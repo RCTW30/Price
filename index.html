@@ -1572,9 +1572,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <script>
 /* ===================== 設定區 ===================== */
 // 訂單後台網址（Google Apps Script 的 /exec 網址）。有填才會出現「送出訂單」；留空時客人只能「複製訂單內容」。
-const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
+const ORDER_ENDPOINT = "";
 // 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填才會出現「LINE 官方帳號」按鈕，讓客人加好友聯繫你。
-const LINE_OA_ID = "@293ljwzr // 網頁程式有改動時，請手動調高這個版本號
+const LINE_OA_ID = "";
+const PAGE_VERSION = "v5.1"; // 網頁程式有改動時，請手動調高這個版本號
 /* ================================================== */
 
 const $ = id => document.getElementById(id);
