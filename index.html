@@ -1345,7 +1345,7 @@ const PAGE_VERSION = "v3.4"; // 網頁程式有改動時，請手動調高這個
 const EMBED = JSON.parse($("data").textContent);
 const NO_BRAND = "其他", MAXQ = 99, CART_KEY = "injora_cart_v1", CONTACT_KEY = "injora_contact_v1";
 // 訂單後台網址：填入 Google Apps Script 網頁應用程式網址（或其他接收 POST 的網址）後，購物車會出現「送出訂單」。留空就只有「複製訂單內容」。
-const ORDER_ENDPOINT = "";
+const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
 const brandOf = it => it.brand || NO_BRAND;
 // 商品圖片：資料裡的 image 是 injora.com 圖檔名，這裡接上圖片網址；沒有圖片或載入失敗時就不顯示
 const imgUrl = it => (it && it.image) ? ((data.imageBase || "") + it.image + "&width=400") : "";
