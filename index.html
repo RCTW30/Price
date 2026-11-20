@@ -142,6 +142,51 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .dbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .dbtns .wide{grid-column:1/-1}
 .dmsg{font-size:13px;color:var(--mute);min-height:18px}
+
+/* 分類導覽 */
+.catnav{display:flex;gap:8px;overflow-x:auto;padding-top:10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.catnav::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:36px;padding:0 14px;border-radius:18px;border:1px solid var(--line);background:var(--panel);font-size:14px;white-space:nowrap;cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:#4a4a4a}
+.chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.chip .ck{color:var(--accent);margin-left:4px;font-weight:700}
+
+/* 區塊標題 */
+.sec{margin:6px 0 22px}
+.sec h2{font-family:var(--disp);font-weight:800;font-size:30px;text-transform:uppercase;margin:0 0 12px;display:flex;align-items:baseline;gap:10px}
+.sec h2 small{font-family:var(--body);font-size:14px;font-weight:400;color:var(--mute);text-transform:none}
+
+/* 熱門推薦 */
+.bundles{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.bcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.bcard h3{margin:0;font-family:var(--disp);font-weight:800;font-size:24px;line-height:1.15}
+.bcard .bdesc{margin:0;color:var(--mute);font-size:14px;white-space:pre-line}
+.bitems{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.bitems li{display:flex;gap:10px;align-items:center;font-size:14px;line-height:1.35}
+.bitems .thumb{width:44px;height:44px;border-radius:6px}
+.bitems .ph{width:44px;height:44px;border-radius:6px;background:var(--panel2);flex:none}
+.bitems .q{color:var(--mute);white-space:nowrap}
+.bfoot{margin-top:auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding-top:10px;border-top:1px solid var(--line)}
+.bfoot .bp{font-family:var(--disp);font-weight:800;font-size:28px;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap}
+.bfoot .btn{min-height:42px;white-space:nowrap;flex:1 1 auto;max-width:100%}
+
+/* 常見問題 */
+.faq{display:grid;gap:8px}
+.faq details{background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.faq summary{cursor:pointer;padding:14px 44px 14px 16px;font-weight:600;list-style:none;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--accent);font-size:22px;font-weight:400}
+.faq details[open] summary::after{content:"−"}
+.faq .ans{padding:0 16px 16px;color:#cfcfc8;white-space:pre-line;word-break:break-word}
+.faq .ans a{color:var(--accent)}
+
+/* 點圖放大 */
+.zoom{cursor:zoom-in}
+.lb{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:56px 16px 24px}
+.lb img{max-width:min(92vw,900px);max-height:76vh;object-fit:contain;background:#fff;border-radius:12px}
+.lb .cap{color:var(--ink);text-align:center;max-width:720px;font-size:15px}
+.lb .cap b{display:block;font-family:var(--disp);font-size:24px;color:var(--accent)}
+.lb .x{position:absolute;top:12px;right:12px;min-height:40px}
 .dfoot textarea{width:100%;height:110px;font:13px monospace;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
 
 @media (max-width:640px){
@@ -171,9 +216,23 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <button class="clear" id="qClear" type="button" aria-label="清除搜尋" hidden>×</button>
       <div class="results" id="results" role="listbox" hidden></div>
     </div>
+    <nav class="catnav" id="catnav" aria-label="分類導覽"></nav>
   </div>
 
-  <div class="list" id="list"><div class="row">載入中…</div></div>
+  <section class="sec" id="secBundles" hidden>
+    <h2>熱門推薦 <small>一鍵整組加入購物車</small></h2>
+    <div class="bundles" id="bundles"></div>
+  </section>
+
+  <section class="sec" id="secParts">
+    <h2>全部零件</h2>
+    <div class="list" id="list"><div class="row">載入中…</div></div>
+  </section>
+
+  <section class="sec" id="secFaq" hidden>
+    <h2>常見問題</h2>
+    <div class="faq" id="faq"></div>
+  </section>
   <p class="note" id="footnote"></p>
   <p class="note">價格僅供參考，實際金額以店家確認的報價為準。</p>
   <div class="foot">
@@ -204,13 +263,20 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
     <div class="dbtns">
       <button id="cartSend" type="button" class="btn primary wide" hidden>送出訂單</button>
+      <button id="cartQuote" type="button" class="btn">下載報價單圖片</button>
       <button id="cartCopy" type="button" class="btn">複製訂單內容</button>
-      <button id="cartClear" type="button" class="btn danger">清空購物車</button>
+      <button id="cartClear" type="button" class="btn danger wide">清空購物車</button>
     </div>
     <div class="dmsg" id="cartMsg" role="status"></div>
     <a class="btn lineapp lineoa" id="cartOA" href="#" target="_blank" rel="noopener noreferrer" hidden>有問題？加入 LINE 官方帳號聯繫我們</a>
   </div>
 </aside>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="商品大圖" hidden>
+  <button class="btn x" id="lbClose" type="button">關閉</button>
+  <img id="lbImg" alt="">
+  <div class="cap" id="lbCap"></div>
+</div>
 
 <!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
@@ -1454,6 +1520,52 @@ select:disabled{opacity:.45;cursor:not-allowed}
     }
    ]
   }
+ ],
+ "bundles": [
+  {
+   "name": "大落差必備套件",
+   "desc": "大落差必備組合",
+   "items": [
+    {
+     "cat": "避震懸吊",
+     "brand": "INJORA",
+     "label": "INJORA 26mm Aluminum Oil Shocks for 1/30 Axial SCX30",
+     "qty": 1
+    },
+    {
+     "cat": "避震懸吊",
+     "brand": "HR",
+     "label": "鋁合金前後避震器活動升高套件",
+     "qty": 1
+    }
+   ]
+  }
+ ],
+ "faq": [
+  {
+   "q": "如何下單？",
+   "a": "在網頁選好零件加入購物車，填寫聯絡方式後按「送出訂單」，我們會用你留的聯絡方式與你確認品項、顏色和金額，確認後訂單才算成立。"
+  },
+  {
+   "q": "網頁上的價格是最終價格嗎？",
+   "a": "網頁價格僅供參考，實際金額以我們確認的報價為準。"
+  },
+  {
+   "q": "付款方式有哪些？",
+   "a": "統一轉帳"
+  },
+  {
+   "q": "運費怎麼算？多久會出貨？",
+   "a": "7-11 取貨 NT$60，需預訂約 2-3 週）"
+  },
+  {
+   "q": "可以面交或自取嗎？",
+   "a": "台中可面交"
+  },
+  {
+   "q": "圖片和實際商品一樣嗎？",
+   "a": "商品圖片來自原廠官網，同款不同顏色或套組可能共用同一張圖，請以文字說明為準，有疑問歡迎先詢問。"
+  }
  ]
 }
 </script>
@@ -1461,10 +1573,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <script>
 /* ===================== 設定區 ===================== */
 // 訂單後台網址（Google Apps Script 的 /exec 網址）。有填才會出現「送出訂單」；留空時客人只能「複製訂單內容」。
-const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
+const ORDER_ENDPOINT = "";
 // 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填才會出現「LINE 官方帳號」按鈕，讓客人加好友聯繫你。
-const LINE_OA_ID = "@293ljwzr";
-const PAGE_VERSION = "v4.3"; // 網頁程式有改動時，請手動調高這個版本號
+const LINE_OA_ID = "";
+const PAGE_VERSION = "v5.0"; // 網頁程式有改動時，請手動調高這個版本號
 /* ================================================== */
 
 const $ = id => document.getElementById(id);
@@ -1481,12 +1593,37 @@ let data = EMBED, rows = [], cart = loadCart();
 const isHttp = u => /^https?:\/\/\S+$/i.test(u || "");
 // image 是完整網址（其他品牌、自動抓到的）就直接用；否則是 injora 圖檔名，接上 imageBase
 const imgUrl = it => !(it && it.image) ? "" : isHttp(it.image) ? it.image : ((data.imageBase || "") + it.image + "&width=400");
-function thumb(it, cls) {
+const bigUrl = it => !(it && it.image) ? "" : isHttp(it.image) ? it.image : ((data.imageBase || "") + it.image + "&width=1000");
+// zoom = true：點圖可以放大
+function thumb(it, cls, zoom) {
   const u = imgUrl(it); if (!u) return null;
-  const im = el("img", { className: cls || "thumb", src: u, alt: nameOf(it), loading: "lazy", referrerPolicy: "no-referrer" });
+  const im = el("img", { className: (cls || "thumb") + (zoom ? " zoom" : ""), src: u, alt: nameOf(it), loading: "lazy", referrerPolicy: "no-referrer" });
   im.addEventListener("error", () => im.remove());
+  if (zoom) {
+    im.tabIndex = 0; im.setAttribute("role", "button"); im.setAttribute("aria-label", "放大圖片：" + nameOf(it));
+    im.addEventListener("click", e => { e.stopPropagation(); openLb(it); });
+    im.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLb(it); } });
+  }
   return im;
 }
+
+/* ---------- 點圖放大 ---------- */
+let lbFocus = null;
+function openLb(it) {
+  lbFocus = document.activeElement;
+  const img = $("lbImg"); img.src = bigUrl(it); img.alt = nameOf(it); img.referrerPolicy = "no-referrer";
+  $("lbCap").replaceChildren(el("b", { textContent: fmt(it.price) }), document.createTextNode(it.label + (it.sku ? "（" + it.sku + "）" : "")));
+  $("lb").hidden = false; document.body.classList.add("locked");
+  $("lbClose").focus();
+}
+function closeLb() {
+  $("lb").hidden = true; $("lbImg").removeAttribute("src");
+  if (!$("drawer").classList.contains("open")) document.body.classList.remove("locked");
+  if (lbFocus) lbFocus.focus({ preventScroll: true });
+}
+$("lbClose").onclick = closeLb;
+$("lb").addEventListener("click", e => { if (e.target === $("lb")) closeLb(); });
+document.addEventListener("keydown", e => { if (!$("lb").hidden && (e.key === "Escape" || e.key === "Tab")) { e.preventDefault(); e.stopImmediatePropagation(); if (e.key === "Escape") closeLb(); } }, true);
 
 /* ---------- 購物車資料（存在客人自己的瀏覽器） ---------- */
 function loadCart() {
@@ -1543,7 +1680,7 @@ function render(raw) {
     const qty = el("input", { id: "qty" + ci, className: "qty", type: "number", min: 1, max: MAXQ, step: 1, value: (k && k.qty) || 1 });
     qty.setAttribute("inputmode", "numeric"); qty.setAttribute("aria-label", cat.name + "的數量");
     const add = el("button", { className: "btn primary", type: "button", textContent: "加入購物車", disabled: true });
-    const box = el("div", { className: "row" });
+    const box = el("div", { className: "row", id: "row" + ci });
     const row = { cat, brands, bsel, sel, qty, add, price, detail, box, shown: [] };
     if (brands.length === 1) bsel.value = brands[0];
     else if (k && brands.includes(k.brand)) bsel.value = k.brand;
@@ -1560,8 +1697,90 @@ function render(raw) {
     rows.push(row);
   });
   buildIndex();
+  renderBundles();
+  renderFaq();
+  renderNav();
   updateRows();
   renderCart();
+}
+
+/* ---------- 分類導覽 ---------- */
+function stickyOffset() { return document.querySelector(".searchwrap").offsetHeight + 10; }
+function jumpTo(target) {
+  const top = target.getBoundingClientRect().top + scrollY - stickyOffset();
+  scrollTo({ top, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+let navTargets = [];
+function renderNav() {
+  const nav = $("catnav"); nav.replaceChildren(); navTargets = [];
+  const add = (label, target, catName) => {
+    const b = el("button", { className: "chip", type: "button" }, label);
+    if (catName) b.dataset.cat = catName;
+    b.addEventListener("click", () => jumpTo(target));
+    nav.append(b); navTargets.push({ b, target });
+  };
+  if ((data.bundles || []).length && !$("secBundles").hidden) add("熱門推薦", $("secBundles"));
+  rows.forEach(r => add(r.cat.name, r.box, r.cat.name));
+  if ((data.faq || []).length) add("常見問題", $("secFaq"));
+  markNav(); syncActive();
+}
+function markNav() {                                                    // 購物車裡有東西的分類打勾
+  const inCart = new Set(cartLines().filter(x => x.it).map(x => x.c.cat));
+  $("catnav").querySelectorAll(".chip[data-cat]").forEach(b => {
+    const has = inCart.has(b.dataset.cat), ck = b.querySelector(".ck");
+    if (has && !ck) b.append(el("span", { className: "ck", textContent: "✓" })); else if (!has && ck) ck.remove();
+  });
+}
+let ticking = false;
+function syncActive() {
+  const off = stickyOffset() + 40; let cur = null;
+  navTargets.forEach(x => { if (!x.target.hidden && x.target.getBoundingClientRect().top <= off) cur = x; });
+  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) { const vis = navTargets.filter(x => !x.target.hidden); if (vis.length) cur = vis[vis.length - 1]; }   // 捲到最底時，最後一個分類亮起
+  navTargets.forEach(x => x.b.classList.toggle("active", x === cur));
+  if (cur) { const nav = $("catnav"), b = cur.b; if (b.offsetLeft < nav.scrollLeft || b.offsetLeft + b.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollTo({ left: b.offsetLeft - 16 }); }
+}
+addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; syncActive(); }); } }, { passive: true });
+
+/* ---------- 熱門推薦 ---------- */
+function bundleLines(bd) { return (bd.items || []).map(x => ({ x, it: findItem({ cat: x.cat, brand: x.brand, label: x.label }) })).filter(y => y.it); }
+function renderBundles() {
+  const box = $("bundles"); box.replaceChildren();
+  const list = (data.bundles || []).map(bd => ({ bd, lines: bundleLines(bd) })).filter(b => b.lines.length);
+  $("secBundles").hidden = !list.length;
+  list.forEach(({ bd, lines }) => {
+    const total = lines.reduce((s, y) => s + y.it.price * y.x.qty, 0);
+    const btn = el("button", { className: "btn primary", type: "button", textContent: "整組加入購物車" });
+    btn.addEventListener("click", () => {
+      lines.forEach(({ x, it }) => {
+        const hit = cart.find(c => c.cat === x.cat && c.brand === brandOf(it) && c.label === it.label);
+        if (hit) hit.qty = Math.min(MAXQ, hit.qty + x.qty); else cart.push({ cat: x.cat, brand: brandOf(it), label: it.label, qty: x.qty });
+      });
+      saveCart(); renderCart();
+      btn.textContent = "已加入 " + lines.length + " 項 ✓"; setTimeout(() => { btn.textContent = "整組加入購物車"; }, 1500);
+      const bar = $("cbTotal"); bar.classList.remove("bump"); void bar.offsetWidth; bar.classList.add("bump");
+    });
+    box.append(el("article", { className: "bcard" },
+      el("h3", { textContent: bd.name }),
+      ...(bd.desc ? [el("p", { className: "bdesc", textContent: bd.desc })] : []),
+      el("ul", { className: "bitems" }, ...lines.map(({ x, it }) => el("li", {},
+        thumb(it, "thumb", true) || el("span", { className: "ph" }),
+        el("span", { textContent: nameOf(it) }), el("span", { className: "q", textContent: "× " + x.qty })))),
+      el("div", { className: "bfoot" }, el("span", { className: "bp", textContent: fmt(total) }), btn)));
+  });
+}
+
+/* ---------- 常見問題 ---------- */
+function linkify(text) {                                               // 回答裡的網址變成可點的連結
+  const out = []; let last = 0;
+  String(text).replace(/https?:\/\/[^\s，。）)]+/g, (m, i) => { out.push(document.createTextNode(text.slice(last, i))); out.push(el("a", { href: m, target: "_blank", rel: "noopener noreferrer", textContent: m })); last = i + m.length; });
+  out.push(document.createTextNode(text.slice(last)));
+  return out;
+}
+function renderFaq() {
+  const box = $("faq"); box.replaceChildren();
+  const list = data.faq || [];
+  $("secFaq").hidden = !list.length;
+  list.forEach(f => box.append(el("details", {}, el("summary", { textContent: f.q }), el("div", { className: "ans" }, ...linkify(f.a || "")))));
 }
 function updateRows() {
   rows.forEach(({ sel, shown, qty, add, price, detail }) => {
@@ -1572,7 +1791,7 @@ function updateRows() {
     if (detail.dataset.key !== it.label) {
       detail.dataset.key = it.label;
       const t = el("div", { className: "txt" });
-      detail.replaceChildren(...[thumb(it), t].filter(Boolean));
+      detail.replaceChildren(...[thumb(it, "thumb", true), t].filter(Boolean));
     }
     const t = detail.querySelector(".txt");
     const link = isHttp(it.url) ? [document.createTextNode("\n"), el("a", { className: "plink", href: it.url, target: "_blank", rel: "noopener noreferrer", textContent: "查看商品頁 ↗" })] : [];
@@ -1666,13 +1885,14 @@ function renderCart() {
     const del = el("button", { className: "btn del danger", type: "button", textContent: "刪除" });
     del.onclick = () => { cart = cart.filter(x => x !== c); saveCart(); renderCart(); };
     body.append(el("div", { className: "line" },
-      el("div", { className: "who" }, ...[thumb(it)].filter(Boolean), el("div", {}, el("div", { className: "name", textContent: it ? nameOf(it) : c.label }),
+      el("div", { className: "who" }, ...[thumb(it, "thumb", true)].filter(Boolean), el("div", {}, el("div", { className: "name", textContent: it ? nameOf(it) : c.label }),
         el("div", { className: "meta" + (it ? "" : " bad"), textContent: it ? c.brand + "｜" + c.cat : "此品項已下架或改名，不列入合計，請刪除" }))),
       el("div", { className: "sub2" }, it ? fmt(it.price * c.qty) : "—", it ? el("small", { textContent: "單價 " + fmt(it.price) }) : ""),
       el("div", { className: "stepper" }, minus, inp, plus), del, lnote));
   });
   ["cartCopy", "cartSend"].forEach(id => $(id).disabled = !count);
-  $("cartClear").disabled = !cart.length;
+  $("cartClear").disabled = !cart.length; $("cartQuote").disabled = !count;
+  markNav();
 }
 
 const contactEls = { name: $("cName"), contact: $("cContact"), remark: $("cRemark") };
@@ -1723,6 +1943,92 @@ async function sendOrder() {
   }
 }
 
+/* ---------- 報價單圖片 ---------- */
+function wrapText(ctx, text, maxW) {                                   // 中英混排自動換行（英文以單字為單位）
+  const tokens = String(text).match(/[A-Za-z0-9.,'"*#&+\/\-]+\s*|\s+|[^\sA-Za-z0-9]/g) || [];
+  const lines = []; let cur = "";
+  tokens.forEach(t => {
+    if (ctx.measureText(cur + t).width <= maxW || !cur) { cur += t; }
+    else { lines.push(cur.trimEnd()); cur = t.trimStart(); }
+    while (ctx.measureText(cur).width > maxW && cur.length > 1) {       // 單一個英文單字太長時硬切
+      let k = cur.length; while (k > 1 && ctx.measureText(cur.slice(0, k)).width > maxW) k--;
+      lines.push(cur.slice(0, k)); cur = cur.slice(k);
+    }
+  });
+  if (cur.trim()) lines.push(cur.trimEnd());
+  return lines;
+}
+function loadImg(src) { return new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; }); }
+async function drawQuote(withLogo) {
+  const W = 1080, P = 64, S = 2;
+  const disp = "'Barlow Condensed','PingFang TC','Noto Sans TC','Microsoft JhengHei',sans-serif";
+  const body = "'PingFang TC','Noto Sans TC','Microsoft JhengHei',sans-serif";
+  const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
+  const now = new Date(), pad = n => String(n).padStart(2, "0");
+  const dateStr = now.getFullYear() + "/" + pad(now.getMonth() + 1) + "/" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
+  const qno = "Q" + String(now.getFullYear()).slice(2) + pad(now.getMonth() + 1) + pad(now.getDate()) + "-" + pad(now.getHours()) + pad(now.getMinutes());
+  const m = document.createElement("canvas").getContext("2d");
+  // 先量高度
+  const nameW = W - P * 2 - 260;
+  const blocks = lines.map(({ c, it }) => {
+    m.font = "600 30px " + body; const nl = wrapText(m, nameOf(it), nameW);
+    m.font = "24px " + body; const sub = wrapText(m, c.brand + (it.sku ? "｜" + it.sku : "") + (c.note && c.note.trim() ? "｜顏色／備註：" + c.note.trim() : ""), nameW);
+    return { c, it, nl, sub, h: nl.length * 40 + sub.length * 32 + 28 };
+  });
+  const info = [v("name") && "姓名：" + v("name"), v("contact") && "聯絡方式：" + v("contact"), v("remark") && "備註：" + v("remark")].filter(Boolean);
+  m.font = "26px " + body; const infoLines = info.flatMap(t => wrapText(m, t, W - P * 2));
+  const H = 250 + 70 + blocks.reduce((s, b) => s + b.h, 0) + 140 + (infoLines.length ? infoLines.length * 38 + 40 : 0) + 150;
+  const cv = document.createElement("canvas"); cv.width = W * S; cv.height = H * S;
+  const g = cv.getContext("2d"); g.scale(S, S);
+  g.fillStyle = "#0b0b0b"; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#b1f200"; g.fillRect(0, 0, W, 10);
+  let y = 60;
+  if (withLogo) { const lg = await loadImg("logo.png"); if (lg) { g.save(); g.beginPath(); g.arc(P + 60, y + 60, 60, 0, Math.PI * 2); g.clip(); g.drawImage(lg, P, y, 120, 120); g.restore(); } }
+  const tx = withLogo ? P + 150 : P;
+  g.fillStyle = "#f1f1ec"; g.font = "800 54px " + disp; g.textBaseline = "top"; g.fillText("AXIAL SCX30", tx, y + 4);
+  g.fillStyle = "#b1f200"; g.font = "800 40px " + body; g.fillText("改裝零件報價單", tx, y + 64);
+  g.fillStyle = "#9b9b94"; g.font = "24px " + body; g.textAlign = "right";
+  g.fillText("報價編號 " + qno, W - P, y + 20); g.fillText(dateStr, W - P, y + 56); g.fillText("價格版本 v" + data.version, W - P, y + 92);
+  g.textAlign = "left"; y = 250;
+  g.fillStyle = "#9b9b94"; g.font = "600 24px " + body;
+  g.fillText("品項", P, y); g.textAlign = "right"; g.fillText("數量", W - P - 190, y); g.fillText("小計", W - P, y); g.textAlign = "left";
+  y += 44; g.fillStyle = "#2b2b2b"; g.fillRect(P, y, W - P * 2, 2); y += 22;
+  blocks.forEach(({ c, it, nl, sub, h }) => {
+    g.fillStyle = "#f1f1ec"; g.font = "600 30px " + body; nl.forEach((t, i) => g.fillText(t, P, y + i * 40));
+    g.fillStyle = "#9b9b94"; g.font = "24px " + body; sub.forEach((t, i) => g.fillText(t, P, y + nl.length * 40 + i * 32));
+    g.textAlign = "right"; g.fillStyle = "#f1f1ec"; g.font = "700 32px " + disp; g.fillText("× " + c.qty, W - P - 190, y);
+    g.fillStyle = "#b1f200"; g.fillText(fmt(it.price * c.qty), W - P, y);
+    g.fillStyle = "#9b9b94"; g.font = "22px " + body; g.fillText("單價 " + fmt(it.price), W - P, y + 42); g.textAlign = "left";
+    y += h; g.fillStyle = "#2b2b2b"; g.fillRect(P, y - 14, W - P * 2, 1);
+  });
+  y += 20; g.fillStyle = "#f1f1ec"; g.font = "600 32px " + body; g.fillText("合計", P, y + 22);
+  g.textAlign = "right"; g.fillStyle = "#b1f200"; g.font = "800 72px " + disp; g.fillText(fmt(total), W - P, y); g.textAlign = "left";
+  y += 120;
+  if (infoLines.length) { g.fillStyle = "#cfcfc8"; g.font = "26px " + body; infoLines.forEach(t => { g.fillText(t, P, y); y += 38; }); y += 40; }
+  g.fillStyle = "#2b2b2b"; g.fillRect(P, y, W - P * 2, 2); y += 26;
+  g.fillStyle = "#9b9b94"; g.font = "22px " + body;
+  g.fillText("價格僅供參考，實際金額以店家確認的報價為準。", P, y);
+  if (data.footnote) g.fillText(data.footnote, P, y + 34);
+  g.fillText(location.host ? location.host + location.pathname : "", P, y + 68);
+  return new Promise((res, rej) => { try { cv.toBlob(b => b ? res(b) : rej(new Error("toBlob")), "image/png"); } catch (e) { rej(e); } });
+}
+async function saveQuote() {
+  const msg = $("cartMsg"); if (!cartTotals().count) return;
+  msg.textContent = "正在產生報價單…";
+  try { await document.fonts.load("800 40px 'Barlow Condensed'"); } catch (e) {}
+  let blob;
+  try { blob = await drawQuote(true); } catch (e) { try { blob = await drawQuote(false); } catch (e2) { msg.textContent = "這個瀏覽器無法產生圖片，請改用「複製訂單內容」。"; return; } }
+  const now = new Date(), name = "SCX30-quote-" + now.getFullYear() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0") + ".png";
+  const file = new File([blob], name, { type: "image/png" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {   // 手機：開啟分享選單，可以存到相簿或直接傳出
+    try { await navigator.share({ files: [file], title: "SCX30 報價單" }); msg.textContent = "報價單已產生。"; return; }
+    catch (e) { if (e && e.name === "AbortError") { msg.textContent = ""; return; } }
+  }
+  const a = el("a", { href: URL.createObjectURL(blob), download: name }); document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  msg.textContent = "報價單圖片已下載。";
+}
+
 /* ---------- 側邊購物車開關 ---------- */
 let lastFocus = null;
 function openCart() {
@@ -1743,7 +2049,7 @@ document.addEventListener("keydown", e => {
   if (!$("drawer").classList.contains("open")) return;
   if (e.key === "Escape") closeCart();
   if (e.key === "Tab") {                                               // 鍵盤操作時，焦點留在購物車裡
-    const f = [...$("drawer").querySelectorAll("button:not(:disabled),input:not(.hp),textarea")].filter(x => x.offsetParent);
+    const f = [...$("drawer").querySelectorAll("button:not(:disabled),input:not(.hp),textarea,a[href]:not([hidden])")].filter(x => x.offsetParent);
     if (!f.length) return;
     if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
     else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
@@ -1752,7 +2058,8 @@ document.addEventListener("keydown", e => {
 $("cartCopy").onclick = copyOrder;
 $("cartSend").onclick = sendOrder;
 $("cartSend").hidden = !ORDER_ENDPOINT;
-if (!ORDER_ENDPOINT) { $("cartCopy").classList.add("primary", "wide"); $("cartClear").classList.add("wide"); }   // 沒有後台時，「複製訂單內容」當主要按鈕
+if (!ORDER_ENDPOINT) $("cartCopy").classList.add("primary");          // 沒有後台時，「複製訂單內容」當主要按鈕
+$("cartQuote").onclick = saveQuote;
 if (LINE_OA_ID) ["cartOA", "footOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; });
 $("cartClear").onclick = () => { if (confirm("確定清空購物車？")) { cart = []; saveCart(); renderCart(); } };
 loadContact();
