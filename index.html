@@ -263,9 +263,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
     <div class="dbtns">
       <button id="cartSend" type="button" class="btn primary wide" hidden>送出訂單</button>
-      <button id="cartQuote" type="button" class="btn">下載報價單圖片</button>
       <button id="cartCopy" type="button" class="btn">複製訂單內容</button>
-      <button id="cartClear" type="button" class="btn danger wide">清空購物車</button>
+      <button id="cartClear" type="button" class="btn danger">清空購物車</button>
     </div>
     <div class="dmsg" id="cartMsg" role="status"></div>
     <a class="btn lineapp lineoa" id="cartOA" href="#" target="_blank" rel="noopener noreferrer" hidden>有問題？加入 LINE 官方帳號聯繫我們</a>
@@ -1573,10 +1572,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <script>
 /* ===================== 設定區 ===================== */
 // 訂單後台網址（Google Apps Script 的 /exec 網址）。有填才會出現「送出訂單」；留空時客人只能「複製訂單內容」。
-const ORDER_ENDPOINT = "";
+const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
 // 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填才會出現「LINE 官方帳號」按鈕，讓客人加好友聯繫你。
-const LINE_OA_ID = "";
-const PAGE_VERSION = "v5.0"; // 網頁程式有改動時，請手動調高這個版本號
+const LINE_OA_ID = "@293ljwzr // 網頁程式有改動時，請手動調高這個版本號
 /* ================================================== */
 
 const $ = id => document.getElementById(id);
@@ -1891,7 +1889,7 @@ function renderCart() {
       el("div", { className: "stepper" }, minus, inp, plus), del, lnote));
   });
   ["cartCopy", "cartSend"].forEach(id => $(id).disabled = !count);
-  $("cartClear").disabled = !cart.length; $("cartQuote").disabled = !count;
+  $("cartClear").disabled = !cart.length;
   markNav();
 }
 
@@ -1943,92 +1941,6 @@ async function sendOrder() {
   }
 }
 
-/* ---------- 報價單圖片 ---------- */
-function wrapText(ctx, text, maxW) {                                   // 中英混排自動換行（英文以單字為單位）
-  const tokens = String(text).match(/[A-Za-z0-9.,'"*#&+\/\-]+\s*|\s+|[^\sA-Za-z0-9]/g) || [];
-  const lines = []; let cur = "";
-  tokens.forEach(t => {
-    if (ctx.measureText(cur + t).width <= maxW || !cur) { cur += t; }
-    else { lines.push(cur.trimEnd()); cur = t.trimStart(); }
-    while (ctx.measureText(cur).width > maxW && cur.length > 1) {       // 單一個英文單字太長時硬切
-      let k = cur.length; while (k > 1 && ctx.measureText(cur.slice(0, k)).width > maxW) k--;
-      lines.push(cur.slice(0, k)); cur = cur.slice(k);
-    }
-  });
-  if (cur.trim()) lines.push(cur.trimEnd());
-  return lines;
-}
-function loadImg(src) { return new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; }); }
-async function drawQuote(withLogo) {
-  const W = 1080, P = 64, S = 2;
-  const disp = "'Barlow Condensed','PingFang TC','Noto Sans TC','Microsoft JhengHei',sans-serif";
-  const body = "'PingFang TC','Noto Sans TC','Microsoft JhengHei',sans-serif";
-  const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
-  const now = new Date(), pad = n => String(n).padStart(2, "0");
-  const dateStr = now.getFullYear() + "/" + pad(now.getMonth() + 1) + "/" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
-  const qno = "Q" + String(now.getFullYear()).slice(2) + pad(now.getMonth() + 1) + pad(now.getDate()) + "-" + pad(now.getHours()) + pad(now.getMinutes());
-  const m = document.createElement("canvas").getContext("2d");
-  // 先量高度
-  const nameW = W - P * 2 - 260;
-  const blocks = lines.map(({ c, it }) => {
-    m.font = "600 30px " + body; const nl = wrapText(m, nameOf(it), nameW);
-    m.font = "24px " + body; const sub = wrapText(m, c.brand + (it.sku ? "｜" + it.sku : "") + (c.note && c.note.trim() ? "｜顏色／備註：" + c.note.trim() : ""), nameW);
-    return { c, it, nl, sub, h: nl.length * 40 + sub.length * 32 + 28 };
-  });
-  const info = [v("name") && "姓名：" + v("name"), v("contact") && "聯絡方式：" + v("contact"), v("remark") && "備註：" + v("remark")].filter(Boolean);
-  m.font = "26px " + body; const infoLines = info.flatMap(t => wrapText(m, t, W - P * 2));
-  const H = 250 + 70 + blocks.reduce((s, b) => s + b.h, 0) + 140 + (infoLines.length ? infoLines.length * 38 + 40 : 0) + 150;
-  const cv = document.createElement("canvas"); cv.width = W * S; cv.height = H * S;
-  const g = cv.getContext("2d"); g.scale(S, S);
-  g.fillStyle = "#0b0b0b"; g.fillRect(0, 0, W, H);
-  g.fillStyle = "#b1f200"; g.fillRect(0, 0, W, 10);
-  let y = 60;
-  if (withLogo) { const lg = await loadImg("logo.png"); if (lg) { g.save(); g.beginPath(); g.arc(P + 60, y + 60, 60, 0, Math.PI * 2); g.clip(); g.drawImage(lg, P, y, 120, 120); g.restore(); } }
-  const tx = withLogo ? P + 150 : P;
-  g.fillStyle = "#f1f1ec"; g.font = "800 54px " + disp; g.textBaseline = "top"; g.fillText("AXIAL SCX30", tx, y + 4);
-  g.fillStyle = "#b1f200"; g.font = "800 40px " + body; g.fillText("改裝零件報價單", tx, y + 64);
-  g.fillStyle = "#9b9b94"; g.font = "24px " + body; g.textAlign = "right";
-  g.fillText("報價編號 " + qno, W - P, y + 20); g.fillText(dateStr, W - P, y + 56); g.fillText("價格版本 v" + data.version, W - P, y + 92);
-  g.textAlign = "left"; y = 250;
-  g.fillStyle = "#9b9b94"; g.font = "600 24px " + body;
-  g.fillText("品項", P, y); g.textAlign = "right"; g.fillText("數量", W - P - 190, y); g.fillText("小計", W - P, y); g.textAlign = "left";
-  y += 44; g.fillStyle = "#2b2b2b"; g.fillRect(P, y, W - P * 2, 2); y += 22;
-  blocks.forEach(({ c, it, nl, sub, h }) => {
-    g.fillStyle = "#f1f1ec"; g.font = "600 30px " + body; nl.forEach((t, i) => g.fillText(t, P, y + i * 40));
-    g.fillStyle = "#9b9b94"; g.font = "24px " + body; sub.forEach((t, i) => g.fillText(t, P, y + nl.length * 40 + i * 32));
-    g.textAlign = "right"; g.fillStyle = "#f1f1ec"; g.font = "700 32px " + disp; g.fillText("× " + c.qty, W - P - 190, y);
-    g.fillStyle = "#b1f200"; g.fillText(fmt(it.price * c.qty), W - P, y);
-    g.fillStyle = "#9b9b94"; g.font = "22px " + body; g.fillText("單價 " + fmt(it.price), W - P, y + 42); g.textAlign = "left";
-    y += h; g.fillStyle = "#2b2b2b"; g.fillRect(P, y - 14, W - P * 2, 1);
-  });
-  y += 20; g.fillStyle = "#f1f1ec"; g.font = "600 32px " + body; g.fillText("合計", P, y + 22);
-  g.textAlign = "right"; g.fillStyle = "#b1f200"; g.font = "800 72px " + disp; g.fillText(fmt(total), W - P, y); g.textAlign = "left";
-  y += 120;
-  if (infoLines.length) { g.fillStyle = "#cfcfc8"; g.font = "26px " + body; infoLines.forEach(t => { g.fillText(t, P, y); y += 38; }); y += 40; }
-  g.fillStyle = "#2b2b2b"; g.fillRect(P, y, W - P * 2, 2); y += 26;
-  g.fillStyle = "#9b9b94"; g.font = "22px " + body;
-  g.fillText("價格僅供參考，實際金額以店家確認的報價為準。", P, y);
-  if (data.footnote) g.fillText(data.footnote, P, y + 34);
-  g.fillText(location.host ? location.host + location.pathname : "", P, y + 68);
-  return new Promise((res, rej) => { try { cv.toBlob(b => b ? res(b) : rej(new Error("toBlob")), "image/png"); } catch (e) { rej(e); } });
-}
-async function saveQuote() {
-  const msg = $("cartMsg"); if (!cartTotals().count) return;
-  msg.textContent = "正在產生報價單…";
-  try { await document.fonts.load("800 40px 'Barlow Condensed'"); } catch (e) {}
-  let blob;
-  try { blob = await drawQuote(true); } catch (e) { try { blob = await drawQuote(false); } catch (e2) { msg.textContent = "這個瀏覽器無法產生圖片，請改用「複製訂單內容」。"; return; } }
-  const now = new Date(), name = "SCX30-quote-" + now.getFullYear() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0") + ".png";
-  const file = new File([blob], name, { type: "image/png" });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {   // 手機：開啟分享選單，可以存到相簿或直接傳出
-    try { await navigator.share({ files: [file], title: "SCX30 報價單" }); msg.textContent = "報價單已產生。"; return; }
-    catch (e) { if (e && e.name === "AbortError") { msg.textContent = ""; return; } }
-  }
-  const a = el("a", { href: URL.createObjectURL(blob), download: name }); document.body.append(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  msg.textContent = "報價單圖片已下載。";
-}
-
 /* ---------- 側邊購物車開關 ---------- */
 let lastFocus = null;
 function openCart() {
@@ -2059,7 +1971,6 @@ $("cartCopy").onclick = copyOrder;
 $("cartSend").onclick = sendOrder;
 $("cartSend").hidden = !ORDER_ENDPOINT;
 if (!ORDER_ENDPOINT) $("cartCopy").classList.add("primary");          // 沒有後台時，「複製訂單內容」當主要按鈕
-$("cartQuote").onclick = saveQuote;
 if (LINE_OA_ID) ["cartOA", "footOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; });
 $("cartClear").onclick = () => { if (confirm("確定清空購物車？")) { cart = []; saveCart(); renderCart(); } };
 loadContact();
