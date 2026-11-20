@@ -9,137 +9,209 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="SCX30 報價">
-<meta name="theme-color" content="#14213d">
+<meta name="theme-color" content="#0b0b0b">
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&display=swap">
 <style>
-:root{--bg:#eef1f4;--panel:#fff;--ink:#14213d;--mute:#5d6b82;--line:#d5dbe4;--accent:#1f5eff;--accent-ink:#fff;--price:#0b7a4b;--danger:#c0392b}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1624;--panel:#18213a;--ink:#e8edf7;--mute:#97a4bd;--line:#2c3856;--accent:#6b97ff;--accent-ink:#0f1624;--price:#4fd69a;--danger:#ff7b6b}}
+:root{
+  --bg:#0b0b0b;--panel:#151515;--panel2:#1d1d1d;--line:#2b2b2b;--ink:#f1f1ec;--mute:#9b9b94;
+  --accent:#b1f200;--accent-ink:#0b0b0b;--accent-dim:rgba(177,242,0,.14);--danger:#ff6b5b;
+  --disp:"Barlow Condensed","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --body:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.5}
-main{max-width:900px;margin:0 auto;padding:28px 16px 120px}
-h1{font-size:clamp(24px,5vw,36px);font-weight:900;letter-spacing:.02em;margin:0;line-height:1.25}
-.brandhead{display:flex;align-items:center;gap:16px;margin:0 0 10px}
-.brandhead img{width:84px;height:84px;flex:none;border-radius:50%}
-.nw{display:inline-block}
-@media (max-width:620px){.brandhead{gap:12px}.brandhead img{width:60px;height:60px}}
-.sub{color:var(--mute);margin:0 0 24px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.row{display:grid;grid-template-columns:130px 1fr 210px;gap:12px;align-items:start;padding:16px 18px;border-bottom:1px solid var(--line)}
-.row:last-child{border-bottom:0}
-.cat{font-weight:700;font-size:17px;padding-top:9px}
-select,input{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:44px}
-select{width:100%}
-input{width:100%}
-select:focus-visible,input:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-select:disabled{opacity:.55;cursor:not-allowed}
+html{scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
+body.locked{overflow:hidden}
+main{max-width:920px;margin:0 auto;padding:28px 16px 130px}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* 標題 */
+.brandhead{display:flex;align-items:center;gap:18px;margin:0 0 6px}
+.brandhead img{width:88px;height:88px;flex:none;border-radius:50%;box-shadow:0 0 0 3px var(--accent)}
+h1{font-family:var(--disp);font-weight:800;font-size:clamp(30px,6.4vw,52px);line-height:1.05;letter-spacing:.01em;margin:0;text-transform:uppercase}
+h1 .nw{display:inline-block}
+h1 .zh{color:var(--accent)}
+.sub{color:var(--mute);margin:10px 0 22px;max-width:62ch}
+
+/* 搜尋 */
+.searchwrap{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 0 12px;margin-bottom:14px}
+.search{position:relative}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--mute);pointer-events:none}
+.search input{width:100%;min-height:50px;padding:12px 44px 12px 44px;font-size:16px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.search input::placeholder{color:#6f6f69}
+.search input:focus{border-color:var(--accent)}
+.search .clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:transparent;color:var(--mute);font-size:22px;cursor:pointer;border-radius:8px}
+.results{position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--panel2);border:1px solid var(--line);border-radius:12px;max-height:min(60vh,460px);overflow:auto;box-shadow:0 18px 40px rgba(0,0,0,.6)}
+.res{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;padding:10px 12px;background:transparent;border:0;border-bottom:1px solid var(--line);cursor:pointer}
+.res:last-child{border-bottom:0}
+.res:hover,.res:focus-visible{background:var(--accent-dim)}
+.res .ph{width:52px;height:52px;border-radius:8px;background:#fff;object-fit:contain}
+.res .ph.none{background:var(--panel)}
+.res .nm{font-weight:600;display:block;word-break:break-word}
+.res .mt{font-size:13px;color:var(--mute)}
+.res .pr{font-family:var(--disp);font-weight:700;font-size:20px;color:var(--accent);white-space:nowrap}
+.res mark{background:none;color:var(--accent)}
+.noresult{padding:16px;color:var(--mute)}
+
+/* 分類列 */
+.list{display:grid;gap:12px}
+.row{display:grid;grid-template-columns:150px 1fr 220px;gap:16px;align-items:start;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;transition:border-color .3s,box-shadow .3s}
+.row.flash{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.cat{font-family:var(--disp);font-weight:700;font-size:21px;line-height:1.2;padding-top:8px}
+select,.qty{min-height:46px;font-size:16px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+select{width:100%;appearance:none;-webkit-appearance:none;padding-right:34px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23b1f200' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+select:disabled{opacity:.45;cursor:not-allowed}
 .pickrow{display:flex;gap:8px}
 .pickrow select:first-child{flex:0 0 150px;width:150px}
 .pickrow select:last-child{flex:1;min-width:0}
-.detail{margin:8px 2px 0;color:var(--mute);font-size:13px;display:flex;gap:12px;align-items:flex-start}
+.detail{margin:10px 2px 0;color:var(--mute);font-size:13px;display:flex;gap:12px;align-items:flex-start}
 .detail:empty{display:none}
 .detail .txt{white-space:pre-line;word-break:break-word;min-width:0;flex:1}
-.thumb{flex:none;width:104px;height:104px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px}
-.line .thumb{width:56px;height:56px}
-.line .who{display:flex;gap:12px;align-items:center;min-width:0}
+.detail .full{color:var(--ink);font-size:14px;margin-bottom:4px;display:block}
+.thumb{flex:none;width:108px;height:108px;object-fit:contain;background:#fff;border-radius:10px}
 .buy{display:flex;flex-direction:column;gap:8px}
-.price{text-align:right;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--price);padding-top:6px}
-.price.empty{color:var(--mute);font-weight:400;font-size:18px}
+.price{text-align:right;font-family:var(--disp);font-weight:800;font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--accent);padding-top:4px}
+.price.empty{color:#55554f;font-weight:600;font-size:24px}
 .buyrow{display:flex;gap:8px}
-.qty{width:76px;flex:none;text-align:center;padding:10px 4px}
-button{font:inherit;font-weight:500;min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
-button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-button.danger{color:var(--danger)}
-button:disabled{opacity:.5;cursor:not-allowed}
-.buyrow button{flex:1;padding:0 8px}
-.note{color:var(--mute);font-size:13px;margin:14px 0 0}
+.qty{width:72px;flex:none;text-align:center;padding:10px 4px}
+.btn{min-height:46px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);font-weight:600;cursor:pointer}
+.btn:hover:not(:disabled){border-color:#4a4a4a}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.btn.primary:hover:not(:disabled){filter:brightness(1.08)}
+.btn.lineapp{background:#06c755;border-color:#06c755;color:#fff;font-weight:700}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.buyrow .btn{flex:1;padding:0 8px}
+
+.note{color:var(--mute);font-size:13px;margin:16px 0 0}
 .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
-.ver{color:var(--mute);font-size:13px;font-variant-numeric:tabular-nums}
-.foot button{min-height:36px;padding:0 14px;font-size:14px}
-.cartbar{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--ink);color:var(--bg);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
-.cartbar .in{max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.cartbar strong{font-size:22px;margin-left:10px;font-variant-numeric:tabular-nums}
-dialog{border:1px solid var(--line);border-radius:12px;padding:0;width:min(640px,94vw);background:var(--panel);color:var(--ink);overflow:hidden}
-dialog::backdrop{background:rgba(10,16,30,.55)}
-.dwrap{display:flex;flex-direction:column;max-height:88vh}
-.dhead{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
-.dhead h2{margin:0;font-size:20px}
-.dbody{overflow:auto;flex:1;min-height:0}
-.empty-cart{padding:32px 18px;text-align:center;color:var(--mute)}
-.line{display:grid;grid-template-columns:1fr auto;gap:8px 12px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center}
-.line .name{font-weight:700;word-break:break-word}
+.ver{color:#6f6f69;font-size:13px;font-variant-numeric:tabular-nums}
+.foot .btn{min-height:38px;font-size:14px;font-weight:500}
+
+/* 底部購物車列 */
+.cartbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(11,11,11,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.cartbar .in{max-width:920px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.cartbar .cnt{color:var(--mute);font-size:14px}
+.cartbar strong{font-family:var(--disp);font-weight:800;font-size:28px;margin-left:10px;color:var(--accent);font-variant-numeric:tabular-nums}
+.cartbar .btn{min-width:132px}
+.badge{display:inline-block;min-width:22px;padding:0 6px;margin-left:6px;border-radius:11px;background:var(--accent-ink);color:var(--accent);font-size:13px;line-height:22px;text-align:center}
+.bump{animation:bump .35s ease}
+@keyframes bump{40%{transform:scale(1.08)}}
+
+/* 側邊購物車 */
+.backdrop{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .25s}
+.backdrop.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;z-index:50;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .3s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+.drawer.open{transform:none;visibility:visible}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dhead h2{margin:0;font-family:var(--disp);font-weight:800;font-size:28px;text-transform:uppercase}
+.dhead .btn{min-height:40px}
+.dbody{overflow:auto;flex:1;min-height:0;overscroll-behavior:contain}
+.empty-cart{padding:40px 18px;text-align:center;color:var(--mute)}
+.line{display:grid;grid-template-columns:1fr auto;gap:10px 12px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center}
+.line .who{display:flex;gap:12px;align-items:center;min-width:0}
+.line .thumb{width:56px;height:56px;border-radius:8px}
+.line .name{font-weight:600;word-break:break-word;line-height:1.35}
 .line .meta{color:var(--mute);font-size:13px}
 .line .meta.bad{color:var(--danger)}
-.line .sub2{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--price)}
-.line .sub2 small{display:block;color:var(--mute);font-weight:400;font-size:12px}
+.line .sub2{text-align:right;font-family:var(--disp);font-weight:700;font-size:22px;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap}
+.line .sub2 small{display:block;font-family:var(--body);color:var(--mute);font-weight:400;font-size:12px}
 .stepper{display:flex;gap:6px;align-items:center}
-.stepper button{min-height:36px;width:36px;padding:0}
-.stepper input{width:64px;min-height:36px;text-align:center;padding:4px}
+.stepper .btn{min-height:36px;width:36px;padding:0}
+.stepper input{width:58px;min-height:36px;text-align:center;padding:4px;background:var(--bg);border:1px solid var(--line);border-radius:8px}
 .line .del{justify-self:end;min-height:36px;font-size:14px}
-.dfoot{padding:14px 18px;border-top:1px solid var(--line);display:grid;gap:10px}
-.dtotal{display:flex;justify-content:space-between;align-items:baseline;font-size:18px}
-.dtotal strong{font-size:28px;font-variant-numeric:tabular-nums;color:var(--price)}
-.dbtns{display:flex;gap:8px;flex-wrap:wrap}
-.dmsg{font-size:13px;color:var(--mute);min-height:18px}
-.lnote{grid-column:1/-1;min-height:40px;font-size:15px;padding:8px 10px}
+.lnote{grid-column:1/-1;min-height:40px;font-size:15px;padding:8px 10px;background:var(--bg);border:1px solid var(--line);border-radius:8px;width:100%}
 .contact{padding:16px 18px;display:grid;gap:10px}
-.contact h3{margin:0;font-size:17px}
+.contact h3{margin:0;font-family:var(--disp);font-weight:700;font-size:20px}
 .contact label{display:grid;gap:4px;font-size:14px;color:var(--mute)}
-.contact textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;resize:vertical}
-.contact textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.contact input,.contact textarea{width:100%;font-size:16px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
+.contact textarea{resize:vertical}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-.dfoot textarea{width:100%;height:120px;font:13px monospace;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
-@media (max-width:620px){
- .row{grid-template-columns:1fr auto;grid-template-areas:"c p" "s s" "b b"}
- .cat{grid-area:c;padding-top:0}.pick{grid-area:s}
- .buy{display:contents}.price{grid-area:p;padding-top:0}.buyrow{grid-area:b}
- .pickrow{flex-direction:column}.pickrow select:first-child{flex:none;width:100%}
+.dfoot{padding:14px 18px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:grid;gap:10px;background:var(--panel)}
+.dtotal{display:flex;justify-content:space-between;align-items:baseline}
+.dtotal strong{font-family:var(--disp);font-weight:800;font-size:34px;color:var(--accent);font-variant-numeric:tabular-nums}
+.dbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dbtns .wide{grid-column:1/-1}
+.dmsg{font-size:13px;color:var(--mute);min-height:18px}
+.dfoot textarea{width:100%;height:110px;font:13px monospace;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
+
+@media (max-width:640px){
+  .brandhead img{width:62px;height:62px}
+  .row{grid-template-columns:1fr auto;grid-template-areas:"c p" "s s" "b b";gap:12px;padding:16px}
+  .cat{grid-area:c;padding-top:2px}.pick{grid-area:s}
+  .buy{display:contents}.price{grid-area:p;padding-top:0;font-size:26px}.buyrow{grid-area:b}
+  .pickrow{flex-direction:column}.pickrow select:first-child{flex:none;width:100%}
+  .thumb{width:84px;height:84px}
+  .drawer{top:auto;left:0;width:100%;height:90vh;height:90dvh;border-left:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;transform:translateY(102%)}
+  .cartbar .btn{min-width:0}
 }
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 <main>
-  <div class="brandhead"><img src="logo.png" alt="SCX30 RC Community" width="84" height="84"><h1><span class="nw">Axial SCX30</span> <span class="nw">改裝零件報價系統</span></h1></div>
-  <p class="sub">選擇品牌與品項、輸入數量，按「加入購物車」，再到購物車檢視全部內容與合計（新台幣）。</p>
-  <div class="card" id="list"><div class="row">載入中…</div></div>
+  <header>
+    <div class="brandhead"><img src="logo.png" alt="SCX30 RC Community" width="88" height="88"><h1><span class="nw">Axial SCX30</span> <span class="nw zh">改裝零件報價系統</span></h1></div>
+    <p class="sub">搜尋或依分類選擇品牌與品項，輸入數量後加入購物車，再用 LINE 把訂單傳給我們（新台幣報價）。</p>
+  </header>
+
+  <div class="searchwrap">
+    <div class="search" id="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="q" type="search" placeholder="搜尋品名、型號或關鍵字，例如 T7025、輪框、Bronco" autocomplete="off" enterkeyhint="search" aria-label="搜尋零件" aria-controls="results">
+      <button class="clear" id="qClear" type="button" aria-label="清除搜尋" hidden>×</button>
+      <div class="results" id="results" role="listbox" hidden></div>
+    </div>
+  </div>
+
+  <div class="list" id="list"><div class="row">載入中…</div></div>
   <p class="note" id="footnote"></p>
-  <p class="note">價格僅供參考，實際金額以現場報價為準。</p>
+  <p class="note">價格僅供參考，實際金額以店家確認的報價為準。</p>
   <div class="foot">
     <span class="ver" id="ver">版本載入中…</span>
-    <button id="force" type="button">強制重新整理</button>
+    <button id="force" class="btn" type="button">強制重新整理</button>
   </div>
 </main>
 
 <div class="cartbar"><div class="in">
-  <div><span id="cbCount">購物車 0 件</span><strong id="cbTotal">NT$ 0</strong></div>
-  <button id="cartOpen" type="button" class="primary">檢視購物車</button>
+  <div><span class="cnt" id="cbCount">購物車 0 件</span><strong id="cbTotal">NT$ 0</strong></div>
+  <button id="cartOpen" type="button" class="btn primary">檢視購物車<span class="badge" id="cbBadge" hidden>0</span></button>
 </div></div>
 
-<dialog id="cart" aria-labelledby="cartTitle"><div class="dwrap">
-  <div class="dhead"><h2 id="cartTitle">購物車</h2><button id="cartClose" type="button">關閉</button></div>
-  <div class="dbody" id="cartBody">
+<div class="backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" aria-hidden="true">
+  <div class="dhead"><h2 id="cartTitle">購物車</h2><button id="cartClose" class="btn" type="button">關閉</button></div>
+  <div class="dbody">
     <div id="cartLines"></div>
     <div class="contact">
       <h3>聯絡資料與備註</h3>
       <label>姓名／稱呼<input id="cName" maxlength="40" autocomplete="name"></label>
       <label>聯絡方式（電話、LINE ID 或 Email）<input id="cContact" maxlength="80" autocomplete="off"></label>
-      <label>其他備註（例如：想要的顏色、交貨時間）<textarea id="cRemark" maxlength="300" rows="3"></textarea></label>
+      <label>其他備註（例如：交貨時間）<textarea id="cRemark" maxlength="300" rows="3"></textarea></label>
       <input id="cHp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     </div>
   </div>
   <div class="dfoot">
     <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
     <div class="dbtns">
-      <button id="cartSend" type="button" class="primary" hidden>送出訂單</button>
-      <button id="cartCopy" type="button" class="primary">複製訂單內容</button>
-      <button id="cartClear" type="button" class="danger">清空購物車</button>
+      <button id="cartLine" type="button" class="btn lineapp wide">用 LINE 傳送訂單</button>
+      <button id="cartSend" type="button" class="btn primary wide" hidden>送出訂單</button>
+      <button id="cartCopy" type="button" class="btn">複製訂單內容</button>
+      <button id="cartClear" type="button" class="btn danger">清空購物車</button>
     </div>
-    <div class="dmsg" id="cartMsg"></div>
+    <div class="dmsg" id="cartMsg" role="status"></div>
   </div>
-</div></dialog>
+</aside>
 
-<!-- 價格資料區：要改價格或品項，只改這一段（逗號和雙引號要保留）；改完請一併更新 version 和 updated -->
+<!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
 {
- "version": "1.3",
+ "version": "1.4",
  "updated": "2026-11-20",
  "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
@@ -155,6 +227,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$32.99 USD",
      "price": 980,
      "note": "未塗裝素色版本，官網售價較塗裝版低 $2",
+     "short": "IR80-30 白色未塗裝",
      "image": "1_b5b04cff-1a73-4b05-9f25-007febcbb658.jpg?v=1790061854"
     },
     {
@@ -165,6 +238,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$34.99 USD",
      "price": 1040,
      "note": "原廠金屬漆塗裝版本（預設綠色為 IR80-30GN）",
+     "short": "IR80-30 塗裝版本",
      "image": "1_b5b04cff-1a73-4b05-9f25-007febcbb658.jpg?v=1790061854"
     },
     {
@@ -175,6 +249,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "透明 PC 車殼版本（附遮蓋貼紙供自行噴漆）",
+     "short": "BUG30 透明車殼",
      "image": "BUG30_8aa073af-38d6-4160-9d36-4451b24554b7.jpg?v=1787640319"
     },
     {
@@ -185,6 +260,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$26.99 USD",
      "price": 810,
      "note": "原廠預塗裝版本（預設黑色為 BUG30-BK）",
+     "short": "BUG30 塗裝車殼",
      "image": "BUG30_8aa073af-38d6-4160-9d36-4451b24554b7.jpg?v=1787640319"
     },
     {
@@ -195,6 +271,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "單買 Bronco 鋁合金前保險桿或後保險桿",
+     "short": "Bronco 前or後保桿",
      "image": "1_8b56cdc8-cf59-4ec8-9cfd-6edd666d9168.jpg?v=1787640334"
     },
     {
@@ -205,6 +282,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "Bronco 鋁合金前後保險桿完整套組",
+     "short": "Bronco 前後保桿組",
      "image": "1_8b56cdc8-cf59-4ec8-9cfd-6edd666d9168.jpg?v=1787640334"
     },
     {
@@ -215,6 +293,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "單買 JLU 鋁合金前保險桿或後保險桿",
+     "short": "牧馬人 前or後保桿",
      "image": "1_cefd030f-c1f0-4456-892d-3a2cf56ca565.jpg?v=1787640329"
     },
     {
@@ -225,6 +304,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "JLU 鋁合金前後保險桿完整套組",
+     "short": "牧馬人 前後保桿組",
      "image": "1_cefd030f-c1f0-4456-892d-3a2cf56ca565.jpg?v=1787640329"
     },
     {
@@ -290,6 +370,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$28.99 USD",
      "price": 870,
      "note": "",
+     "short": "黃銅LCG車架",
      "image": "DSC00629_e2b15747-4f22-40c9-8596-208f8e5a5fe6.jpg?v=1793434931"
     },
     {
@@ -300,6 +381,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$22.99 USD",
      "price": 690,
      "note": "單買鋁合金 LCG 低重心車架套件（不含尼龍側踏板）",
+     "short": "鋁合金LCG車架(不含側板)",
      "image": "DSC01558_fd96e762-fc1d-4ee9-b5b2-bfb2bd7671f8.jpg?v=1787640325"
     },
     {
@@ -310,6 +392,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "鋁合金 LCG 車架 + 尼龍側踏板 (SCX30-19) 套組",
+     "short": "鋁合金LCG車架(含側板)",
      "image": "DSC01558_fd96e762-fc1d-4ee9-b5b2-bfb2bd7671f8.jpg?v=1787640325"
     }
    ]
@@ -320,11 +403,12 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
     {
      "brand": "INJORA",
      "label": "INJORA Black Brass High Clearance Chassis Links for 1/30 SCX30 CJ-7",
-     "sku": "SCX30-44BB (CJ-7 專用黑黃銅高通過性底盤連桿)",
+     "sku": "SCX30-44BB",
      "color": "Black (黑色)",
      "usd": "$17.99 USD",
      "price": 540,
      "note": "",
+     "short": "CJ-7 專用黑黃銅高通過性底盤連桿",
      "image": "DSC02999.jpg?v=1794897352"
     },
     {
@@ -335,6 +419,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "單買 CJ-7 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)",
+     "short": "CJ-7 專用不鏽鋼高通過性底盤連桿",
      "image": "SCX30-43-29.jpg?v=1793260206"
     },
     {
@@ -345,16 +430,18 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "CJ-7 專用不鏽鋼底盤連桿 + 轉向連桿完整套組",
+     "short": "CJ-7 專用不鏽鋼高通過性底盤連桿(含轉向)",
      "image": "SCX30-43-29.jpg?v=1793260206"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Black Brass High Clearance Chassis Links for 1/30 SCX30 Tacoma",
-     "sku": "SCX30-41BB (Tacoma 專用黑黃銅高通過性底盤連桿)",
+     "sku": "SCX30-41BB",
      "color": "Black (黑色)",
      "usd": "$17.99 USD",
      "price": 540,
      "note": "",
+     "short": "Tacoma 專用黑黃銅高通過性底盤連桿",
      "image": "DSC01303.jpg?v=1793172665"
     },
     {
@@ -365,6 +452,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "單買 Tacoma 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)",
+     "short": "Tacoma 專用不鏽鋼高通過性底盤連桿",
      "image": "SCX30-39-29.jpg?v=1792742830"
     },
     {
@@ -375,6 +463,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "Tacoma 專用不鏽鋼底盤連桿 + 轉向連桿完整套組",
+     "short": "Tacoma 專用不鏽鋼高通過性底盤連桿(含轉向)",
      "image": "SCX30-39-29.jpg?v=1792742830"
     },
     {
@@ -385,6 +474,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$17.99 USD",
      "price": 540,
      "note": "",
+     "short": "Bronco JLU K10黑黃銅高通過性底盤連桿 (含轉向)",
      "image": "DSC00159_98c88aba-59df-4b2c-9eae-bc820009466b.jpg?v=1787640302"
     },
     {
@@ -395,6 +485,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$15.99 USD",
      "price": 480,
      "note": "",
+     "short": "Bronco JLU K10黑黃銅高通過性底盤連桿",
      "image": "DSC07243.jpg?v=1787640382"
     },
     {
@@ -405,6 +496,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "單買 Bronco/JLU/K10 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)",
+     "short": "Bronco JLU K10不鏽鋼高通過性底盤連桿",
      "image": "SCX30-28-29_77de2a4d-8672-4688-91ee-4762ba962418.jpg?v=1787640272"
     },
     {
@@ -415,6 +507,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "Bronco/JLU/K10 專用不鏽鋼底盤連桿 + 轉向連桿完整套組",
+     "short": "Bronco JLU K10不鏽鋼高通過性底盤連桿(含轉向)",
      "image": "SCX30-28-29_77de2a4d-8672-4688-91ee-4762ba962418.jpg?v=1787640272"
     },
     {
@@ -490,6 +583,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$17.99 USD",
      "price": 540,
      "note": "",
+     "short": "26mm 鋁合金油壓避震器",
      "image": "DSC08766_582abcbc-c3f4-4ec6-96fd-e7ad12f4017c.jpg?v=1787640369"
     },
     {
@@ -500,6 +594,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$17.99 USD",
      "price": 540,
      "note": "",
+     "short": "23mm/22.5mm 鋁合金油壓避震器",
      "image": "DSC08766_7b47ea59-863e-4a58-b589-539d8a707569.jpg?v=1787640369"
     }
    ]
@@ -510,51 +605,56 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
     {
      "brand": "INJORA",
      "label": "INJORA Stainless Steel Drive Shafts for 1/30 SCX30 CJ-7",
-     "sku": "SCX30-42 (CJ-7 專用不鏽鋼傳動軸)",
+     "sku": "SCX30-42",
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
      "note": "",
+     "short": "CJ-7 專用不鏽鋼傳動軸",
      "image": "1_3d7864f6-a45c-400a-a0e2-847996460600.jpg?v=1793173233"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Stainless Steel Drive Shafts for 1/30 SCX30 Tacoma",
-     "sku": "SCX30-38 (Tacoma 專用不鏽鋼傳動軸)",
+     "sku": "SCX30-38",
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
      "note": "",
+     "short": "Tacoma 專用不鏽鋼傳動軸",
      "image": "DSC00812.jpg?v=1792737487"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Stainless Steel Drive Shafts for 1/30 SCX30 Bronco JLU K10",
-     "sku": "SCX30-01 (Bronco/JLU/K10 不鏽鋼傳動軸)",
+     "sku": "SCX30-01",
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
      "note": "",
+     "short": "Bronco/JLU/K10 不鏽鋼傳動軸",
      "image": "DSC07208.jpg?v=1787640383"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Complete Transmission with Brass Skid Plate for 1/30 SCX30",
-     "sku": "SCX30-31 (完整波箱總成含黃銅底板)",
+     "sku": "SCX30-31",
      "color": "Black / Brass (黑/黃銅色)",
      "usd": "$29.99 USD",
      "price": 900,
      "note": "",
+     "short": "完整波箱總成含黃銅底板",
      "image": "DSC08668_79e235a2-d211-442a-8097-6f4b1f2cb0d9.jpg?v=1787640212"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Aluminum Transmission Kit for 1/30 SCX30 (Unassembled)",
-     "sku": "SCX30-11BK (鋁合金波箱外殼套件-散裝)",
+     "sku": "SCX30-11BK",
      "color": "Black (黑色)",
      "usd": "$20.99 USD",
      "price": 630,
      "note": "",
+     "short": "鋁合金波箱外殼套件-散裝",
      "image": "DSC09804_6a7afa36-f238-4a2d-af7a-9a65f6442fb6.jpg?v=1787640356"
     },
     {
@@ -580,11 +680,12 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
     {
      "brand": "INJORA",
      "label": "INJORA Aluminum Skid Plate for 1/30 SCX30 (5.6g)",
-     "sku": "SCX30-06BK (5.6g 鋁合金波箱底板)",
+     "sku": "SCX30-06BK",
      "color": "Black (黑色)",
      "usd": "$15.99 USD",
      "price": 480,
      "note": "",
+     "short": "5.6g 鋁合金波箱底板",
      "image": "DSC08378.jpg?v=1787640370"
     },
     {
@@ -620,6 +721,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$41.99 USD",
      "price": 1240,
      "note": "單買 +4.5mm 行星齒輪加寬前車橋（含雙十字萬向節傳動軸與黃銅轉向杯）",
+     "short": "+4.5mm 行星齒輪加寬前車橋",
      "image": "SCX30-34BKFR_SKU_aad9a1c8-fca5-4b4c-ac66-75eefad22fb8.jpg?v=1787640159"
     },
     {
@@ -630,6 +732,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$59.99 USD",
      "price": 1770,
      "note": "前後車橋",
+     "short": "+4.5mm 行星齒輪加寬前後車橋",
      "image": "SCX30-34BKFR_SKU_aad9a1c8-fca5-4b4c-ac66-75eefad22fb8.jpg?v=1787640159"
     },
     {
@@ -640,6 +743,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$36.99 USD",
      "price": 1100,
      "note": "單買 +3mm 行星齒輪加寬前車橋（含黃銅轉向杯）",
+     "short": "+3mm 行星齒輪加寬前車橋",
      "image": "SCX30-25BKFRSKU_795138bc-bb79-4802-85e6-0fb236b0f0d9.jpg?v=1787640274"
     },
     {
@@ -650,16 +754,18 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "usd": "$52.99 USD",
      "price": 1570,
      "note": "前後車橋",
+     "short": "+3mm 行星齒輪加寬前後車橋",
      "image": "SCX30-25BKFRSKU_795138bc-bb79-4802-85e6-0fb236b0f0d9.jpg?v=1787640274"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Stock Width Axles with Brass Steering Knuckles for 1/30 SCX30",
-     "sku": "SCX30-32BKFR (原廠寬度金屬車橋含黃銅轉向杯)",
+     "sku": "SCX30-32BKFR",
      "color": "Black / Brass (黑/黃銅色)",
      "usd": "$49.99 USD",
      "price": 1480,
      "note": "",
+     "short": "原廠寬度金屬車橋含黃銅轉向杯",
      "image": "1_ccde4d73-cea8-4e9b-a3a4-0637dc21b90c.jpg?v=1787640249"
     },
     {
@@ -1338,33 +1444,39 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
 </script>
 
 <script>
+/* ===================== 設定區 ===================== */
+// 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填：訂單會直接傳到你的官方帳號；留空：客人自己選要傳給誰。
+const LINE_OA_ID = "@293ljwzr";
+// 訂單後台網址（Google Apps Script 的 /exec 網址）。有填才會出現「送出訂單」；留空就只用 LINE 和複製。
+const ORDER_ENDPOINT = "";
+const PAGE_VERSION = "v4.0"; // 網頁程式有改動時，請手動調高這個版本號
+/* ================================================== */
+
 const $ = id => document.getElementById(id);
 const fmt = n => "NT$ " + n.toLocaleString("en-US");
 const el = (t, p = {}, ...k) => { const e = Object.assign(document.createElement(t), p); e.append(...k); return e; };
-const PAGE_VERSION = "v3.4"; // 網頁程式有改動時，請手動調高這個版本號
 const EMBED = JSON.parse($("data").textContent);
 const NO_BRAND = "其他", MAXQ = 99, CART_KEY = "injora_cart_v1", CONTACT_KEY = "injora_contact_v1";
-// 訂單後台網址：填入 Google Apps Script 網頁應用程式網址（或其他接收 POST 的網址）後，購物車會出現「送出訂單」。留空就只有「複製訂單內容」。
-const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
 const brandOf = it => it.brand || NO_BRAND;
-// 商品圖片：資料裡的 image 是 injora.com 圖檔名，這裡接上圖片網址；沒有圖片或載入失敗時就不顯示
-const imgUrl = it => (it && it.image) ? ((data.imageBase || "") + it.image + "&width=400") : "";
-function thumb(it) {
-  const u = imgUrl(it); if (!u) return null;
-  const im = el("img", { className: "thumb", src: u, alt: it.label, loading: "lazy", referrerPolicy: "no-referrer" });
-  im.addEventListener("error", () => im.remove());
-  return im;
-}
+const nameOf = it => (it && it.short) || (it && it.label) || "";      // 有「顯示名稱」就用精簡名稱
 const clampQ = v => Math.min(MAXQ, Math.max(1, parseInt(v, 10) || 1));
 let data = EMBED, rows = [], cart = loadCart();
 
-/* ---------- 購物車資料（存在客人自己的瀏覽器，重新整理後還在） ---------- */
+/* ---------- 商品圖片 ---------- */
+const imgUrl = it => (it && it.image) ? ((data.imageBase || "") + it.image + "&width=400") : "";
+function thumb(it, cls) {
+  const u = imgUrl(it); if (!u) return null;
+  const im = el("img", { className: cls || "thumb", src: u, alt: nameOf(it), loading: "lazy", referrerPolicy: "no-referrer" });
+  im.addEventListener("error", () => im.remove());
+  return im;
+}
+
+/* ---------- 購物車資料（存在客人自己的瀏覽器） ---------- */
 function loadCart() {
   try { const a = JSON.parse(localStorage.getItem(CART_KEY) || "[]"); return Array.isArray(a) ? a.filter(x => x && x.label && x.qty > 0) : []; }
   catch (e) { return []; }
 }
 function saveCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (e) {} }
-// 購物車只記「分類、品牌、品名、數量」，價格每次都從最新的價格資料查，所以調價後購物車會自動跟著變
 function findItem(c) {
   const cat = data.categories.find(x => x.name === c.cat);
   return cat && cat.items.find(it => brandOf(it) === c.brand && it.label === c.label);
@@ -1376,21 +1488,21 @@ function cartTotals() {
   return { count, total };
 }
 
-/* ---------- 價格資料更新 ---------- */
+/* ---------- 價格資料更新（避免快取） ---------- */
 async function loadData() {
   const r = await fetch(location.pathname + "?t=" + Date.now(), { cache: "no-store" });
   if (!r.ok) throw new Error("HTTP " + r.status);
   const doc = new DOMParser().parseFromString(await r.text(), "text/html");
   return JSON.parse(doc.getElementById("data").textContent);
 }
-async function refresh() { try { render(await loadData()); } catch (e) { /* 讀取失敗時維持內建價格 */ } }
+async function refresh() { try { render(await loadData()); } catch (e) {} }
 
 /* ---------- 選品區 ---------- */
 function fillItems(row, want) {
   const b = row.bsel.value;
-  row.shown = b ? row.cat.items.filter(it => brandOf(it) === b) : [];   // 只列出所選品牌的品項
+  row.shown = b ? row.cat.items.filter(it => brandOf(it) === b) : [];
   row.sel.replaceChildren(el("option", { value: "", textContent: b ? "請選擇品項" : "請先選擇品牌" }));
-  row.shown.forEach((it, i) => row.sel.append(el("option", { value: i, textContent: it.label })));
+  row.shown.forEach((it, i) => row.sel.append(el("option", { value: i, textContent: nameOf(it) })));
   row.sel.disabled = !b;
   const idx = want ? row.shown.findIndex(it => it.label === want) : -1;
   row.sel.value = idx >= 0 ? String(idx) : "";
@@ -1407,17 +1519,16 @@ function render(raw) {
     const bsel = el("select", { id: "brand" + ci }, el("option", { value: "", textContent: "請選擇品牌" }));
     bsel.setAttribute("aria-label", cat.name + "的品牌");
     brands.forEach(b => bsel.append(el("option", { value: b, textContent: b })));
-    const sel = el("select", { id: "cat" + ci });
-    sel.setAttribute("aria-label", cat.name + "的品項");
+    const sel = el("select", { id: "cat" + ci }); sel.setAttribute("aria-label", cat.name + "的品項");
     const detail = el("div", { className: "detail" });
-    const price = el("div", { className: "price empty", textContent: "—" });
-    price.setAttribute("aria-live", "polite");
+    const price = el("div", { className: "price empty", textContent: "—" }); price.setAttribute("aria-live", "polite");
     const k = keep[cat.name];
     const qty = el("input", { id: "qty" + ci, className: "qty", type: "number", min: 1, max: MAXQ, step: 1, value: (k && k.qty) || 1 });
     qty.setAttribute("inputmode", "numeric"); qty.setAttribute("aria-label", cat.name + "的數量");
-    const add = el("button", { className: "primary", type: "button", textContent: "加入購物車", disabled: true });
-    const row = { cat, brands, bsel, sel, qty, add, price, detail, shown: [] };
-    if (brands.length === 1) bsel.value = brands[0];                    // 這個分類只有一個品牌時自動選好
+    const add = el("button", { className: "btn primary", type: "button", textContent: "加入購物車", disabled: true });
+    const box = el("div", { className: "row" });
+    const row = { cat, brands, bsel, sel, qty, add, price, detail, box, shown: [] };
+    if (brands.length === 1) bsel.value = brands[0];
     else if (k && brands.includes(k.brand)) bsel.value = k.brand;
     fillItems(row, k && k.label);
     bsel.addEventListener("change", () => { fillItems(row); updateRows(); });
@@ -1425,12 +1536,13 @@ function render(raw) {
     qty.addEventListener("input", updateRows);
     qty.addEventListener("change", () => { qty.value = clampQ(qty.value); updateRows(); });
     add.addEventListener("click", () => addToCart(row));
-    list.append(el("div", { className: "row" },
-      el("label", { className: "cat", htmlFor: "brand" + ci, textContent: cat.name }),
+    box.append(el("label", { className: "cat", htmlFor: "brand" + ci, textContent: cat.name }),
       el("div", { className: "pick" }, el("div", { className: "pickrow" }, bsel, sel), detail),
-      el("div", { className: "buy" }, price, el("div", { className: "buyrow" }, qty, add))));
+      el("div", { className: "buy" }, price, el("div", { className: "buyrow" }, qty, add)));
+    list.append(box);
     rows.push(row);
   });
+  buildIndex();
   updateRows();
   renderCart();
 }
@@ -1440,11 +1552,13 @@ function updateRows() {
     const it = shown[+sel.value], q = clampQ(qty.value);
     price.textContent = fmt(it.price * q); price.className = "price"; add.disabled = false;
     const txt = ["單價：" + fmt(it.price) + " × " + q, it.sku && "型號：" + it.sku, it.color && "顏色：" + it.color, it.usd && "官網價：" + it.usd, it.note && "備註：" + it.note].filter(Boolean).join("\n");
-    if (detail.dataset.key !== it.label) {                              // 換品項才重畫圖片，改數量時不閃爍
+    if (detail.dataset.key !== it.label) {
       detail.dataset.key = it.label;
-      detail.replaceChildren(...[thumb(it), el("div", { className: "txt" })].filter(Boolean));
+      const t = el("div", { className: "txt" });
+      detail.replaceChildren(...[thumb(it), t].filter(Boolean));
     }
-    detail.querySelector(".txt").textContent = txt;
+    const t = detail.querySelector(".txt");
+    t.replaceChildren(...(it.short ? [el("span", { className: "full", textContent: it.label })] : []), document.createTextNode(txt));
   });
 }
 function addToCart(row) {
@@ -1455,51 +1569,132 @@ function addToCart(row) {
   saveCart(); renderCart();
   row.sel.value = ""; row.qty.value = 1; updateRows();
   row.add.textContent = "已加入 ✓"; setTimeout(() => { row.add.textContent = "加入購物車"; }, 1200);
+  const bar = $("cbTotal"); bar.classList.remove("bump"); void bar.offsetWidth; bar.classList.add("bump");
 }
+
+/* ---------- 搜尋 ---------- */
+let index = [];
+const norm = s => String(s || "").toLowerCase().replace(/[\s\-_/()（）"'.,]+/g, "");
+function buildIndex() {
+  index = [];
+  rows.forEach((row, ri) => row.cat.items.forEach(it => index.push({ ri, it,
+    hay: norm([it.short, it.label, it.sku, it.color, brandOf(it), row.cat.name, it.note].join(" ")) })));
+}
+function search(q) {
+  const words = q.trim().toLowerCase().split(/\s+/).map(norm).filter(Boolean);
+  if (!words.length) return [];
+  return index.filter(x => words.every(w => x.hay.includes(w))).slice(0, 30);
+}
+function showResults() {
+  const q = $("q").value, box = $("results");
+  $("qClear").hidden = !q;
+  if (!q.trim()) { box.hidden = true; box.replaceChildren(); return; }
+  const hits = search(q);
+  box.replaceChildren();
+  if (!hits.length) box.append(el("div", { className: "noresult", textContent: "找不到符合的零件，試試型號或其他關鍵字。" }));
+  hits.forEach(({ ri, it }) => {
+    const ph = thumb(it, "ph") || el("span", { className: "ph none" });
+    const b = el("button", { className: "res", type: "button" }, ph,
+      el("span", {}, el("span", { className: "nm", textContent: nameOf(it) }),
+        el("span", { className: "mt", textContent: brandOf(it) + "｜" + rows[ri].cat.name + (it.sku ? "｜" + it.sku : "") })),
+      el("span", { className: "pr", textContent: fmt(it.price) }));
+    b.setAttribute("role", "option");
+    b.addEventListener("click", () => pick(ri, it));
+    box.append(b);
+  });
+  box.hidden = false;
+}
+function pick(ri, it) {
+  const row = rows[ri];
+  row.bsel.value = brandOf(it); fillItems(row, it.label); row.qty.value = 1; updateRows();
+  $("q").value = ""; showResults();
+  row.box.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+  row.box.classList.add("flash"); setTimeout(() => row.box.classList.remove("flash"), 1600);
+  setTimeout(() => row.add.focus({ preventScroll: true }), 350);
+}
+$("q").addEventListener("input", showResults);
+$("q").addEventListener("focus", showResults);
+$("q").addEventListener("keydown", e => {
+  if (e.key === "Escape") { $("q").value = ""; showResults(); }
+  if (e.key === "ArrowDown") { const f = $("results").querySelector(".res"); if (f) { e.preventDefault(); f.focus(); } }
+  if (e.key === "Enter") { const f = $("results").querySelector(".res"); if (f) { e.preventDefault(); f.click(); } }
+});
+$("results").addEventListener("keydown", e => {
+  const a = document.activeElement; if (!a.classList.contains("res")) return;
+  if (e.key === "ArrowDown" && a.nextElementSibling) { e.preventDefault(); a.nextElementSibling.focus(); }
+  if (e.key === "ArrowUp") { e.preventDefault(); (a.previousElementSibling || $("q")).focus(); }
+  if (e.key === "Escape") { $("q").focus(); $("q").value = ""; showResults(); }
+});
+$("qClear").addEventListener("click", () => { $("q").value = ""; showResults(); $("q").focus(); });
+document.addEventListener("click", e => { if (!$("search").contains(e.target)) $("results").hidden = true; });
 
 /* ---------- 購物車 ---------- */
 function setQty(c, v) { c.qty = clampQ(v); saveCart(); renderCart(); }
 function renderCart() {
   const { count, total } = cartTotals();
   $("cbCount").textContent = "購物車 " + count + " 件"; $("cbTotal").textContent = fmt(total); $("cartTotal").textContent = fmt(total);
+  $("cbBadge").textContent = count; $("cbBadge").hidden = !count;
   const body = $("cartLines"); body.replaceChildren();
-  if (!cart.length) { body.append(el("div", { className: "empty-cart", textContent: "購物車是空的，先選幾樣品項加進來吧。" })); }
+  if (!cart.length) body.append(el("div", { className: "empty-cart", textContent: "購物車是空的，先搜尋或選幾樣零件加進來吧。" }));
   cartLines().forEach(({ c, it }) => {
-    const minus = el("button", { type: "button", textContent: "−", disabled: c.qty <= 1 }); minus.setAttribute("aria-label", "減少數量");
-    const plus = el("button", { type: "button", textContent: "＋", disabled: c.qty >= MAXQ }); plus.setAttribute("aria-label", "增加數量");
-    const inp = el("input", { type: "number", min: 1, max: MAXQ, value: c.qty }); inp.setAttribute("aria-label", c.label + " 數量");
+    const minus = el("button", { className: "btn", type: "button", textContent: "−", disabled: c.qty <= 1 }); minus.setAttribute("aria-label", "減少數量");
+    const plus = el("button", { className: "btn", type: "button", textContent: "＋", disabled: c.qty >= MAXQ }); plus.setAttribute("aria-label", "增加數量");
+    const inp = el("input", { type: "number", min: 1, max: MAXQ, value: c.qty }); inp.setAttribute("aria-label", "數量");
     minus.onclick = () => setQty(c, c.qty - 1); plus.onclick = () => setQty(c, c.qty + 1);
     inp.onchange = () => setQty(c, inp.value);
     const lnote = el("input", { className: "lnote", maxLength: 100, value: c.note || "", placeholder: "這項的顏色／備註（例如：想要綠色）" });
-    lnote.setAttribute("aria-label", c.label + " 的顏色或備註");
-    lnote.addEventListener("input", () => { c.note = lnote.value; saveCart(); });   // 只存不重畫，避免輸入時失去游標
-    const del = el("button", { className: "del danger", type: "button", textContent: "刪除" });
+    lnote.setAttribute("aria-label", "顏色或備註");
+    lnote.addEventListener("input", () => { c.note = lnote.value; saveCart(); });
+    const del = el("button", { className: "btn del danger", type: "button", textContent: "刪除" });
     del.onclick = () => { cart = cart.filter(x => x !== c); saveCart(); renderCart(); };
     body.append(el("div", { className: "line" },
-      el("div", { className: "who" }, ...[thumb(it)].filter(Boolean), el("div", {}, el("div", { className: "name", textContent: c.label }),
+      el("div", { className: "who" }, ...[thumb(it)].filter(Boolean), el("div", {}, el("div", { className: "name", textContent: it ? nameOf(it) : c.label }),
         el("div", { className: "meta" + (it ? "" : " bad"), textContent: it ? c.brand + "｜" + c.cat : "此品項已下架或改名，不列入合計，請刪除" }))),
       el("div", { className: "sub2" }, it ? fmt(it.price * c.qty) : "—", it ? el("small", { textContent: "單價 " + fmt(it.price) }) : ""),
       el("div", { className: "stepper" }, minus, inp, plus), del, lnote));
   });
-  $("cartCopy").disabled = !count; $("cartSend").disabled = !count; $("cartClear").disabled = !cart.length;
+  ["cartLine", "cartCopy", "cartSend"].forEach(id => $(id).disabled = !count);
+  $("cartClear").disabled = !cart.length;
 }
+
 const contactEls = { name: $("cName"), contact: $("cContact"), remark: $("cRemark") };
 function loadContact() { try { const o = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}"); for (const k in contactEls) contactEls[k].value = o[k] || ""; } catch (e) {} }
 function saveContact() { try { localStorage.setItem(CONTACT_KEY, JSON.stringify({ name: contactEls.name.value, contact: contactEls.contact.value, remark: contactEls.remark.value })); } catch (e) {} }
 Object.values(contactEls).forEach(e => e.addEventListener("input", saveContact));
+
 function orderText() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
-  return ["Axial SCX30 改裝零件訂單", ""].concat(
-    lines.map(({ c, it }, i) => (i + 1) + ". [" + c.brand + "] " + c.label + (it.sku ? "（" + it.sku + "）" : "") + " × " + c.qty + " = " + fmt(it.price * c.qty) + (c.note && c.note.trim() ? "\n   顏色／備註：" + c.note.trim() : "")),
+  return ["【Axial SCX30 改裝零件訂單】", ""].concat(
+    lines.map(({ c, it }, i) => (i + 1) + ". [" + c.brand + "] " + nameOf(it) + (it.sku ? "（" + it.sku + "）" : "") + " × " + c.qty + " = " + fmt(it.price * c.qty) + (c.note && c.note.trim() ? "\n   顏色／備註：" + c.note.trim() : "")),
     ["", "合計：" + fmt(total)],
     v("name") ? ["姓名：" + v("name")] : [], v("contact") ? ["聯絡方式：" + v("contact")] : [], v("remark") ? ["其他備註：" + v("remark")] : [],
     ["（價格版本 v" + data.version + "，更新於 " + data.updated + "）"]).join("\n");
 }
+function fallbackBox(text) {
+  const old = $("cartFallback"); if (old) old.remove();
+  const ta = el("textarea", { id: "cartFallback", readOnly: true, value: text }); $("cartMsg").after(ta); ta.select();
+}
+async function copyText(text) { try { await navigator.clipboard.writeText(text); return true; } catch (e) { return false; } }
+async function copyOrder() {
+  const text = orderText();
+  if (await copyText(text)) $("cartMsg").textContent = "已複製，可以貼到 LINE 或訊息傳給店家。";
+  else { fallbackBox(text); $("cartMsg").textContent = "無法自動複製，請手動全選下面的文字複製。"; }
+}
+// LINE：有官方帳號 ID 就直接開啟與店家的對話並帶入訂單；沒有就開啟 LINE 分享畫面讓客人選對象
+function lineOrder() {
+  const text = orderText();
+  copyText(text);                                                   // 同時複製一份，萬一 LINE 沒帶入文字可以直接貼上
+  const url = LINE_OA_ID
+    ? "https://line.me/R/oaMessage/" + encodeURIComponent(LINE_OA_ID) + "/?" + encodeURIComponent(text)
+    : "https://line.me/R/share?text=" + encodeURIComponent(text);
+  $("cartMsg").textContent = "正在開啟 LINE…訂單內容也已複製，如果沒有自動帶入，直接貼上即可。電腦版 LINE 不支援，請改用「複製訂單內容」。";
+  location.href = url;
+}
 function orderPayload() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
   return { sentAt: new Date().toISOString(), priceVersion: data.version, pageVersion: PAGE_VERSION,
-    name: v("name"), contact: v("contact"), remark: v("remark"), website: $("cHp").value,   // website 是防機器人的隱藏欄位，正常客人看不到也不會填
-    items: lines.map(({ c, it }) => ({ category: c.cat, brand: c.brand, label: c.label, sku: it.sku || "", qty: c.qty, unitPrice: it.price, subtotal: it.price * c.qty, note: (c.note || "").trim() })),
+    name: v("name"), contact: v("contact"), remark: v("remark"), website: $("cHp").value,
+    items: lines.map(({ c, it }) => ({ category: c.cat, brand: c.brand, label: it.label, sku: it.sku || "", qty: c.qty, unitPrice: it.price, subtotal: it.price * c.qty, note: (c.note || "").trim() })),
     total, text: orderText() };
 }
 async function sendOrder() {
@@ -1510,32 +1705,46 @@ async function sendOrder() {
   try {
     const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(orderPayload()) });
     const j = await r.json();
-    if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認聯絡方式後再試一次，或改按「複製訂單內容」傳給店家。"; return; }
+    if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認聯絡方式後再試一次，或改用 LINE 傳送。"; return; }
     cart = []; saveCart(); contactEls.remark.value = ""; saveContact();
     renderCart(); msg.textContent = "訂單已送出" + (j.id ? "（編號 " + j.id + "）" : "") + "，店家會用你留的聯絡方式與你確認。";
   } catch (e) {
-    renderCart(); msg.textContent = "無法確認訂單是否送出成功，請不要重複送出，改按「複製訂單內容」傳給店家。";
+    renderCart(); msg.textContent = "無法確認訂單是否送出成功，請不要重複送出，改用 LINE 傳送或複製訂單內容。";
   }
 }
-async function copyOrder() {
-  const text = orderText(), msg = $("cartMsg");
-  try { await navigator.clipboard.writeText(text); msg.textContent = "已複製，可以貼到 LINE 或訊息傳給店家。"; }
-  catch (e) {
-    const old = $("cartFallback"); if (old) old.remove();
-    const ta = el("textarea", { id: "cartFallback", readOnly: true, value: text }); $("cartMsg").after(ta); ta.select();
-    msg.textContent = "無法自動複製，請手動全選下面的文字複製。";
-  }
+
+/* ---------- 側邊購物車開關 ---------- */
+let lastFocus = null;
+function openCart() {
+  lastFocus = document.activeElement; $("cartMsg").textContent = "";
+  $("drawer").classList.add("open"); $("backdrop").classList.add("open");
+  $("drawer").setAttribute("aria-hidden", "false"); document.body.classList.add("locked");
+  setTimeout(() => $("cartClose").focus(), 50);
 }
-const dlg = $("cart");
-$("cartOpen").onclick = () => { $("cartMsg").textContent = ""; (dlg.showModal ? dlg.showModal() : dlg.setAttribute("open", "")); };
-$("cartClose").onclick = () => (dlg.close ? dlg.close() : dlg.removeAttribute("open"));
-dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });   // 點對話框外面也能關閉
+function closeCart() {
+  $("drawer").classList.remove("open"); $("backdrop").classList.remove("open");
+  $("drawer").setAttribute("aria-hidden", "true"); document.body.classList.remove("locked");
+  if (lastFocus) lastFocus.focus({ preventScroll: true });
+}
+$("cartOpen").onclick = openCart;
+$("cartClose").onclick = closeCart;
+$("backdrop").onclick = closeCart;
+document.addEventListener("keydown", e => {
+  if (!$("drawer").classList.contains("open")) return;
+  if (e.key === "Escape") closeCart();
+  if (e.key === "Tab") {                                               // 鍵盤操作時，焦點留在購物車裡
+    const f = [...$("drawer").querySelectorAll("button:not(:disabled),input:not(.hp),textarea")].filter(x => x.offsetParent);
+    if (!f.length) return;
+    if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+    else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+  }
+});
+$("cartLine").onclick = lineOrder;
 $("cartCopy").onclick = copyOrder;
 $("cartSend").onclick = sendOrder;
 $("cartSend").hidden = !ORDER_ENDPOINT;
-if (ORDER_ENDPOINT) $("cartCopy").classList.remove("primary");
-loadContact();
 $("cartClear").onclick = () => { if (confirm("確定清空購物車？")) { cart = []; saveCart(); renderCart(); } };
+loadContact();
 
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
 $("force").addEventListener("click", () => { location.href = location.pathname + "?r=" + Date.now(); });
