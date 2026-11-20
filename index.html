@@ -23,6 +23,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-padding-top:84px}
+html,body{overflow-x:clip}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
 body.locked{overflow:hidden}
 main{max-width:920px;margin:0 auto;padding:28px 16px 130px}
@@ -60,11 +61,12 @@ h1 .zh{color:var(--accent)}
 
 /* 分類列 */
 .list{display:grid;gap:12px}
-.row{display:grid;grid-template-columns:150px 1fr 220px;gap:16px;align-items:start;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;transition:border-color .3s,box-shadow .3s}
+.row{display:grid;grid-template-columns:150px minmax(0,1fr) 220px;gap:16px;align-items:start;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;transition:border-color .3s,box-shadow .3s}
 .row.flash{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
 .cat{font-family:var(--disp);font-weight:700;font-size:21px;line-height:1.2;padding-top:8px}
 select,.qty{min-height:46px;font-size:16px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-select{width:100%;appearance:none;-webkit-appearance:none;padding-right:34px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23b1f200' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.row>*,.pick,.pickrow,.detail .txt{min-width:0}
+select{width:100%;max-width:100%;min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;appearance:none;-webkit-appearance:none;padding-right:34px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23b1f200' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 select:disabled{opacity:.45;cursor:not-allowed}
 .pickrow{display:flex;gap:8px}
 .pickrow select:first-child{flex:0 0 150px;width:150px}
@@ -191,7 +193,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 
 @media (max-width:640px){
   .brandhead img{width:62px;height:62px}
-  .row{grid-template-columns:1fr auto;grid-template-areas:"c p" "s s" "b b";gap:12px;padding:16px}
+  .row{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"c p" "s s" "b b";gap:12px;padding:16px}
   .cat{grid-area:c;padding-top:2px}.pick{grid-area:s}
   .buy{display:contents}.price{grid-area:p;padding-top:0;font-size:26px}.buyrow{grid-area:b}
   .pickrow{flex-direction:column}.pickrow select:first-child{flex:none;width:100%}
@@ -1575,7 +1577,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
 // 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填才會出現「LINE 官方帳號」按鈕，讓客人加好友聯繫你。
 const LINE_OA_ID = "@293ljwzr";
-const PAGE_VERSION = "v5.1"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v5.2"; // 網頁程式有改動時，請手動調高這個版本號
 /* ================================================== */
 
 const $ = id => document.getElementById(id);
