@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
-<title>INJORA SCX30 改裝品報價查詢</title>
+<title>Axial SCX30 改裝零件報價系統</title>
 <style>
 :root{--bg:#eef1f4;--panel:#fff;--ink:#14213d;--mute:#5d6b82;--line:#d5dbe4;--accent:#1f5eff;--accent-ink:#fff;--price:#0b7a4b;--danger:#c0392b}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1624;--panel:#18213a;--ink:#e8edf7;--mute:#97a4bd;--line:#2c3856;--accent:#6b97ff;--accent-ink:#0f1624;--price:#4fd69a;--danger:#ff7b6b}}
@@ -26,7 +26,12 @@ select:disabled{opacity:.55;cursor:not-allowed}
 .pickrow{display:flex;gap:8px}
 .pickrow select:first-child{flex:0 0 150px;width:150px}
 .pickrow select:last-child{flex:1;min-width:0}
-.detail{margin:8px 2px 0;color:var(--mute);font-size:13px;white-space:pre-line;word-break:break-word}
+.detail{margin:8px 2px 0;color:var(--mute);font-size:13px;display:flex;gap:12px;align-items:flex-start}
+.detail:empty{display:none}
+.detail .txt{white-space:pre-line;word-break:break-word;min-width:0;flex:1}
+.thumb{flex:none;width:104px;height:104px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px}
+.line .thumb{width:56px;height:56px}
+.line .who{display:flex;gap:12px;align-items:center;min-width:0}
 .buy{display:flex;flex-direction:column;gap:8px}
 .price{text-align:right;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--price);padding-top:6px}
 .price.empty{color:var(--mute);font-weight:400;font-size:18px}
@@ -77,7 +82,7 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
 </head>
 <body>
 <main>
-  <h1>INJORA SCX30 改裝品報價</h1>
+  <h1>Axial SCX30 改裝零件報價系統</h1>
   <p class="sub">選擇品牌與品項、輸入數量，按「加入購物車」，再到購物車檢視全部內容與合計（新台幣）。</p>
   <div class="card" id="list"><div class="row">載入中…</div></div>
   <p class="note" id="footnote"></p>
@@ -109,9 +114,10 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
 <!-- 價格資料區：要改價格或品項，只改這一段（逗號和雙引號要保留）；改完請一併更新 version 和 updated -->
 <script type="application/json" id="data">
 {
- "version": "1.1",
+ "version": "1.3",
  "updated": "2026-11-20",
  "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
+ "imageBase": "https://www.injora.com/cdn/shop/files/",
  "categories": [
   {
    "name": "車殼與外觀件",
@@ -123,16 +129,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "White (Unpainted 白色未塗裝)",
      "usd": "$32.99 USD",
      "price": 980,
-     "note": "未塗裝素色版本，官網售價較塗裝版低 $2"
-    },
-    {
-     "brand": "MEUS",
-     "label": "TEST",
-     "sku": "TEST",
-     "color": "TEST",
-     "usd": "",
-     "price": 150,
-     "note": ""
+     "note": "未塗裝素色版本，官網售價較塗裝版低 $2",
+     "image": "1_b5b04cff-1a73-4b05-9f25-007febcbb658.jpg?v=1790061854"
     },
     {
      "brand": "INJORA",
@@ -141,7 +139,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Green / Purple / Grey (綠 / 紫 / 灰塗裝)",
      "usd": "$34.99 USD",
      "price": 1040,
-     "note": "原廠金屬漆塗裝版本（預設綠色為 IR80-30GN）"
+     "note": "原廠金屬漆塗裝版本（預設綠色為 IR80-30GN）",
+     "image": "1_b5b04cff-1a73-4b05-9f25-007febcbb658.jpg?v=1790061854"
     },
     {
      "brand": "INJORA",
@@ -150,7 +149,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Clear (透明車殼)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": "透明 PC 車殼版本（附遮蓋貼紙供自行噴漆）"
+     "note": "透明 PC 車殼版本（附遮蓋貼紙供自行噴漆）",
+     "image": "BUG30_8aa073af-38d6-4160-9d36-4451b24554b7.jpg?v=1787640319"
     },
     {
      "brand": "INJORA",
@@ -159,7 +159,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Purple / Burgundy / Blue / Green (黑 / 紫 / 酒紅 / 藍 / 綠)",
      "usd": "$26.99 USD",
      "price": 810,
-     "note": "原廠預塗裝版本（預設黑色為 BUG30-BK）"
+     "note": "原廠預塗裝版本（預設黑色為 BUG30-BK）",
+     "image": "BUG30_8aa073af-38d6-4160-9d36-4451b24554b7.jpg?v=1787640319"
     },
     {
      "brand": "INJORA",
@@ -168,7 +169,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Red Tow Hook (黑色配紅拖車鉤)",
      "usd": "$13.99 USD",
      "price": 420,
-     "note": "單買 Bronco 鋁合金前保險桿或後保險桿"
+     "note": "單買 Bronco 鋁合金前保險桿或後保險桿",
+     "image": "1_8b56cdc8-cf59-4ec8-9cfd-6edd666d9168.jpg?v=1787640334"
     },
     {
      "brand": "INJORA",
@@ -177,7 +179,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Red Tow Hook (黑色配紅拖車鉤)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": "Bronco 鋁合金前後保險桿完整套組"
+     "note": "Bronco 鋁合金前後保險桿完整套組",
+     "image": "1_8b56cdc8-cf59-4ec8-9cfd-6edd666d9168.jpg?v=1787640334"
     },
     {
      "brand": "INJORA",
@@ -186,7 +189,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$13.99 USD",
      "price": 420,
-     "note": "單買 JLU 鋁合金前保險桿或後保險桿"
+     "note": "單買 JLU 鋁合金前保險桿或後保險桿",
+     "image": "1_cefd030f-c1f0-4456-892d-3a2cf56ca565.jpg?v=1787640329"
     },
     {
      "brand": "INJORA",
@@ -195,7 +199,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": "JLU 鋁合金前後保險桿完整套組"
+     "note": "JLU 鋁合金前後保險桿完整套組",
+     "image": "1_cefd030f-c1f0-4456-892d-3a2cf56ca565.jpg?v=1787640329"
     },
     {
      "brand": "INJORA",
@@ -204,7 +209,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$13.99 USD",
      "price": 420,
-     "note": "單買 JLU Stinger 造型前保險桿或後保險桿"
+     "note": "單買 JLU Stinger 造型前保險桿或後保險桿",
+     "image": "2_78b8a537-f153-4f4a-bed5-ee0a4dace720.jpg?v=1787640321"
     },
     {
      "brand": "INJORA",
@@ -213,7 +219,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": "JLU Stinger 造型前後保險桿完整套組"
+     "note": "JLU Stinger 造型前後保險桿完整套組",
+     "image": "2_78b8a537-f153-4f4a-bed5-ee0a4dace720.jpg?v=1787640321"
     },
     {
      "brand": "INJORA",
@@ -222,7 +229,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Chrome (電鍍銀)",
      "usd": "$13.99 USD",
      "price": 420,
-     "note": "單買 Chevrolet K10 電鍍銀鋁合金前保險桿或後保險桿"
+     "note": "單買 Chevrolet K10 電鍍銀鋁合金前保險桿或後保險桿",
+     "image": "1_37c60713-b42a-4f31-86e0-59f8da676d20.jpg?v=1787640305"
     },
     {
      "brand": "INJORA",
@@ -231,7 +239,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Chrome (電鍍銀)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": "Chevrolet K10 電鍍銀鋁合金前後保險桿完整套組"
+     "note": "Chevrolet K10 電鍍銀鋁合金前後保險桿完整套組",
+     "image": "1_37c60713-b42a-4f31-86e0-59f8da676d20.jpg?v=1787640305"
     },
     {
      "brand": "INJORA",
@@ -240,12 +249,13 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$4.99 USD",
      "price": 150,
-     "note": ""
+     "note": "",
+     "image": "DSC09557.jpg?v=1792376836"
     }
    ]
   },
   {
-   "name": "車架與底盤結構",
+   "name": "車架",
    "items": [
     {
      "brand": "INJORA",
@@ -254,7 +264,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass (黃銅原色)",
      "usd": "$28.99 USD",
      "price": 870,
-     "note": ""
+     "note": "",
+     "image": "DSC00629_e2b15747-4f22-40c9-8596-208f8e5a5fe6.jpg?v=1793434931"
     },
     {
      "brand": "INJORA",
@@ -263,7 +274,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$22.99 USD",
      "price": 690,
-     "note": "單買鋁合金 LCG 低重心車架套件（不含尼龍側踏板）"
+     "note": "單買鋁合金 LCG 低重心車架套件（不含尼龍側踏板）",
+     "image": "DSC01558_fd96e762-fc1d-4ee9-b5b2-bfb2bd7671f8.jpg?v=1787640325"
     },
     {
      "brand": "INJORA",
@@ -272,39 +284,13 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": "鋁合金 LCG 車架 + 尼龍側踏板 (SCX30-19) 套組"
-    },
-    {
-     "brand": "INJORA",
-     "label": "INJORA Brass Skid Plate for 1/30 SCX30 (17.9g) (Brass 黃銅原色)",
-     "sku": "SCX30-06BR",
-     "color": "Brass (黃銅原色)",
-     "usd": "$16.99 USD",
-     "price": 510,
-     "note": "原色黃銅波箱底板（無黑色塗層）"
-    },
-    {
-     "brand": "INJORA",
-     "label": "INJORA Brass Skid Plate for 1/30 SCX30 (17.9g) (Black Brass 黑黃銅塗層)",
-     "sku": "SCX30-06BB",
-     "color": "Black Brass (黑黃銅)",
-     "usd": "$17.99 USD",
-     "price": 540,
-     "note": "黑色抗氧化塗層黃銅波箱底板"
-    },
-    {
-     "brand": "INJORA",
-     "label": "INJORA Aluminum Skid Plate for 1/30 SCX30 (5.6g)",
-     "sku": "SCX30-06BK (5.6g 鋁合金波箱底板)",
-     "color": "Black (黑色)",
-     "usd": "$15.99 USD",
-     "price": 480,
-     "note": ""
+     "note": "鋁合金 LCG 車架 + 尼龍側踏板 (SCX30-19) 套組",
+     "image": "DSC01558_fd96e762-fc1d-4ee9-b5b2-bfb2bd7671f8.jpg?v=1787640325"
     }
    ]
   },
   {
-   "name": "底盤連桿與避震懸吊",
+   "name": "底盤與轉向連桿",
    "items": [
     {
      "brand": "INJORA",
@@ -313,7 +299,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$17.99 USD",
      "price": 540,
-     "note": ""
+     "note": "",
+     "image": "DSC02999.jpg?v=1794897352"
     },
     {
      "brand": "INJORA",
@@ -322,7 +309,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
-     "note": "單買 CJ-7 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)"
+     "note": "單買 CJ-7 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)",
+     "image": "SCX30-43-29.jpg?v=1793260206"
     },
     {
      "brand": "INJORA",
@@ -331,7 +319,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": "CJ-7 專用不鏽鋼底盤連桿 + 轉向連桿完整套組"
+     "note": "CJ-7 專用不鏽鋼底盤連桿 + 轉向連桿完整套組",
+     "image": "SCX30-43-29.jpg?v=1793260206"
     },
     {
      "brand": "INJORA",
@@ -340,7 +329,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$17.99 USD",
      "price": 540,
-     "note": ""
+     "note": "",
+     "image": "DSC01303.jpg?v=1793172665"
     },
     {
      "brand": "INJORA",
@@ -349,7 +339,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
-     "note": "單買 Tacoma 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)"
+     "note": "單買 Tacoma 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)",
+     "image": "SCX30-39-29.jpg?v=1792742830"
     },
     {
      "brand": "INJORA",
@@ -358,7 +349,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": "Tacoma 專用不鏽鋼底盤連桿 + 轉向連桿完整套組"
+     "note": "Tacoma 專用不鏽鋼底盤連桿 + 轉向連桿完整套組",
+     "image": "SCX30-39-29.jpg?v=1792742830"
     },
     {
      "brand": "INJORA",
@@ -367,7 +359,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$17.99 USD",
      "price": 540,
-     "note": ""
+     "note": "",
+     "image": "DSC00159_98c88aba-59df-4b2c-9eae-bc820009466b.jpg?v=1787640302"
     },
     {
      "brand": "INJORA",
@@ -376,7 +369,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$15.99 USD",
      "price": 480,
-     "note": ""
+     "note": "",
+     "image": "DSC07243.jpg?v=1787640382"
     },
     {
      "brand": "INJORA",
@@ -385,7 +379,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
-     "note": "單買 Bronco/JLU/K10 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)"
+     "note": "單買 Bronco/JLU/K10 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)",
+     "image": "SCX30-28-29_77de2a4d-8672-4688-91ee-4762ba962418.jpg?v=1787640272"
     },
     {
      "brand": "INJORA",
@@ -394,7 +389,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": "Bronco/JLU/K10 專用不鏽鋼底盤連桿 + 轉向連桿完整套組"
+     "note": "Bronco/JLU/K10 專用不鏽鋼底盤連桿 + 轉向連桿完整套組",
+     "image": "SCX30-28-29_77de2a4d-8672-4688-91ee-4762ba962418.jpg?v=1787640272"
     },
     {
      "brand": "INJORA",
@@ -403,7 +399,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
-     "note": ""
+     "note": "",
+     "image": "DSC08693_0f91f00a-c499-423a-8bbf-2a953e0cf2ba.jpg?v=1791540742"
     },
     {
      "brand": "INJORA",
@@ -412,7 +409,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$8.99 USD",
      "price": 270,
-     "note": ""
+     "note": "",
+     "image": "DSC05567.jpg?v=1789723105"
     },
     {
      "brand": "INJORA",
@@ -421,7 +419,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$10.99 USD",
      "price": 330,
-     "note": ""
+     "note": "",
+     "image": "DSC08115_a98f9ac8-d2f7-4ab7-8946-abace68a2655.jpg?v=1787640371"
     },
     {
      "brand": "INJORA",
@@ -430,7 +429,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$2.99 USD",
      "price": 90,
-     "note": "僅含 16 顆尼龍連桿球頭（不含金屬球珠與螺絲）"
+     "note": "僅含 16 顆尼龍連桿球頭（不含金屬球珠與螺絲）",
+     "image": "DSC03458_9644164e-5813-481b-9782-1b4adabf1437.jpg?v=1791881572"
     },
     {
      "brand": "INJORA",
@@ -439,7 +439,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$6.99 USD",
      "price": 210,
-     "note": "尼龍球頭 + 銅球珠、球頭螺絲與墊片完整替換包"
+     "note": "尼龍球頭 + 銅球珠、球頭螺絲與墊片完整替換包",
+     "image": "DSC03458_9644164e-5813-481b-9782-1b4adabf1437.jpg?v=1791881572"
     },
     {
      "brand": "INJORA",
@@ -448,8 +449,14 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$1.99 USD",
      "price": 60,
-     "note": ""
-    },
+     "note": "",
+     "image": "SCX30-30_23a9d56c-2327-4a61-be1f-c2385e62090a.jpg?v=1787640270"
+    }
+   ]
+  },
+  {
+   "name": "避震懸吊",
+   "items": [
     {
      "brand": "INJORA",
      "label": "INJORA 26mm Aluminum Oil Shocks for 1/30 Axial SCX30",
@@ -457,7 +464,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Titanium (黑色 / 鈦色)",
      "usd": "$17.99 USD",
      "price": 540,
-     "note": ""
+     "note": "",
+     "image": "DSC08766_582abcbc-c3f4-4ec6-96fd-e7ad12f4017c.jpg?v=1787640369"
     },
     {
      "brand": "INJORA",
@@ -466,12 +474,13 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$17.99 USD",
      "price": 540,
-     "note": ""
+     "note": "",
+     "image": "DSC08766_7b47ea59-863e-4a58-b589-539d8a707569.jpg?v=1787640369"
     }
    ]
   },
   {
-   "name": "車橋與傳動系統",
+   "name": "傳動系統",
    "items": [
     {
      "brand": "INJORA",
@@ -480,7 +489,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
-     "note": ""
+     "note": "",
+     "image": "1_3d7864f6-a45c-400a-a0e2-847996460600.jpg?v=1793173233"
     },
     {
      "brand": "INJORA",
@@ -489,7 +499,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
-     "note": ""
+     "note": "",
+     "image": "DSC00812.jpg?v=1792737487"
     },
     {
      "brand": "INJORA",
@@ -498,7 +509,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$14.99 USD",
      "price": 450,
-     "note": ""
+     "note": "",
+     "image": "DSC07208.jpg?v=1787640383"
     },
     {
      "brand": "INJORA",
@@ -507,7 +519,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Brass (黑/黃銅色)",
      "usd": "$29.99 USD",
      "price": 900,
-     "note": ""
+     "note": "",
+     "image": "DSC08668_79e235a2-d211-442a-8097-6f4b1f2cb0d9.jpg?v=1787640212"
     },
     {
      "brand": "INJORA",
@@ -516,7 +529,38 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$20.99 USD",
      "price": 630,
-     "note": ""
+     "note": "",
+     "image": "DSC09804_6a7afa36-f238-4a2d-af7a-9a65f6442fb6.jpg?v=1787640356"
+    },
+    {
+     "brand": "INJORA",
+     "label": "INJORA Brass Skid Plate for 1/30 SCX30 (17.9g) (Brass 黃銅原色)",
+     "sku": "SCX30-06BR",
+     "color": "Brass (黃銅原色)",
+     "usd": "$16.99 USD",
+     "price": 510,
+     "note": "原色黃銅波箱底板（無黑色塗層）",
+     "image": "DSC00818_42d6f7c1-06cd-472c-ae32-2af7de3ef370.jpg?v=1787640323"
+    },
+    {
+     "brand": "INJORA",
+     "label": "INJORA Brass Skid Plate for 1/30 SCX30 (17.9g) (Black Brass 黑黃銅塗層)",
+     "sku": "SCX30-06BB",
+     "color": "Black Brass (黑黃銅)",
+     "usd": "$17.99 USD",
+     "price": 540,
+     "note": "黑色抗氧化塗層黃銅波箱底板",
+     "image": "DSC00818_42d6f7c1-06cd-472c-ae32-2af7de3ef370.jpg?v=1787640323"
+    },
+    {
+     "brand": "INJORA",
+     "label": "INJORA Aluminum Skid Plate for 1/30 SCX30 (5.6g)",
+     "sku": "SCX30-06BK (5.6g 鋁合金波箱底板)",
+     "color": "Black (黑色)",
+     "usd": "$15.99 USD",
+     "price": 480,
+     "note": "",
+     "image": "DSC08378.jpg?v=1787640370"
     },
     {
      "brand": "INJORA",
@@ -525,7 +569,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$4.99 USD",
      "price": 150,
-     "note": "波箱專用不鏽鋼培林組（6顆入）"
+     "note": "波箱專用不鏽鋼培林組（6顆入）",
+     "image": "DSC03160_a8cc2f3e-cf79-40de-b4df-b529491a3121.jpg?v=1787640303"
     },
     {
      "brand": "INJORA",
@@ -534,8 +579,14 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$9.99 USD",
      "price": 300,
-     "note": "前後車橋專用不鏽鋼培林組（14顆入）"
-    },
+     "note": "前後車橋專用不鏽鋼培林組（14顆入）",
+     "image": "DSC03160_a8cc2f3e-cf79-40de-b4df-b529491a3121.jpg?v=1787640303"
+    }
+   ]
+  },
+  {
+   "name": "車橋相關配件",
+   "items": [
     {
      "brand": "INJORA",
      "label": "INJORA +4.5mm Planet Axles with Double Joint Shafts for 1/30 SCX30 (Front Only 僅前橋)",
@@ -543,7 +594,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$41.99 USD",
      "price": 1240,
-     "note": "單買 +4.5mm 行星齒輪加寬前車橋（含雙十字萬向節傳動軸與黃銅轉向杯）"
+     "note": "單買 +4.5mm 行星齒輪加寬前車橋（含雙十字萬向節傳動軸與黃銅轉向杯）",
+     "image": "SCX30-34BKFR_SKU_aad9a1c8-fca5-4b4c-ac66-75eefad22fb8.jpg?v=1787640159"
     },
     {
      "brand": "INJORA",
@@ -552,7 +604,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$59.99 USD",
      "price": 1770,
-     "note": ""
+     "note": "前後車橋",
+     "image": "SCX30-34BKFR_SKU_aad9a1c8-fca5-4b4c-ac66-75eefad22fb8.jpg?v=1787640159"
     },
     {
      "brand": "INJORA",
@@ -561,7 +614,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$36.99 USD",
      "price": 1100,
-     "note": "單買 +3mm 行星齒輪加寬前車橋（含黃銅轉向杯）"
+     "note": "單買 +3mm 行星齒輪加寬前車橋（含黃銅轉向杯）",
+     "image": "SCX30-25BKFRSKU_795138bc-bb79-4802-85e6-0fb236b0f0d9.jpg?v=1787640274"
     },
     {
      "brand": "INJORA",
@@ -570,7 +624,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$52.99 USD",
      "price": 1570,
-     "note": ""
+     "note": "前後車橋",
+     "image": "SCX30-25BKFRSKU_795138bc-bb79-4802-85e6-0fb236b0f0d9.jpg?v=1787640274"
     },
     {
      "brand": "INJORA",
@@ -579,7 +634,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Brass (黑/黃銅色)",
      "usd": "$49.99 USD",
      "price": 1480,
-     "note": ""
+     "note": "",
+     "image": "1_ccde4d73-cea8-4e9b-a3a4-0637dc21b90c.jpg?v=1787640249"
     },
     {
      "brand": "INJORA",
@@ -588,7 +644,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": ""
+     "note": "",
+     "image": "1_8937ab3e-d2c5-4782-8dcb-fff2c325d100.jpg?v=1787640357"
     },
     {
      "brand": "INJORA",
@@ -597,7 +654,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$5.99 USD – $7.99 USD (單軸規格)",
      "price": 180,
-     "note": "單買前軸 (SCX30-13F 十字萬向節) 或後軸 (SCX30-13R 直軸)，依前後軸規格定價不同（後軸 $5.99 / 前軸 $7.99）"
+     "note": "單買前軸 (SCX30-13F 十字萬向節) 或後軸 (SCX30-13R 直軸)，依前後軸規格定價不同（後軸 $5.99 / 前軸 $7.99）",
+     "image": "DSC00325_2ae3aa31-3a1a-4f50-8ffd-53fafc66f24d.jpg?v=1787640343"
     },
     {
      "brand": "INJORA",
@@ -606,7 +664,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver (金屬原色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": "前後軸完整套組"
+     "note": "前後軸完整套組",
+     "image": "DSC00325_2ae3aa31-3a1a-4f50-8ffd-53fafc66f24d.jpg?v=1787640343"
     },
     {
      "brand": "INJORA",
@@ -615,7 +674,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$13.99 USD",
      "price": 420,
-     "note": ""
+     "note": "轉向杯配重",
+     "image": "DSC00337_3555ad92-a4b2-455d-9fda-60b070e53fb1.jpg?v=1787640381"
     },
     {
      "brand": "INJORA",
@@ -624,7 +684,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$4.99 USD",
      "price": 150,
-     "note": ""
+     "note": "",
+     "image": "DSC08947_435c38c1-9ef2-4171-9296-f0b9824ff595.jpg?v=1787640354"
     },
     {
      "brand": "INJORA",
@@ -633,7 +694,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$13.99 USD",
      "price": 420,
-     "note": ""
+     "note": "",
+     "image": "DSC03786_9e5a8e1d-6d1f-4d35-ab28-4c2984196afa.jpg?v=1787640291"
     },
     {
      "brand": "INJORA",
@@ -651,7 +713,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Steel (金屬原色)",
      "usd": "$8.99 USD",
      "price": 270,
-     "note": "單車橋份量（1組蝸桿+蝸輪，可選 2/13T 加速 23% 或 2/16T 原廠齒比）"
+     "note": "單車橋份量（1組蝸桿+蝸輪，可選 2/13T 加速 23% 或 2/16T 原廠齒比）",
+     "image": "DSC00458_804aab68-6589-48d5-ad06-5df7ffe77f9c.jpg?v=1787640341"
     },
     {
      "brand": "INJORA",
@@ -660,7 +723,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Steel (金屬原色)",
      "usd": "$16.99 USD",
      "price": 510,
-     "note": "前後雙橋份量組合（含 2 Sets 12T / 13T / 16T 或 12T+13T / 13T+16T 搭配組合）"
+     "note": "前後雙橋份量組合（含 2 Sets 12T / 13T / 16T 或 12T+13T / 13T+16T 搭配組合）",
+     "image": "DSC00458_804aab68-6589-48d5-ad06-5df7ffe77f9c.jpg?v=1787640341"
     },
     {
      "brand": "INJORA",
@@ -669,7 +733,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver / Black (銀色 / 黑色)",
      "usd": "$4.99 USD",
      "price": 150,
-     "note": ""
+     "note": "",
+     "image": "INJORAM2WHEELNUTFORSCX30_5_c2487439-6207-41e2-b073-a4f12b9fd19a.jpg?v=1787640358"
     }
    ]
   },
@@ -683,7 +748,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$38.99 USD",
      "price": 1160,
-     "note": ""
+     "note": "",
+     "image": "DSC0592_48d867c4-6fa3-40ff-96c9-59889f93009b.jpg?v=1787640166"
     },
     {
      "brand": "INJORA",
@@ -692,7 +758,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass / Black (黃銅/黑)",
      "usd": "$39.99 USD",
      "price": 1180,
-     "note": ""
+     "note": "",
+     "image": "DSC08848_521e9ad3-af77-4d06-a4b5-23f066ebac95.jpg?v=1789717298"
     },
     {
      "brand": "INJORA",
@@ -701,7 +768,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$33.99 USD",
      "price": 1010,
-     "note": ""
+     "note": "",
+     "image": "DSC09161_6d24e61c-ce03-4582-9b91-d38874ddcb39.jpg?v=1787640355"
     },
     {
      "brand": "INJORA",
@@ -710,7 +778,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Green (黑/綠)",
      "usd": "$61.99 USD",
      "price": 1830,
-     "note": ""
+     "note": "",
+     "image": "1_fefdd17d-0f7a-4801-a852-a6d8939ee976.jpg?v=1787640137"
     },
     {
      "brand": "INJORA",
@@ -719,7 +788,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Green (黑/綠)",
      "usd": "$61.99 USD",
      "price": 1830,
-     "note": ""
+     "note": "",
+     "image": "1_1_512c157d-2af3-447e-bc64-9186efb6ab2a.jpg?v=1787640287"
     },
     {
      "brand": "INJORA",
@@ -728,7 +798,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$43.99 USD",
      "price": 1300,
-     "note": ""
+     "note": "",
+     "image": "1_1_31466693-0039-4a32-8259-461e68c69cef.jpg?v=1787640354"
     },
     {
      "brand": "INJORA",
@@ -737,7 +808,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Green / Black (綠/黑)",
      "usd": "$21.99 USD",
      "price": 660,
-     "note": ""
+     "note": "",
+     "image": "DSC08392_9cdc087f-9367-4e72-ac37-bfee85f05615.jpg?v=1787640137"
     },
     {
      "brand": "INJORA",
@@ -746,7 +818,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Green / Black (綠/黑)",
      "usd": "$21.99 USD",
      "price": 660,
-     "note": ""
+     "note": "",
+     "image": "DSC07753_1_ba2250d8-92f7-4e15-be78-bf4e0d81ed40.jpg?v=1787640289"
     },
     {
      "brand": "INJORA",
@@ -755,7 +828,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Red / White",
      "usd": "$1.00 USD",
      "price": 30,
-     "note": ""
+     "note": "",
+     "image": "DSC04944_c31f02c0-2435-4e6d-b842-1c8953b0693c.jpg?v=1787640280"
     },
     {
      "brand": "INJORA",
@@ -764,7 +838,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": ""
+     "note": "",
+     "image": "1_dc5c13a1-0659-42a3-ae9a-9c0b07e01d87.jpg?v=1787640258"
     },
     {
      "brand": "INJORA",
@@ -773,7 +848,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver / Black (銀/黑)",
      "usd": "$6.99 USD",
      "price": 210,
-     "note": ""
+     "note": "",
+     "image": "DSC00122_56335ed6-977e-4a8b-b708-ce5d6e8f237a.jpg?v=1787640342"
     },
     {
      "brand": "INJORA",
@@ -782,7 +858,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver / Black (銀/黑)",
      "usd": "$6.99 USD",
      "price": 210,
-     "note": ""
+     "note": "",
+     "image": "DSC03195_a2a7d824-0091-4dcd-8253-aa273ebd0295.jpg?v=1787640297"
     },
     {
      "brand": "INJORA",
@@ -791,7 +868,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$37.99 USD",
      "price": 1130,
-     "note": ""
+     "note": "",
+     "image": "INT-T6M-T4_e876d671-f550-4477-926a-622a1892b9a5.jpg?v=1787640348"
     },
     {
      "brand": "INJORA",
@@ -800,7 +878,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T4DCM_7371c08c-8a7b-4cc1-a85c-04bcb6f896aa.jpg?v=1787640658"
     },
     {
      "brand": "INJORA",
@@ -809,7 +888,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "White LED / Black Mount (白光/黑座)",
      "usd": "$14.99 USD",
      "price": 450,
-     "note": ""
+     "note": "",
+     "image": "DSC09076_922e3d91-9928-45fd-a18f-b9c2fa5f54a2.jpg?v=1787640199"
     }
    ]
   },
@@ -823,7 +903,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7025_0f02a754-866b-4a32-9e7b-157618e5aa7b.jpg?v=1794278265"
     },
     {
      "brand": "INJORA",
@@ -832,7 +913,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7014.jpg?v=1794277851"
     },
     {
      "brand": "INJORA",
@@ -841,7 +923,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7019.jpg?v=1794277918"
     },
     {
      "brand": "INJORA",
@@ -850,7 +933,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7022.jpg?v=1794278084"
     },
     {
      "brand": "INJORA",
@@ -859,7 +943,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7027.jpg?v=1794278328"
     },
     {
      "brand": "INJORA",
@@ -868,7 +953,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7011.jpg?v=1794277791"
     },
     {
      "brand": "INJORA",
@@ -877,7 +963,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7021.jpg?v=1794278028"
     },
     {
      "brand": "INJORA",
@@ -886,7 +973,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7024.jpg?v=1794278163"
     },
     {
      "brand": "INJORA",
@@ -895,7 +983,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7020_26329157-8cca-4d8e-b83f-b9e262e4e1d5.jpg?v=1794277976"
     },
     {
      "brand": "INJORA",
@@ -904,7 +993,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7028.jpg?v=1794278389"
     },
     {
      "brand": "INJORA",
@@ -913,7 +1003,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7030.jpg?v=1794278455"
     },
     {
      "brand": "INJORA",
@@ -922,7 +1013,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$12.99 USD",
      "price": 390,
-     "note": ""
+     "note": "",
+     "image": "T7031.jpg?v=1794278507"
     },
     {
      "brand": "INJORA",
@@ -931,7 +1023,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Green / Blue / Yellow (依官網規格)",
      "usd": "$10.99 USD",
      "price": 330,
-     "note": ""
+     "note": "",
+     "image": "TI07-36-14_9c0fb017-9cb4-4f85-8616-6c25889d1f86.jpg?v=1787640271"
     },
     {
      "brand": "INJORA",
@@ -940,7 +1033,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Green / Blue / Yellow (依官網規格)",
      "usd": "$10.99 USD",
      "price": 330,
-     "note": ""
+     "note": "",
+     "image": "TI07-40-14_05c2fde9-cb9f-4f4a-9172-49667cab4327.jpg?v=1787640270"
     }
    ]
   },
@@ -954,7 +1048,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Titanium (黑色 / 鈦色)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": ""
+     "note": "",
+     "image": "1_829de8ae-e95c-4294-b8b7-2065c43820c0.jpg?v=1787640363"
     },
     {
      "brand": "INJORA",
@@ -963,7 +1058,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Titanium (黑色 / 鈦色)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": ""
+     "note": "",
+     "image": "1_cdd634cc-dfca-454e-8981-e487dd22d7b2.jpg?v=1787640361"
     },
     {
      "brand": "INJORA",
@@ -972,7 +1068,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Gold / Titanium (金色 / 鈦色)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": ""
+     "note": "",
+     "image": "1_21f418bc-edc3-4465-b4dd-9b417ba5fa9d.jpg?v=1787640290"
     },
     {
      "brand": "INJORA",
@@ -981,7 +1078,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$23.99 USD",
      "price": 720,
-     "note": ""
+     "note": "",
+     "image": "W7005BB_917e52c6-dee2-46f9-a75d-8a486bff4c68.jpg?v=1787640282"
     },
     {
      "brand": "INJORA",
@@ -990,7 +1088,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver / Black (銀/黑)",
      "usd": "$22.99 USD",
      "price": 690,
-     "note": ""
+     "note": "",
+     "image": "DSC02074_2b51e936-0e04-4346-8cd9-d945b09b5d79.jpg?v=1787640320"
     },
     {
      "brand": "INJORA",
@@ -999,7 +1098,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass (黃銅原色)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": "黃銅原色版本（4顆入）"
+     "note": "黃銅原色版本（4顆入）",
+     "image": "1-1_6db2df04-6f35-4e89-839f-99ee3e8be457.jpg?v=1787640306"
     },
     {
      "brand": "INJORA",
@@ -1008,7 +1108,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "White / Black Brass (白色 / 黑黃銅塗層)",
      "usd": "$26.99 USD",
      "price": 810,
-     "note": "表面塗層版本（白色 W7007WH-19 或黑黃銅 W7007BB-19，4顆入）"
+     "note": "表面塗層版本（白色 W7007WH-19 或黑黃銅 W7007BB-19，4顆入）",
+     "image": "1-1_6db2df04-6f35-4e89-839f-99ee3e8be457.jpg?v=1787640306"
     },
     {
      "brand": "INJORA",
@@ -1017,7 +1118,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Purple / Grey (紫色 / 灰色)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": ""
+     "note": "",
+     "image": "W7008PU-19_9a1a9d21-66ef-48ee-aaa7-8973f749553b.jpg?v=1787640277"
     },
     {
      "brand": "INJORA",
@@ -1026,7 +1128,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Titanium (黑色 / 鈦色)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": ""
+     "note": "",
+     "image": "1_1b478fbd-d192-44d2-a054-0443ba3ab9e7.jpg?v=1787640193"
     },
     {
      "brand": "INJORA",
@@ -1035,7 +1138,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Blue / Orange (黑 / 藍 / 橘)",
      "usd": "$22.99 USD",
      "price": 690,
-     "note": ""
+     "note": "",
+     "image": "1_66c50f8c-3163-4c9f-a310-38db61268674.jpg?v=1787640201"
     },
     {
      "brand": "INJORA",
@@ -1044,7 +1148,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Silver / Black (銀/黑)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": ""
+     "note": "",
+     "image": "W7013SR-19_24e2f209-c6a1-41d2-a9c9-c748f8f03ed4.jpg?v=1787640198"
     },
     {
      "brand": "INJORA",
@@ -1053,7 +1158,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass (黃銅原色)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": "黃銅原色版本（4顆入）"
+     "note": "黃銅原色版本（4顆入）",
+     "image": "0_e770e173-7e4a-4ed0-b893-689ab672ccd1.jpg?v=1787640164"
     },
     {
      "brand": "INJORA",
@@ -1062,7 +1168,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "White Color Brass (白色塗層黃銅)",
      "usd": "$27.99 USD",
      "price": 840,
-     "note": "白色表面塗層版本（4顆入，塗層版較原色貴 $3）"
+     "note": "白色表面塗層版本（4顆入，塗層版較原色貴 $3）",
+     "image": "0_e770e173-7e4a-4ed0-b893-689ab672ccd1.jpg?v=1787640164"
     },
     {
      "brand": "INJORA",
@@ -1071,7 +1178,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Chrome-Plated Brass / Black-Plated Brass (電鍍銀 / 電鍍黑)",
      "usd": "$24.99 USD",
      "price": 750,
-     "note": ""
+     "note": "",
+     "image": "1_8710b896-c153-49ff-8cb1-fd46349302d4.jpg?v=1792230547"
     },
     {
      "brand": "INJORA",
@@ -1080,7 +1188,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Silver (黑框黑胎)",
      "usd": "$28.99 USD",
      "price": 870,
-     "note": ""
+     "note": "",
+     "image": "1_8e5f1d5f-9308-44bb-a140-a845bc4f8785.jpg?v=1787640161"
     },
     {
      "brand": "INJORA",
@@ -1089,7 +1198,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass (黃銅原色)",
      "usd": "$7.99 USD",
      "price": 240,
-     "note": ""
+     "note": "",
+     "image": "DSC00283_cead54cb-d21e-410b-800d-f4d0e6fc9dce.jpg?v=1787640341"
     },
     {
      "brand": "INJORA",
@@ -1098,7 +1208,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass (黃銅原色)",
      "usd": "$7.99 USD",
      "price": 240,
-     "note": ""
+     "note": "",
+     "image": "DSC00644_292a61fe-e2ee-4336-9ff6-e2ef7e902fc8.jpg?v=1787640297"
     },
     {
      "brand": "INJORA",
@@ -1107,7 +1218,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass (黃銅原色)",
      "usd": "$5.99 USD",
      "price": 180,
-     "note": "2 顆裝（僅供前輪配重使用）"
+     "note": "2 顆裝（僅供前輪配重使用）",
+     "image": "DSC08050_08c9ff66-406a-4d7e-950a-bbc9884f53a6.jpg?v=1787640238"
     },
     {
      "brand": "INJORA",
@@ -1116,7 +1228,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass (黃銅原色)",
      "usd": "$9.99 USD",
      "price": 300,
-     "note": "4 顆裝（四輪全配重使用）"
+     "note": "4 顆裝（四輪全配重使用）",
+     "image": "DSC08050_08c9ff66-406a-4d7e-950a-bbc9884f53a6.jpg?v=1787640238"
     },
     {
      "brand": "INJORA",
@@ -1125,7 +1238,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass (黃銅原色)",
      "usd": "$5.99 USD",
      "price": 180,
-     "note": "2 顆裝（僅供前輪配重使用）"
+     "note": "2 顆裝（僅供前輪配重使用）",
+     "image": "DSC08060_f61374ac-f394-4b7e-8975-fb49ec3cfac2.jpg?v=1787640237"
     },
     {
      "brand": "INJORA",
@@ -1134,7 +1248,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Brass (黃銅原色)",
      "usd": "$9.99 USD",
      "price": 300,
-     "note": "4 顆裝（四輪全配重使用）"
+     "note": "4 顆裝（四輪全配重使用）",
+     "image": "DSC08060_f61374ac-f394-4b7e-8975-fb49ec3cfac2.jpg?v=1787640237"
     }
    ]
   },
@@ -1148,7 +1263,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Silver (黑/銀)",
      "usd": "$4.99 USD",
      "price": 150,
-     "note": "單支購買規格（3.0mm套筒 / 2.0mm+十字 / T3星形 / 0.05\"六角，任選單支；另 3.0mm+2.0mm 雙支組為 $8.99 USD）"
+     "note": "單支購買規格（3.0mm套筒 / 2.0mm+十字 / T3星形 / 0.05\"六角，任選單支；另 3.0mm+2.0mm 雙支組為 $8.99 USD）",
+     "image": "1_cfe79b4f-002e-4ce6-a937-5346c5506a84.jpg?v=1788320208"
     },
     {
      "brand": "INJORA",
@@ -1157,7 +1273,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black / Silver (黑/銀)",
      "usd": "$19.99 USD",
      "price": 600,
-     "note": "4 件式專用螺絲起子/套筒完整套組"
+     "note": "4 件式專用螺絲起子/套筒完整套組",
+     "image": "1_cfe79b4f-002e-4ce6-a937-5346c5506a84.jpg?v=1788320208"
     },
     {
      "brand": "INJORA",
@@ -1166,7 +1283,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$15.99 USD",
      "price": 480,
-     "note": ""
+     "note": "",
+     "image": "DSC05951_04f4c29f-92f3-4c1b-9d93-92c5dc1bee0d.jpg?v=1787640254"
     },
     {
      "brand": "INJORA",
@@ -1175,7 +1293,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$7.99 USD",
      "price": 240,
-     "note": ""
+     "note": "",
+     "image": "DSC03672_4cb55fc9-296d-4133-a953-05cbd6101d9e.jpg?v=1787640292"
     },
     {
      "brand": "INJORA",
@@ -1184,7 +1303,8 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
      "color": "Black (黑色)",
      "usd": "$6.99 USD",
      "price": 210,
-     "note": ""
+     "note": "",
+     "image": "DSC00081_bcad837c-6fd0-4613-bac7-6521a60a4ba3.jpg?v=1787640346"
     }
    ]
   }
@@ -1196,10 +1316,18 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
 const $ = id => document.getElementById(id);
 const fmt = n => "NT$ " + n.toLocaleString("en-US");
 const el = (t, p = {}, ...k) => { const e = Object.assign(document.createElement(t), p); e.append(...k); return e; };
-const PAGE_VERSION = "v3.0"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v3.1"; // 網頁程式有改動時，請手動調高這個版本號
 const EMBED = JSON.parse($("data").textContent);
 const NO_BRAND = "其他", MAXQ = 99, CART_KEY = "injora_cart_v1";
 const brandOf = it => it.brand || NO_BRAND;
+// 商品圖片：資料裡的 image 是 injora.com 圖檔名，這裡接上圖片網址；沒有圖片或載入失敗時就不顯示
+const imgUrl = it => (it && it.image) ? ((data.imageBase || "") + it.image + "&width=400") : "";
+function thumb(it) {
+  const u = imgUrl(it); if (!u) return null;
+  const im = el("img", { className: "thumb", src: u, alt: it.label, loading: "lazy", referrerPolicy: "no-referrer" });
+  im.addEventListener("error", () => im.remove());
+  return im;
+}
 const clampQ = v => Math.min(MAXQ, Math.max(1, parseInt(v, 10) || 1));
 let data = EMBED, rows = [], cart = loadCart();
 
@@ -1281,10 +1409,15 @@ function render(raw) {
 }
 function updateRows() {
   rows.forEach(({ sel, shown, qty, add, price, detail }) => {
-    if (sel.value === "") { price.textContent = "—"; price.className = "price empty"; detail.textContent = ""; add.disabled = true; return; }
+    if (sel.value === "") { price.textContent = "—"; price.className = "price empty"; detail.replaceChildren(); delete detail.dataset.key; add.disabled = true; return; }
     const it = shown[+sel.value], q = clampQ(qty.value);
     price.textContent = fmt(it.price * q); price.className = "price"; add.disabled = false;
-    detail.textContent = ["單價：" + fmt(it.price) + " × " + q, it.sku && "型號：" + it.sku, it.color && "顏色：" + it.color, it.usd && "官網價：" + it.usd, it.note && "備註：" + it.note].filter(Boolean).join("\n");
+    const txt = ["單價：" + fmt(it.price) + " × " + q, it.sku && "型號：" + it.sku, it.color && "顏色：" + it.color, it.usd && "官網價：" + it.usd, it.note && "備註：" + it.note].filter(Boolean).join("\n");
+    if (detail.dataset.key !== it.label) {                              // 換品項才重畫圖片，改數量時不閃爍
+      detail.dataset.key = it.label;
+      detail.replaceChildren(...[thumb(it), el("div", { className: "txt" })].filter(Boolean));
+    }
+    detail.querySelector(".txt").textContent = txt;
   });
 }
 function addToCart(row) {
@@ -1313,8 +1446,8 @@ function renderCart() {
     const del = el("button", { className: "del danger", type: "button", textContent: "刪除" });
     del.onclick = () => { cart = cart.filter(x => x !== c); saveCart(); renderCart(); };
     body.append(el("div", { className: "line" },
-      el("div", {}, el("div", { className: "name", textContent: c.label }),
-        el("div", { className: "meta" + (it ? "" : " bad"), textContent: it ? c.brand + "｜" + c.cat : "此品項已下架或改名，不列入合計，請刪除" })),
+      el("div", { className: "who" }, ...[thumb(it)].filter(Boolean), el("div", {}, el("div", { className: "name", textContent: c.label }),
+        el("div", { className: "meta" + (it ? "" : " bad"), textContent: it ? c.brand + "｜" + c.cat : "此品項已下架或改名，不列入合計，請刪除" }))),
       el("div", { className: "sub2" }, it ? fmt(it.price * c.qty) : "—", it ? el("small", { textContent: "單價 " + fmt(it.price) }) : ""),
       el("div", { className: "stepper" }, minus, inp, plus), del));
   });
@@ -1322,7 +1455,7 @@ function renderCart() {
 }
 function orderText() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals();
-  return ["INJORA SCX30 改裝品訂單", ""].concat(
+  return ["Axial SCX30 改裝零件訂單", ""].concat(
     lines.map(({ c, it }, i) => (i + 1) + ". [" + c.brand + "] " + c.label + (it.sku ? "（" + it.sku + "）" : "") + " × " + c.qty + " = " + fmt(it.price * c.qty)),
     ["", "合計：" + fmt(total), "（價格版本 v" + data.version + "，更新於 " + data.updated + "）"]).join("\n");
 }
