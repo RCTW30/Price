@@ -71,6 +71,13 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
 .dtotal strong{font-size:28px;font-variant-numeric:tabular-nums;color:var(--price)}
 .dbtns{display:flex;gap:8px;flex-wrap:wrap}
 .dmsg{font-size:13px;color:var(--mute);min-height:18px}
+.lnote{grid-column:1/-1;min-height:40px;font-size:15px;padding:8px 10px}
+.contact{padding:16px 18px;display:grid;gap:10px}
+.contact h3{margin:0;font-size:17px}
+.contact label{display:grid;gap:4px;font-size:14px;color:var(--mute)}
+.contact textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;resize:vertical}
+.contact textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .dfoot textarea{width:100%;height:120px;font:13px monospace;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
 @media (max-width:620px){
  .row{grid-template-columns:1fr auto;grid-template-areas:"c p" "s s" "b b"}
@@ -100,10 +107,20 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
 
 <dialog id="cart" aria-labelledby="cartTitle"><div class="dwrap">
   <div class="dhead"><h2 id="cartTitle">購物車</h2><button id="cartClose" type="button">關閉</button></div>
-  <div class="dbody" id="cartBody"></div>
+  <div class="dbody" id="cartBody">
+    <div id="cartLines"></div>
+    <div class="contact">
+      <h3>聯絡資料與備註</h3>
+      <label>姓名／稱呼<input id="cName" maxlength="40" autocomplete="name"></label>
+      <label>聯絡方式（電話、LINE ID 或 Email）<input id="cContact" maxlength="80" autocomplete="off"></label>
+      <label>其他備註（例如：想要的顏色、交貨時間）<textarea id="cRemark" maxlength="300" rows="3"></textarea></label>
+      <input id="cHp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    </div>
+  </div>
   <div class="dfoot">
     <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
     <div class="dbtns">
+      <button id="cartSend" type="button" class="primary" hidden>送出訂單</button>
       <button id="cartCopy" type="button" class="primary">複製訂單內容</button>
       <button id="cartClear" type="button" class="danger">清空購物車</button>
     </div>
@@ -1316,9 +1333,11 @@ dialog::backdrop{background:rgba(10,16,30,.55)}
 const $ = id => document.getElementById(id);
 const fmt = n => "NT$ " + n.toLocaleString("en-US");
 const el = (t, p = {}, ...k) => { const e = Object.assign(document.createElement(t), p); e.append(...k); return e; };
-const PAGE_VERSION = "v3.1"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v3.2"; // 網頁程式有改動時，請手動調高這個版本號
 const EMBED = JSON.parse($("data").textContent);
-const NO_BRAND = "其他", MAXQ = 99, CART_KEY = "injora_cart_v1";
+const NO_BRAND = "其他", MAXQ = 99, CART_KEY = "injora_cart_v1", CONTACT_KEY = "injora_contact_v1";
+// 訂單後台網址：填入 Google Apps Script 網頁應用程式網址（或其他接收 POST 的網址）後，購物車會出現「送出訂單」。留空就只有「複製訂單內容」。
+const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
 const brandOf = it => it.brand || NO_BRAND;
 // 商品圖片：資料裡的 image 是 injora.com 圖檔名，這裡接上圖片網址；沒有圖片或載入失敗時就不顯示
 const imgUrl = it => (it && it.image) ? ((data.imageBase || "") + it.image + "&width=400") : "";
@@ -1435,7 +1454,7 @@ function setQty(c, v) { c.qty = clampQ(v); saveCart(); renderCart(); }
 function renderCart() {
   const { count, total } = cartTotals();
   $("cbCount").textContent = "購物車 " + count + " 件"; $("cbTotal").textContent = fmt(total); $("cartTotal").textContent = fmt(total);
-  const body = $("cartBody"); body.replaceChildren();
+  const body = $("cartLines"); body.replaceChildren();
   if (!cart.length) { body.append(el("div", { className: "empty-cart", textContent: "購物車是空的，先選幾樣品項加進來吧。" })); }
   cartLines().forEach(({ c, it }) => {
     const minus = el("button", { type: "button", textContent: "−", disabled: c.qty <= 1 }); minus.setAttribute("aria-label", "減少數量");
@@ -1443,21 +1462,52 @@ function renderCart() {
     const inp = el("input", { type: "number", min: 1, max: MAXQ, value: c.qty }); inp.setAttribute("aria-label", c.label + " 數量");
     minus.onclick = () => setQty(c, c.qty - 1); plus.onclick = () => setQty(c, c.qty + 1);
     inp.onchange = () => setQty(c, inp.value);
+    const lnote = el("input", { className: "lnote", maxLength: 100, value: c.note || "", placeholder: "這項的顏色／備註（例如：想要綠色）" });
+    lnote.setAttribute("aria-label", c.label + " 的顏色或備註");
+    lnote.addEventListener("input", () => { c.note = lnote.value; saveCart(); });   // 只存不重畫，避免輸入時失去游標
     const del = el("button", { className: "del danger", type: "button", textContent: "刪除" });
     del.onclick = () => { cart = cart.filter(x => x !== c); saveCart(); renderCart(); };
     body.append(el("div", { className: "line" },
       el("div", { className: "who" }, ...[thumb(it)].filter(Boolean), el("div", {}, el("div", { className: "name", textContent: c.label }),
         el("div", { className: "meta" + (it ? "" : " bad"), textContent: it ? c.brand + "｜" + c.cat : "此品項已下架或改名，不列入合計，請刪除" }))),
       el("div", { className: "sub2" }, it ? fmt(it.price * c.qty) : "—", it ? el("small", { textContent: "單價 " + fmt(it.price) }) : ""),
-      el("div", { className: "stepper" }, minus, inp, plus), del));
+      el("div", { className: "stepper" }, minus, inp, plus), del, lnote));
   });
-  $("cartCopy").disabled = !count; $("cartClear").disabled = !cart.length;
+  $("cartCopy").disabled = !count; $("cartSend").disabled = !count; $("cartClear").disabled = !cart.length;
 }
+const contactEls = { name: $("cName"), contact: $("cContact"), remark: $("cRemark") };
+function loadContact() { try { const o = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}"); for (const k in contactEls) contactEls[k].value = o[k] || ""; } catch (e) {} }
+function saveContact() { try { localStorage.setItem(CONTACT_KEY, JSON.stringify({ name: contactEls.name.value, contact: contactEls.contact.value, remark: contactEls.remark.value })); } catch (e) {} }
+Object.values(contactEls).forEach(e => e.addEventListener("input", saveContact));
 function orderText() {
-  const lines = cartLines().filter(x => x.it), { total } = cartTotals();
+  const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
   return ["Axial SCX30 改裝零件訂單", ""].concat(
-    lines.map(({ c, it }, i) => (i + 1) + ". [" + c.brand + "] " + c.label + (it.sku ? "（" + it.sku + "）" : "") + " × " + c.qty + " = " + fmt(it.price * c.qty)),
-    ["", "合計：" + fmt(total), "（價格版本 v" + data.version + "，更新於 " + data.updated + "）"]).join("\n");
+    lines.map(({ c, it }, i) => (i + 1) + ". [" + c.brand + "] " + c.label + (it.sku ? "（" + it.sku + "）" : "") + " × " + c.qty + " = " + fmt(it.price * c.qty) + (c.note && c.note.trim() ? "\n   顏色／備註：" + c.note.trim() : "")),
+    ["", "合計：" + fmt(total)],
+    v("name") ? ["姓名：" + v("name")] : [], v("contact") ? ["聯絡方式：" + v("contact")] : [], v("remark") ? ["其他備註：" + v("remark")] : [],
+    ["（價格版本 v" + data.version + "，更新於 " + data.updated + "）"]).join("\n");
+}
+function orderPayload() {
+  const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
+  return { sentAt: new Date().toISOString(), priceVersion: data.version, pageVersion: PAGE_VERSION,
+    name: v("name"), contact: v("contact"), remark: v("remark"), website: $("cHp").value,   // website 是防機器人的隱藏欄位，正常客人看不到也不會填
+    items: lines.map(({ c, it }) => ({ category: c.cat, brand: c.brand, label: c.label, sku: it.sku || "", qty: c.qty, unitPrice: it.price, subtotal: it.price * c.qty, note: (c.note || "").trim() })),
+    total, text: orderText() };
+}
+async function sendOrder() {
+  const msg = $("cartMsg");
+  if (!cartTotals().count) return;
+  if (!contactEls.contact.value.trim()) { msg.textContent = "請先填寫聯絡方式，店家才能聯絡你。"; contactEls.contact.focus(); return; }
+  $("cartSend").disabled = true; msg.textContent = "送出中…";
+  try {
+    const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(orderPayload()) });
+    const j = await r.json();
+    if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認聯絡方式後再試一次，或改按「複製訂單內容」傳給店家。"; return; }
+    cart = []; saveCart(); contactEls.remark.value = ""; saveContact();
+    renderCart(); msg.textContent = "訂單已送出" + (j.id ? "（編號 " + j.id + "）" : "") + "，店家會用你留的聯絡方式與你確認。";
+  } catch (e) {
+    renderCart(); msg.textContent = "無法確認訂單是否送出成功，請不要重複送出，改按「複製訂單內容」傳給店家。";
+  }
 }
 async function copyOrder() {
   const text = orderText(), msg = $("cartMsg");
@@ -1473,6 +1523,10 @@ $("cartOpen").onclick = () => { $("cartMsg").textContent = ""; (dlg.showModal ? 
 $("cartClose").onclick = () => (dlg.close ? dlg.close() : dlg.removeAttribute("open"));
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });   // 點對話框外面也能關閉
 $("cartCopy").onclick = copyOrder;
+$("cartSend").onclick = sendOrder;
+$("cartSend").hidden = !ORDER_ENDPOINT;
+if (ORDER_ENDPOINT) $("cartCopy").classList.remove("primary");
+loadContact();
 $("cartClear").onclick = () => { if (confirm("確定清空購物車？")) { cart = []; saveCart(); renderCart(); } };
 
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
