@@ -72,6 +72,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .detail{margin:10px 2px 0;color:var(--mute);font-size:13px;display:flex;gap:12px;align-items:flex-start}
 .detail:empty{display:none}
 .detail .txt{white-space:pre-line;word-break:break-word;min-width:0;flex:1}
+.plink{color:var(--accent);text-decoration:none;font-weight:600}
+.plink:hover{text-decoration:underline}
 .detail .full{color:var(--ink);font-size:14px;margin-bottom:4px;display:block}
 .thumb{flex:none;width:108px;height:108px;object-fit:contain;background:#fff;border-radius:10px}
 .buy{display:flex;flex-direction:column;gap:8px}
@@ -83,6 +85,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .btn:hover:not(:disabled){border-color:#4a4a4a}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
 .btn.primary:hover:not(:disabled){filter:brightness(1.08)}
+.lineoa{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;text-align:center}
+.footbtns{display:flex;gap:8px;flex-wrap:wrap}
 .btn.lineapp{background:#06c755;border-color:#06c755;color:#fff;font-weight:700}
 .btn.danger{color:var(--danger)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
@@ -157,7 +161,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <main>
   <header>
     <div class="brandhead"><img src="logo.png" alt="SCX30 RC Community" width="88" height="88"><h1><span class="nw">Axial SCX30</span> <span class="nw zh">改裝零件報價系統</span></h1></div>
-    <p class="sub">搜尋或依分類選擇品牌與品項，輸入數量後加入購物車，再用 LINE 把訂單傳給我們（新台幣報價）。</p>
+    <p class="sub">搜尋或依分類選擇品牌與品項，輸入數量後加入購物車，再到購物車送出訂單（新台幣報價）。</p>
   </header>
 
   <div class="searchwrap">
@@ -174,7 +178,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
   <p class="note">價格僅供參考，實際金額以店家確認的報價為準。</p>
   <div class="foot">
     <span class="ver" id="ver">版本載入中…</span>
-    <button id="force" class="btn" type="button">強制重新整理</button>
+    <span class="footbtns"><a class="btn lineapp lineoa" id="footOA" href="#" target="_blank" rel="noopener noreferrer" hidden>LINE 官方帳號</a><button id="force" class="btn" type="button">強制重新整理</button></span>
   </div>
 </main>
 
@@ -199,12 +203,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
   <div class="dfoot">
     <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
     <div class="dbtns">
-      <button id="cartLine" type="button" class="btn lineapp wide">用 LINE 傳送訂單</button>
       <button id="cartSend" type="button" class="btn primary wide" hidden>送出訂單</button>
       <button id="cartCopy" type="button" class="btn">複製訂單內容</button>
       <button id="cartClear" type="button" class="btn danger">清空購物車</button>
     </div>
     <div class="dmsg" id="cartMsg" role="status"></div>
+    <a class="btn lineapp lineoa" id="cartOA" href="#" target="_blank" rel="noopener noreferrer" hidden>有問題？加入 LINE 官方帳號聯繫我們</a>
   </div>
 </aside>
 
@@ -596,6 +600,17 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "23mm/22.5mm 鋁合金油壓避震器",
      "image": "DSC08766_7b47ea59-863e-4a58-b589-539d8a707569.jpg?v=1787640369"
+    },
+    {
+     "brand": "HR",
+     "label": "鋁合金前後避震器活動升高套件",
+     "sku": "SXTY28FB08",
+     "color": "銀色",
+     "usd": "",
+     "price": 480,
+     "note": "大落差必備套件",
+     "short": "鋁合金前後避震器活動升高套件",
+     "image": "https://img.alicdn.com/imgextra/i3/2331811280/O1CN011nCgrM1LKI5LFL5nc_!!2331811280.png_468x468q50.jpg_.webp"
     }
    ]
   },
@@ -1445,11 +1460,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
 
 <script>
 /* ===================== 設定區 ===================== */
-// 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填：訂單會直接傳到你的官方帳號；留空：客人自己選要傳給誰。
+// 訂單後台網址（Google Apps Script 的 /exec 網址）。有填才會出現「送出訂單」；留空時客人只能「複製訂單內容」。
+const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
+// 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填才會出現「LINE 官方帳號」按鈕，讓客人加好友聯繫你。
 const LINE_OA_ID = "@293ljwzr";
-// 訂單後台網址（Google Apps Script 的 /exec 網址）。有填才會出現「送出訂單」；留空就只用 LINE 和複製。
-const ORDER_ENDPOINT = "";
-const PAGE_VERSION = "v4.0"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v4.3"; // 網頁程式有改動時，請手動調高這個版本號
 /* ================================================== */
 
 const $ = id => document.getElementById(id);
@@ -1463,7 +1478,9 @@ const clampQ = v => Math.min(MAXQ, Math.max(1, parseInt(v, 10) || 1));
 let data = EMBED, rows = [], cart = loadCart();
 
 /* ---------- 商品圖片 ---------- */
-const imgUrl = it => (it && it.image) ? ((data.imageBase || "") + it.image + "&width=400") : "";
+const isHttp = u => /^https?:\/\/\S+$/i.test(u || "");
+// image 是完整網址（其他品牌、自動抓到的）就直接用；否則是 injora 圖檔名，接上 imageBase
+const imgUrl = it => !(it && it.image) ? "" : isHttp(it.image) ? it.image : ((data.imageBase || "") + it.image + "&width=400");
 function thumb(it, cls) {
   const u = imgUrl(it); if (!u) return null;
   const im = el("img", { className: cls || "thumb", src: u, alt: nameOf(it), loading: "lazy", referrerPolicy: "no-referrer" });
@@ -1558,7 +1575,8 @@ function updateRows() {
       detail.replaceChildren(...[thumb(it), t].filter(Boolean));
     }
     const t = detail.querySelector(".txt");
-    t.replaceChildren(...(it.short ? [el("span", { className: "full", textContent: it.label })] : []), document.createTextNode(txt));
+    const link = isHttp(it.url) ? [document.createTextNode("\n"), el("a", { className: "plink", href: it.url, target: "_blank", rel: "noopener noreferrer", textContent: "查看商品頁 ↗" })] : [];
+    t.replaceChildren(...(it.short ? [el("span", { className: "full", textContent: it.label })] : []), document.createTextNode(txt), ...link);
   });
 }
 function addToCart(row) {
@@ -1653,7 +1671,7 @@ function renderCart() {
       el("div", { className: "sub2" }, it ? fmt(it.price * c.qty) : "—", it ? el("small", { textContent: "單價 " + fmt(it.price) }) : ""),
       el("div", { className: "stepper" }, minus, inp, plus), del, lnote));
   });
-  ["cartLine", "cartCopy", "cartSend"].forEach(id => $(id).disabled = !count);
+  ["cartCopy", "cartSend"].forEach(id => $(id).disabled = !count);
   $("cartClear").disabled = !cart.length;
 }
 
@@ -1680,16 +1698,8 @@ async function copyOrder() {
   if (await copyText(text)) $("cartMsg").textContent = "已複製，可以貼到 LINE 或訊息傳給店家。";
   else { fallbackBox(text); $("cartMsg").textContent = "無法自動複製，請手動全選下面的文字複製。"; }
 }
-// LINE：有官方帳號 ID 就直接開啟與店家的對話並帶入訂單；沒有就開啟 LINE 分享畫面讓客人選對象
-function lineOrder() {
-  const text = orderText();
-  copyText(text);                                                   // 同時複製一份，萬一 LINE 沒帶入文字可以直接貼上
-  const url = LINE_OA_ID
-    ? "https://line.me/R/oaMessage/" + encodeURIComponent(LINE_OA_ID) + "/?" + encodeURIComponent(text)
-    : "https://line.me/R/share?text=" + encodeURIComponent(text);
-  $("cartMsg").textContent = "正在開啟 LINE…訂單內容也已複製，如果沒有自動帶入，直接貼上即可。電腦版 LINE 不支援，請改用「複製訂單內容」。";
-  location.href = url;
-}
+// LINE 官方帳號：打開官方帳號頁面（手機開 LINE 加好友，電腦會顯示 QR Code）
+const lineUrl = () => "https://line.me/R/ti/p/" + encodeURIComponent(LINE_OA_ID);
 function orderPayload() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
   return { sentAt: new Date().toISOString(), priceVersion: data.version, pageVersion: PAGE_VERSION,
@@ -1705,11 +1715,11 @@ async function sendOrder() {
   try {
     const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(orderPayload()) });
     const j = await r.json();
-    if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認聯絡方式後再試一次，或改用 LINE 傳送。"; return; }
+    if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認聯絡方式後再試一次，或改用「複製訂單內容」傳給店家。"; return; }
     cart = []; saveCart(); contactEls.remark.value = ""; saveContact();
     renderCart(); msg.textContent = "訂單已送出" + (j.id ? "（編號 " + j.id + "）" : "") + "，店家會用你留的聯絡方式與你確認。";
   } catch (e) {
-    renderCart(); msg.textContent = "無法確認訂單是否送出成功，請不要重複送出，改用 LINE 傳送或複製訂單內容。";
+    renderCart(); msg.textContent = "無法確認訂單是否送出成功，請不要重複送出，改按「複製訂單內容」傳給店家。";
   }
 }
 
@@ -1739,10 +1749,11 @@ document.addEventListener("keydown", e => {
     else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
   }
 });
-$("cartLine").onclick = lineOrder;
 $("cartCopy").onclick = copyOrder;
 $("cartSend").onclick = sendOrder;
 $("cartSend").hidden = !ORDER_ENDPOINT;
+if (!ORDER_ENDPOINT) { $("cartCopy").classList.add("primary", "wide"); $("cartClear").classList.add("wide"); }   // 沒有後台時，「複製訂單內容」當主要按鈕
+if (LINE_OA_ID) ["cartOA", "footOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; });
 $("cartClear").onclick = () => { if (confirm("確定清空購物車？")) { cart = []; saveCart(); renderCart(); } };
 loadContact();
 
