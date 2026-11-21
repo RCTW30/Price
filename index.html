@@ -327,7 +327,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
 {
- "version": "1.8",
+ "version": "1.9",
  "updated": "2026-11-22",
  "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
@@ -792,6 +792,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$16.99 USD",
      "price": 510,
      "note": "原色黃銅波箱底板（無黑色塗層）",
+     "short": "銅色黃銅波箱底板（無黑色塗層）",
      "image": "DSC00818_42d6f7c1-06cd-472c-ae32-2af7de3ef370.jpg?v=1787640323"
     },
     {
@@ -802,6 +803,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$17.99 USD",
      "price": 540,
      "note": "黑色抗氧化塗層黃銅波箱底板",
+     "short": "黑色抗氧化塗層黃銅波箱底板",
      "image": "DSC00818_42d6f7c1-06cd-472c-ae32-2af7de3ef370.jpg?v=1787640323"
     },
     {
@@ -903,6 +905,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "",
+     "short": "鋁合金前後橋殼",
      "image": "1_8937ab3e-d2c5-4782-8dcb-fff2c325d100.jpg?v=1787640357"
     },
     {
@@ -923,16 +926,18 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "前後軸完整套組",
+     "short": "不鏽鋼前後CVD",
      "image": "DSC00325_2ae3aa31-3a1a-4f50-8ffd-53fafc66f24d.jpg?v=1787640343"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Black Brass Steering Knuckles for 1/30 Axial SCX30",
-     "sku": "SCX30-04BK (黑黃銅轉向杯)",
+     "sku": "SCX30-04BK",
      "color": "Black (黑色)",
      "usd": "$13.99 USD",
      "price": 420,
      "note": "轉向杯配重",
+     "short": "黑黃銅轉向杯配重",
      "image": "DSC00337_3555ad92-a4b2-455d-9fda-60b070e53fb1.jpg?v=1787640381"
     },
     {
@@ -954,15 +959,6 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 420,
      "note": "",
      "image": "DSC03786_9e5a8e1d-6d1f-4d35-ab28-4c2984196afa.jpg?v=1787640291"
-    },
-    {
-     "brand": "INJORA",
-     "label": "INJORA 2pcs Aluminum Diff Covers for SCX30-25BKFR",
-     "sku": "SCX30-27",
-     "color": "Black (黑色)",
-     "usd": "$9.99 USD",
-     "price": 300,
-     "note": ""
     },
     {
      "brand": "INJORA",
@@ -1477,21 +1473,23 @@ select:disabled{opacity:.45;cursor:not-allowed}
     {
      "brand": "INJORA",
      "label": "INJORA 4.7g Brass Inner Clamp Rings for INJORA 0.7\" D18 Wheels",
-     "sku": "W7003-18 (0.7\" D18 輪框用 4.7g 黃銅內夾環)",
+     "sku": "W7003-18",
      "color": "Brass (黃銅原色)",
      "usd": "$7.99 USD",
      "price": 240,
      "note": "",
+     "short": "0.7\" D18 輪框用 4.7g 黃銅內夾環",
      "image": "DSC00283_cead54cb-d21e-410b-800d-f4d0e6fc9dce.jpg?v=1787640341"
     },
     {
      "brand": "INJORA",
      "label": "INJORA 5.6g Brass Inner Clamp Rings for INJORA 0.7\" D19 Wheels",
-     "sku": "W7004-19 (0.7\" D19 輪框用 5.6g 黃銅內夾環)",
+     "sku": "W7004-19",
      "color": "Brass (黃銅原色)",
      "usd": "$7.99 USD",
      "price": 240,
      "note": "",
+     "short": "0.7\" D19 輪框用 5.6g 黃銅內夾環",
      "image": "DSC00644_292a61fe-e2ee-4336-9ff6-e2ef7e902fc8.jpg?v=1787640297"
     },
     {
@@ -1502,6 +1500,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$5.99 USD",
      "price": 180,
      "note": "2 顆裝（僅供前輪配重使用）",
+     "short": "0.7\" D18 輪框用 10g 黃銅內夾環 2顆裝",
      "image": "DSC08050_08c9ff66-406a-4d7e-950a-bbc9884f53a6.jpg?v=1787640238"
     },
     {
@@ -1512,6 +1511,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$9.99 USD",
      "price": 300,
      "note": "4 顆裝（四輪全配重使用）",
+     "short": "0.7\" D18 輪框用 10g 黃銅內夾環 4顆裝",
      "image": "DSC08050_08c9ff66-406a-4d7e-950a-bbc9884f53a6.jpg?v=1787640238"
     },
     {
@@ -1522,6 +1522,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$5.99 USD",
      "price": 180,
      "note": "2 顆裝（僅供前輪配重使用）",
+     "short": "0.7\" D19 輪框用 10.1g 黃銅內夾環 2顆裝",
      "image": "DSC08060_f61374ac-f394-4b7e-8975-fb49ec3cfac2.jpg?v=1787640237"
     },
     {
@@ -1532,6 +1533,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$9.99 USD",
      "price": 300,
      "note": "4 顆裝（四輪全配重使用）",
+     "short": "0.7\" D19 輪框用 10.1g 黃銅內夾環 4顆裝",
      "image": "DSC08060_f61374ac-f394-4b7e-8975-fb49ec3cfac2.jpg?v=1787640237"
     }
    ]
@@ -1557,36 +1559,40 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "4 件式專用螺絲起子/套筒完整套組",
+     "short": "4 件式專用螺絲起子/套筒完整套組",
      "image": "1_cfe79b4f-002e-4ce6-a937-5346c5506a84.jpg?v=1788320208"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Aluminum RC Car Stand with Shock Holder for 1/30 1/32 RC Crawler",
-     "sku": "Tool-70BK (1/30 1/32 鋁合金修車架)",
+     "sku": "Tool-70BK",
      "color": "Black (黑色)",
      "usd": "$15.99 USD",
      "price": 480,
      "note": "",
+     "short": "1/30 1/32 鋁合金修車架",
      "image": "DSC05951_04f4c29f-92f3-4c1b-9d93-92c5dc1bee0d.jpg?v=1787640254"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Grade 12.9 Alloy Steel M1.0 M1.4 M2.0 Screws Set for 1/30 SCX30",
-     "sku": "SCX30-24 (12.9級合金鋼螺絲組)",
+     "sku": "SCX30-24",
      "color": "Black (黑色)",
      "usd": "$7.99 USD",
      "price": 240,
      "note": "",
+     "short": "12.9級合金鋼螺絲組",
      "image": "DSC03672_4cb55fc9-296d-4133-a953-05cbd6101d9e.jpg?v=1787640292"
     },
     {
      "brand": "INJORA",
      "label": "INJORA 8mm & 10mm Acetate Cloth Tape for RC Wiring",
-     "sku": "Tool-71 (8mm & 10mm 醋酸布膠帶)",
+     "sku": "Tool-71",
      "color": "Black (黑色)",
      "usd": "$6.99 USD",
      "price": 210,
      "note": "",
+     "short": "8mm & 10mm 醋酸布膠帶",
      "image": "DSC00081_bcad837c-6fd0-4613-bac7-6521a60a4ba3.jpg?v=1787640346"
     }
    ]
