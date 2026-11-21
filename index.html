@@ -97,6 +97,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .note{color:var(--mute);font-size:13px;margin:16px 0 0}
 .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
 .ver{color:#6f6f69;font-size:13px;font-variant-numeric:tabular-nums}
+.chg{margin-top:10px;color:#6f6f69;font-size:13px}
+.chg summary{cursor:pointer;display:inline-block;list-style:none;text-decoration:underline;text-underline-offset:3px}
+.chg summary::-webkit-details-marker{display:none}
+.chg summary:hover{color:var(--mute)}
+.chg ul{margin:8px 0 0;padding-left:18px;color:var(--mute);line-height:1.7}
 .foot .btn{min-height:38px;font-size:14px;font-weight:500}
 
 /* 底部購物車列 */
@@ -265,6 +270,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <span class="ver" id="ver">版本載入中…</span>
     <span class="footbtns"><a class="btn lineapp lineoa" id="footOA" href="#" target="_blank" rel="noopener noreferrer" hidden>LINE 官方帳號</a><button id="force" class="btn" type="button">強制重新整理</button></span>
   </div>
+  <details class="chg" id="chg" hidden><summary id="chgTitle">本次更新內容</summary><ul id="chgList"></ul></details>
 </main>
 
 <div class="cartbar"><div class="in">
@@ -1601,7 +1607,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
 const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
 // 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填才會出現「LINE 官方帳號」按鈕，讓客人加好友聯繫你。
 const LINE_OA_ID = "@293ljwzr";
-const PAGE_VERSION = "v5.3"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v5.4"; // 網頁程式有改動時，請手動調高這個版本號
+// 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
+const CHANGELOG_DATE = "2026-11-21";
+const CHANGELOG = [
+  "新增「我的訂單」：送出訂單後，可以在頁面下方查看店家的確認狀態",
+  "訂單還在「待確認」時，可以自己在網頁上取消",
+  "頁面最下方新增本次更新說明"
+];
 /* ================================================== */
 
 const $ = id => document.getElementById(id);
@@ -2074,6 +2087,12 @@ renderOrders();
 document.addEventListener("visibilitychange", () => { if (!document.hidden) { refresh(); refreshStatus(); } });
 $("force").addEventListener("click", () => { location.href = location.pathname + "?r=" + Date.now(); });
 if (location.search.startsWith("?r=")) history.replaceState(null, "", location.pathname);
+// 頁面最下方的更新說明
+if (CHANGELOG.length) {
+  $("chgTitle").textContent = PAGE_VERSION + " 更新內容（" + CHANGELOG_DATE + "）";
+  $("chgList").replaceChildren(...CHANGELOG.map(t => el("li", { textContent: t })));
+  $("chg").hidden = false;
+}
 render(EMBED);
 refresh();
 refreshStatus(true);
