@@ -140,6 +140,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .contact{padding:16px 18px;display:grid;gap:10px}
 .contact h3{margin:0;font-family:var(--disp);font-weight:700;font-size:20px}
 .contact label{display:grid;gap:4px;font-size:14px;color:var(--mute)}
+.contact h3.ship{margin-top:10px;padding-top:16px;border-top:1px solid var(--line)}
+.contact label.chk{display:flex;align-items:center;gap:8px;color:var(--ink);cursor:pointer}
+.contact label.chk input{width:20px;height:20px;min-height:0;accent-color:var(--accent);margin:0}
+.contact .hint{font-size:13px;color:var(--mute);margin:-2px 0 0}
+.contact .hint a{color:var(--accent)}
+.privacy{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.55;color:#cfcfc8;background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:10px 12px;margin:0}
 .contact input,.contact textarea{width:100%;font-size:16px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
 .contact textarea{resize:vertical}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
@@ -194,6 +200,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .st{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:600;border:1px solid var(--line);color:var(--ink)}
 .st.pending{border-color:#d9b23a;color:#f0cc55}
 .st.ok{border-color:var(--accent);color:var(--accent)}
+.st.wait{border-color:#3b6fb6;color:#7fb2ff}
 .st.cancel{border-color:#5a2a26;color:var(--danger)}
 .ostamp{color:#6f6f69;font-size:13px;margin-top:6px}
 .faq{display:grid;gap:8px}
@@ -288,6 +295,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <label>姓名／稱呼<input id="cName" maxlength="40" autocomplete="name"></label>
       <label>聯絡方式（電話、LINE ID 或 Email）<input id="cContact" maxlength="80" autocomplete="off"></label>
       <label>其他備註（例如：交貨時間）<textarea id="cRemark" maxlength="300" rows="3"></textarea></label>
+      <h3 class="ship">寄件資料（7-11 店到店）</h3>
+      <p class="hint">需要寄送才填寫，面交或自取可以留空。</p>
+      <label class="chk"><input type="checkbox" id="sSame"> 收件人同上方聯絡人</label>
+      <label>收件人姓名（請填寫與證件相同的真實姓名）<input id="sName" maxlength="20" autocomplete="name"></label>
+      <label>收件人手機（取件通知會傳到這支手機）<input id="sPhone" maxlength="12" inputmode="tel" autocomplete="tel" placeholder="例如 0912345678"></label>
+      <label>7-11 收件門市（門市名稱或店號）<input id="sStore" maxlength="40" autocomplete="off" placeholder="例如 鑫華門市 或 123456"></label>
+      <p class="hint" id="storeHint" hidden>不知道門市名稱？<a id="storeLink" href="#" target="_blank" rel="noopener noreferrer">查詢 7-11 門市 ↗</a></p>
+      <p class="privacy"><span aria-hidden="true">🔒</span><span>寄件資料僅用於本次訂單出貨與取件通知，不會提供給第三方，也不會用於行銷或其他用途。</span></p>
       <input id="cHp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
     </div>
   </div>
@@ -312,8 +327,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
 {
- "version": "1.4",
- "updated": "2026-11-20",
+ "version": "1.5",
+ "updated": "2026-11-22",
  "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
  "categories": [
@@ -978,6 +993,17 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 150,
      "note": "",
      "image": "INJORAM2WHEELNUTFORSCX30_5_c2487439-6207-41e2-b073-a4f12b9fd19a.jpg?v=1787640358"
+    },
+    {
+     "brand": "KYX",
+     "label": "不鏽鋼車橋護板(一車份)",
+     "sku": "SCX30",
+     "color": "銀色",
+     "usd": "",
+     "price": 180,
+     "note": "一車份兩個",
+     "short": "不鏽鋼車橋護板(一車份)",
+     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKvwxMmY_pHpCVwk4Oiak9Ya92je-NrRrpLcNd2NQBvA&s"
     }
    ]
   },
@@ -1607,13 +1633,13 @@ select:disabled{opacity:.45;cursor:not-allowed}
 const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
 // 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填才會出現「LINE 官方帳號」按鈕，讓客人加好友聯繫你。
 const LINE_OA_ID = "@293ljwzr";
-const PAGE_VERSION = "v5.4"; // 網頁程式有改動時，請手動調高這個版本號
+// 7-11 門市查詢網址，顯示在「收件門市」下方讓客人查詢。留空就不顯示連結。
+const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";
+const PAGE_VERSION = "v5.6"; // 網頁程式有改動時，請手動調高這個版本號
 // 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
 const CHANGELOG_DATE = "2026-11-21";
 const CHANGELOG = [
-  "新增「我的訂單」：送出訂單後，可以在頁面下方查看店家的確認狀態",
-  "訂單還在「待確認」時，可以自己在網頁上取消",
-  "頁面最下方新增本次更新說明"
+  "「我的訂單」新增「待貨中」狀態，商品調貨期間可以看到進度"
 ];
 /* ================================================== */
 
@@ -1934,10 +1960,33 @@ function renderCart() {
   markNav();
 }
 
-const contactEls = { name: $("cName"), contact: $("cContact"), remark: $("cRemark") };
-function loadContact() { try { const o = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}"); for (const k in contactEls) contactEls[k].value = o[k] || ""; } catch (e) {} }
-function saveContact() { try { localStorage.setItem(CONTACT_KEY, JSON.stringify({ name: contactEls.name.value, contact: contactEls.contact.value, remark: contactEls.remark.value })); } catch (e) {} }
+// 聯絡與寄件資料只存在客人自己的瀏覽器，方便下次不用重填
+const contactEls = { name: $("cName"), contact: $("cContact"), remark: $("cRemark"), shipName: $("sName"), shipPhone: $("sPhone"), shipStore: $("sStore") };
+function loadContact() { try { const o = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}"); for (const k in contactEls) contactEls[k].value = o[k] || ""; $("sSame").checked = !!o.same; } catch (e) {} }
+function saveContact() { try { const o = { same: $("sSame").checked }; for (const k in contactEls) o[k] = contactEls[k].value; localStorage.setItem(CONTACT_KEY, JSON.stringify(o)); } catch (e) {} }
 Object.values(contactEls).forEach(e => e.addEventListener("input", saveContact));
+const phoneOf = s => String(s || "").replace(/[\s\-()]/g, "");
+const isTwMobile = s => /^09\d{8}$/.test(phoneOf(s));
+function syncSame() {                                                  // 勾選「收件人同上方聯絡人」時帶入姓名和手機
+  if (!$("sSame").checked) return;
+  contactEls.shipName.value = contactEls.name.value.trim();
+  const m = String(contactEls.contact.value).match(/09[\d\s\-]{8,12}/);
+  if (m && isTwMobile(m[0])) contactEls.shipPhone.value = phoneOf(m[0]);
+  saveContact();
+}
+$("sSame").addEventListener("change", () => { syncSame(); saveContact(); });
+[contactEls.name, contactEls.contact].forEach(e => e.addEventListener("input", syncSame));
+[contactEls.shipName, contactEls.shipPhone].forEach(e => e.addEventListener("input", () => { if ($("sSame").checked) { $("sSame").checked = false; saveContact(); } }));
+if (STORE_LOOKUP_URL) { $("storeLink").href = STORE_LOOKUP_URL; $("storeHint").hidden = false; }
+// 寄件資料：全部留空＝不寄送；有填任何一欄就要三欄都填，手機要是 09 開頭 10 碼
+function shipCheck() {
+  const n = contactEls.shipName.value.trim(), ph = contactEls.shipPhone.value.trim(), st = contactEls.shipStore.value.trim();
+  if (!n && !ph && !st) return "";
+  if (!n) return [contactEls.shipName, "請填寫收件人姓名。"];
+  if (!isTwMobile(ph)) return [contactEls.shipPhone, "收件人手機格式不正確，請填 09 開頭的 10 碼手機號碼。"];
+  if (!st) return [contactEls.shipStore, "請填寫 7-11 收件門市。"];
+  return "";
+}
 
 function orderText() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
@@ -1945,6 +1994,7 @@ function orderText() {
     lines.map(({ c, it }, i) => (i + 1) + ". [" + c.brand + "] " + nameOf(it) + (it.sku ? "（" + it.sku + "）" : "") + " × " + c.qty + " = " + fmt(it.price * c.qty) + (c.note && c.note.trim() ? "\n   顏色／備註：" + c.note.trim() : "")),
     ["", "合計：" + fmt(total)],
     v("name") ? ["姓名：" + v("name")] : [], v("contact") ? ["聯絡方式：" + v("contact")] : [], v("remark") ? ["其他備註：" + v("remark")] : [],
+    v("shipName") || v("shipStore") ? ["", "【7-11 寄件】收件人：" + v("shipName") + "｜手機：" + phoneOf(v("shipPhone")) + "｜門市：" + v("shipStore")] : [],
     ["（價格版本 v" + data.version + "，更新於 " + data.updated + "）"]).join("\n");
 }
 function fallbackBox(text) {
@@ -1963,6 +2013,7 @@ function orderPayload() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
   return { sentAt: new Date().toISOString(), priceVersion: data.version, pageVersion: PAGE_VERSION,
     name: v("name"), contact: v("contact"), remark: v("remark"), website: $("cHp").value,
+    shipName: v("shipName"), shipPhone: phoneOf(v("shipPhone")), shipStore: v("shipStore"),
     items: lines.map(({ c, it }) => ({ category: c.cat, brand: c.brand, label: it.label, sku: it.sku || "", qty: c.qty, unitPrice: it.price, subtotal: it.price * c.qty, note: (c.note || "").trim() })),
     total, text: orderText() };
 }
@@ -1970,6 +2021,7 @@ async function sendOrder() {
   const msg = $("cartMsg");
   if (!cartTotals().count) return;
   if (!contactEls.contact.value.trim()) { msg.textContent = "請先填寫聯絡方式，店家才能聯絡你。"; contactEls.contact.focus(); return; }
+  const sc = shipCheck(); if (sc) { msg.textContent = sc[1]; sc[0].focus(); return; }
   $("cartSend").disabled = true; msg.textContent = "送出中…";
   try {
     const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(orderPayload()) });
@@ -1995,7 +2047,7 @@ function loadOrders() {
   catch (e) { return []; }
 }
 function saveOrders() { try { localStorage.setItem(ORDERS_KEY, JSON.stringify(myOrders)); } catch (e) {} }
-const stClass = s => s === "待確認" ? "pending" : s === "已取消" ? "cancel" : s === "已確認" ? "ok" : "";
+const stClass = s => s === "待確認" ? "pending" : s === "已取消" ? "cancel" : s === "已確認" ? "ok" : s === "待貨中" ? "wait" : "";
 async function api(body) {
   const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
   return r.json();
