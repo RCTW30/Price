@@ -173,6 +173,24 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .bfoot .btn{min-height:42px;white-space:nowrap;flex:1 1 auto;max-width:100%}
 
 /* 常見問題 */
+/* 我的訂單 */
+.orders{display:grid;gap:10px}
+.ord{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.ord .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ord .oid{font-family:var(--disp);font-weight:700;font-size:20px;letter-spacing:.02em}
+.ord .when{color:var(--mute);font-size:13px}
+.ord ul{margin:0;padding-left:18px;color:#cfcfc8;font-size:14px}
+.ord .bot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ord .ot{font-family:var(--disp);font-weight:800;font-size:24px;color:var(--accent)}
+.ord .acts{display:flex;gap:8px}
+.ord .btn{min-height:38px;font-size:14px}
+.ord .omsg{font-size:13px;color:var(--mute)}
+.ord.cancelled{opacity:.6}
+.st{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:600;border:1px solid var(--line);color:var(--ink)}
+.st.pending{border-color:#d9b23a;color:#f0cc55}
+.st.ok{border-color:var(--accent);color:var(--accent)}
+.st.cancel{border-color:#5a2a26;color:var(--danger)}
+.ostamp{color:#6f6f69;font-size:13px;margin-top:6px}
 .faq{display:grid;gap:8px}
 .faq details{background:var(--panel);border:1px solid var(--line);border-radius:12px}
 .faq summary{cursor:pointer;padding:14px 44px 14px 16px;font-weight:600;list-style:none;position:relative}
@@ -229,6 +247,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
   <section class="sec" id="secParts">
     <h2>全部零件</h2>
     <div class="list" id="list"><div class="row">載入中…</div></div>
+  </section>
+
+  <section class="sec" id="secOrders" hidden>
+    <h2>我的訂單 <small>只顯示在這台裝置送出的訂單</small></h2>
+    <div class="orders" id="orders"></div>
+    <div class="ostamp" id="ostamp"></div>
   </section>
 
   <section class="sec" id="secFaq" hidden>
@@ -1577,14 +1601,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
 const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec";
 // 你的 LINE 官方帳號 ID（含 @，例如 "@123abcde"）。有填才會出現「LINE 官方帳號」按鈕，讓客人加好友聯繫你。
 const LINE_OA_ID = "@293ljwzr";
-const PAGE_VERSION = "v5.2"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v5.3"; // 網頁程式有改動時，請手動調高這個版本號
 /* ================================================== */
 
 const $ = id => document.getElementById(id);
 const fmt = n => "NT$ " + n.toLocaleString("en-US");
 const el = (t, p = {}, ...k) => { const e = Object.assign(document.createElement(t), p); e.append(...k); return e; };
 const EMBED = JSON.parse($("data").textContent);
-const NO_BRAND = "其他", MAXQ = 99, CART_KEY = "injora_cart_v1", CONTACT_KEY = "injora_contact_v1";
+const NO_BRAND = "其他", MAXQ = 99, CART_KEY = "injora_cart_v1", CONTACT_KEY = "injora_contact_v1", ORDERS_KEY = "injora_orders_v1";
 const brandOf = it => it.brand || NO_BRAND;
 const nameOf = it => (it && it.short) || (it && it.label) || "";      // 有「顯示名稱」就用精簡名稱
 const clampQ = v => Math.min(MAXQ, Math.max(1, parseInt(v, 10) || 1));
@@ -1722,6 +1746,7 @@ function renderNav() {
   };
   if ((data.bundles || []).length && !$("secBundles").hidden) add("熱門推薦", $("secBundles"));
   rows.forEach(r => add(r.cat.name, r.box, r.cat.name));
+  if (myOrders.length) add("我的訂單", $("secOrders"));
   if ((data.faq || []).length) add("常見問題", $("secFaq"));
   markNav(); syncActive();
 }
@@ -1937,11 +1962,78 @@ async function sendOrder() {
     const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(orderPayload()) });
     const j = await r.json();
     if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認聯絡方式後再試一次，或改用「複製訂單內容」傳給店家。"; return; }
+    if (j.id && j.token) {                                             // 記住這張訂單，之後可以在「我的訂單」查狀態或取消
+      const pl = orderPayload();
+      myOrders.unshift({ id: j.id, token: j.token, at: Date.now(), total: pl.total, status: "待確認",
+        items: pl.items.map(x => ({ name: (findItem({ cat: x.category, brand: x.brand, label: x.label }) ? nameOf(findItem({ cat: x.category, brand: x.brand, label: x.label })) : x.label), qty: x.qty, note: x.note })) });
+      myOrders = myOrders.slice(0, 20); saveOrders(); renderOrders(); renderNav();
+    }
     cart = []; saveCart(); contactEls.remark.value = ""; saveContact();
-    renderCart(); msg.textContent = "訂單已送出" + (j.id ? "（編號 " + j.id + "）" : "") + "，店家會用你留的聯絡方式與你確認。";
+    renderCart(); msg.textContent = "訂單已送出" + (j.id ? "（編號 " + j.id + "）" : "") + "，店家會用你留的聯絡方式與你確認。" + (j.token ? "可以在頁面下方「我的訂單」查看狀態或取消。" : "");
   } catch (e) {
     renderCart(); msg.textContent = "無法確認訂單是否送出成功，請不要重複送出，改按「複製訂單內容」傳給店家。";
   }
+}
+
+/* ---------- 我的訂單：查詢最新狀態、取消 ---------- */
+let myOrders = loadOrders(), lastStatusAt = 0;
+function loadOrders() {
+  try { const a = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]"); return Array.isArray(a) ? a.filter(o => o && o.id && o.token) : []; }
+  catch (e) { return []; }
+}
+function saveOrders() { try { localStorage.setItem(ORDERS_KEY, JSON.stringify(myOrders)); } catch (e) {} }
+const stClass = s => s === "待確認" ? "pending" : s === "已取消" ? "cancel" : s === "已確認" ? "ok" : "";
+async function api(body) {
+  const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
+  return r.json();
+}
+function renderOrders() {
+  const box = $("orders"); box.replaceChildren();
+  $("secOrders").hidden = !myOrders.length;
+  myOrders.forEach(o => {
+    const d = new Date(o.at), pad = n => String(n).padStart(2, "0");
+    const when = d.getFullYear() + "/" + pad(d.getMonth() + 1) + "/" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+    const omsg = el("div", { className: "omsg" });
+    const acts = el("div", { className: "acts" });
+    if (o.status === "待確認") {
+      const b = el("button", { className: "btn danger", type: "button", textContent: "取消訂單" });
+      b.addEventListener("click", () => cancelMine(o, b, omsg));
+      acts.append(b);
+    } else if (o.status === "已取消") {
+      const b = el("button", { className: "btn", type: "button", textContent: "從清單移除" });
+      b.addEventListener("click", () => { myOrders = myOrders.filter(x => x !== o); saveOrders(); renderOrders(); renderNav(); });
+      acts.append(b);
+    } else {
+      omsg.textContent = "店家已處理這張訂單，如需更改或取消，請用 LINE 聯繫我們。";
+    }
+    box.append(el("article", { className: "ord" + (o.status === "已取消" ? " cancelled" : "") },
+      el("div", { className: "top" }, el("span", {}, el("span", { className: "oid", textContent: o.id }), " ", el("span", { className: "when", textContent: when })),
+        el("span", { className: "st " + stClass(o.status), textContent: o.status })),
+      el("ul", {}, ...o.items.map(x => el("li", { textContent: x.name + " × " + x.qty + (x.note ? "（" + x.note + "）" : "") }))),
+      el("div", { className: "bot" }, el("span", { className: "ot", textContent: fmt(o.total) }), acts), omsg));
+  });
+}
+async function refreshStatus(force) {
+  if (!ORDER_ENDPOINT || !myOrders.length) return;
+  if (!force && Date.now() - lastStatusAt < 60000) return;            // 一分鐘內最多查一次
+  lastStatusAt = Date.now();
+  try {
+    const j = await api({ action: "status", orders: myOrders.map(o => ({ id: o.id, token: o.token })) });
+    if (!j.ok) return;
+    myOrders.forEach(o => { if (j.statuses && j.statuses[o.id]) o.status = String(j.statuses[o.id]).slice(0, 20); });
+    saveOrders(); renderOrders();
+    const d = new Date(); $("ostamp").textContent = "狀態更新於 " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  } catch (e) { $("ostamp").textContent = "暫時無法取得最新狀態，稍後重新整理再試。"; }
+}
+async function cancelMine(o, btn, omsg) {
+  if (!confirm("確定要取消訂單 " + o.id + "？取消後無法復原。")) return;
+  btn.disabled = true; omsg.textContent = "取消中…";
+  try {
+    const j = await api({ action: "cancel", id: o.id, token: o.token });
+    if (j.ok) { o.status = "已取消"; saveOrders(); renderOrders(); return; }
+    if (j.reason === "locked") { o.status = String(j.status || "已確認").slice(0, 20); saveOrders(); renderOrders(); return; }
+    btn.disabled = false; omsg.textContent = "取消沒有成功，請稍後再試，或用 LINE 聯繫我們。";
+  } catch (e) { btn.disabled = false; omsg.textContent = "無法連線，請稍後再試，或用 LINE 聯繫我們。"; }
 }
 
 /* ---------- 側邊購物車開關 ---------- */
@@ -1977,12 +2069,14 @@ if (!ORDER_ENDPOINT) $("cartCopy").classList.add("primary");          // 沒有�
 if (LINE_OA_ID) ["cartOA", "footOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; });
 $("cartClear").onclick = () => { if (confirm("確定清空購物車？")) { cart = []; saveCart(); renderCart(); } };
 loadContact();
+renderOrders();
 
-document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { refresh(); refreshStatus(); } });
 $("force").addEventListener("click", () => { location.href = location.pathname + "?r=" + Date.now(); });
 if (location.search.startsWith("?r=")) history.replaceState(null, "", location.pathname);
 render(EMBED);
 refresh();
+refreshStatus(true);
 </script>
 </body>
 </html>
