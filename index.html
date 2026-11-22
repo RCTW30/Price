@@ -327,7 +327,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
 {
- "version": "1.9",
+ "version": "1.5",
  "updated": "2026-11-22",
  "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
@@ -431,6 +431,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "單買 JLU Stinger 造型前保險桿或後保險桿",
+     "short": "牧馬人 前or後保桿 （尖款）",
      "image": "2_78b8a537-f153-4f4a-bed5-ee0a4dace720.jpg?v=1787640321"
     },
     {
@@ -441,6 +442,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "JLU Stinger 造型前後保險桿完整套組",
+     "short": "牧馬人 前後保桿組( 尖款 )",
      "image": "2_78b8a537-f153-4f4a-bed5-ee0a4dace720.jpg?v=1787640321"
     },
     {
@@ -451,6 +453,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "單買 Chevrolet K10 電鍍銀鋁合金前保險桿或後保險桿",
+     "short": "單買 Chevrolet K10 電鍍銀鋁合金前保險桿或後保險桿",
      "image": "1_37c60713-b42a-4f31-86e0-59f8da676d20.jpg?v=1787640305"
     },
     {
@@ -461,16 +464,18 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "Chevrolet K10 電鍍銀鋁合金前後保險桿完整套組",
+     "short": "Chevrolet K10 電鍍銀鋁合金前後保險桿完整套組",
      "image": "1_37c60713-b42a-4f31-86e0-59f8da676d20.jpg?v=1787640305"
     },
     {
      "brand": "INJORA",
      "label": "INJORA Nylon Rock Sliders for 1/30 SCX30",
-     "sku": "SCX30-19 (尼龍側踏板)",
+     "sku": "SCX30-19",
      "color": "Black (黑色)",
      "usd": "$4.99 USD",
      "price": 150,
      "note": "",
+     "short": "尼龍側踏板",
      "image": "DSC09557.jpg?v=1792376836"
     }
    ]
@@ -634,6 +639,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "",
+     "short": "不鏽鋼+3/+5 後底盤連桿",
      "image": "DSC08693_0f91f00a-c499-423a-8bbf-2a953e0cf2ba.jpg?v=1791540742"
     },
     {
@@ -644,6 +650,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$8.99 USD",
      "price": 270,
      "note": "",
+     "short": "不鏽鋼轉向連桿",
      "image": "DSC05567.jpg?v=1789723105"
     },
     {
@@ -654,6 +661,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$10.99 USD",
      "price": 330,
      "note": "",
+     "short": "黃銅轉向連桿",
      "image": "DSC08115_a98f9ac8-d2f7-4ab7-8946-abace68a2655.jpg?v=1787640371"
     },
     {
@@ -1596,6 +1604,22 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "image": "DSC00081_bcad837c-6fd0-4613-bac7-6521a60a4ba3.jpg?v=1787640346"
     }
    ]
+  },
+  {
+   "name": "3D列印件",
+   "items": [
+    {
+     "brand": "PLA+",
+     "label": "SCX30 維修駐車架",
+     "sku": "Stand",
+     "color": "Black (黑色)",
+     "usd": "",
+     "price": 150,
+     "note": "",
+     "short": "SCX30 維修駐車架(請備注車款)",
+     "image": "images/Stand.JPG"
+    }
+   ]
   }
  ],
  "bundles": [
@@ -1679,11 +1703,11 @@ const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiS
 const LINE_OA_ID = "@293ljwzr";
 // 7-11 門市查詢網址，顯示在「收件門市」下方讓客人查詢。留空就不顯示連結。
 const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";
-const PAGE_VERSION = "v5.6"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v5.7"; // 網頁程式有改動時，請手動調高這個版本號
 // 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
 const CHANGELOG_DATE = "2026-11-21";
 const CHANGELOG = [
-  "「我的訂單」新增「待貨中」狀態，商品調貨期間可以看到進度"
+  "商品圖片改用店家實拍照片（部分品項）"
 ];
 /* ================================================== */
 
@@ -1700,8 +1724,11 @@ let data = EMBED, rows = [], cart = loadCart();
 /* ---------- 商品圖片 ---------- */
 const isHttp = u => /^https?:\/\/\S+$/i.test(u || "");
 // image 是完整網址（其他品牌、自動抓到的）就直接用；否則是 injora 圖檔名，接上 imageBase
-const imgUrl = it => !(it && it.image) ? "" : isHttp(it.image) ? it.image : ((data.imageBase || "") + it.image + "&width=400");
-const bigUrl = it => !(it && it.image) ? "" : isHttp(it.image) ? it.image : ((data.imageBase || "") + it.image + "&width=1000");
+// 圖片來源三種：完整網址（直接用）、網站資料夾裡的圖片如 images/abc.jpg（含「/」，直接用）、injora 圖檔名（接上 imageBase）
+const isLocal = u => /^[\w\-. ]+\/[^\s]+$/.test(u || "") && !/^\.\.?\//.test(u);
+const imgSrc = (it, w) => !(it && it.image) ? "" : (isHttp(it.image) || isLocal(it.image)) ? it.image : ((data.imageBase || "") + it.image + "&width=" + w);
+const imgUrl = it => imgSrc(it, 400);
+const bigUrl = it => imgSrc(it, 1000);
 // zoom = true：點圖可以放大
 function thumb(it, cls, zoom) {
   const u = imgUrl(it); if (!u) return null;
