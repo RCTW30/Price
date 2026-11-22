@@ -188,6 +188,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .chip:hover{border-color:#4a4a4a}
 .chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
 .chip .ck{color:var(--accent);margin-left:4px;font-weight:700}
+.chip.stockchip{border-color:var(--accent);color:var(--accent);font-weight:700}
+.chip.stockchip.on{background:var(--accent);color:var(--accent-ink)}
+.chip.stockchip .n{margin-left:6px;font-size:12px;opacity:.8}
+.stockhint{margin:-6px 0 12px;color:var(--mute);font-size:13px}
+.stockhint button{background:none;border:0;padding:0;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer}
 
 /* 區塊標題 */
 .sec{margin:6px 0 22px}
@@ -335,7 +340,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
   </section>
 
   <section class="sec" id="secParts">
-    <h2>全部零件</h2>
+    <h2 id="partsTitle">全部零件</h2>
+    <p class="stockhint" id="stockHint" hidden>目前只顯示有現貨的商品。<button type="button" id="stockOff">顯示全部商品</button></p>
     <div class="list" id="list"><div class="row">載入中…</div></div>
   </section>
 
@@ -423,7 +429,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
 {
- "version": "1.11",
+ "version": "1.10",
  "updated": "2026-11-22",
  "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
@@ -2481,7 +2487,8 @@ const CHANGELOG_DATE = "2026-11-22";
 const CHANGELOG = [
   "店名改為「山稜RC選物」，用 LINE 分享網址時會顯示預覽卡片。",
   "新增「購物須知」：訂購流程、到貨時間、退換貨與個資說明。",
-  "品項會顯示庫存狀態，例如現貨或預計到貨時間。"
+  "品項會顯示庫存狀態，例如現貨或預計到貨時間。",
+  "分類列最前面新增「現貨」按鈕，一鍵只顯示有現貨的商品。"
 ];
 /* ================================================== */
 
@@ -2563,7 +2570,7 @@ async function refresh() { try { render(await loadData()); } catch (e) {} }
 /* ---------- 選品區 ---------- */
 function fillItems(row, want) {
   const b = row.bsel.value;
-  row.shown = b ? row.cat.items.filter(it => brandOf(it) === b) : [];
+  row.shown = b ? visibleItems(row.cat).filter(it => brandOf(it) === b) : [];
   row.sel.replaceChildren(el("option", { value: "", textContent: b ? "請選擇品項" : "請先選擇品牌" }));
   row.shown.forEach((it, i) => row.sel.append(el("option", { value: i, textContent: nameOf(it) + (it.stock ? "｜" + it.stock : "") })));
   row.sel.disabled = !b;
@@ -2610,9 +2617,39 @@ function render(raw) {
   renderBundles();
   renderFaq();
   renderNav();
-  updateRows();
+  applyStockFilter();
   renderCart();
 }
+
+/* ---------- 只看現貨 ---------- */
+let onlyStock = /^#stock$/.test(location.hash);
+function inStock(it) { return !!it.stock && stockKind(it.stock) === "ok"; }
+function visibleItems(cat) { return onlyStock ? cat.items.filter(inStock) : cat.items; }
+function applyStockFilter() {
+  rows.forEach(row => {
+    const vis = visibleItems(row.cat);
+    const brands = [...new Set(vis.map(brandOf))];
+    const curB = row.bsel.value, curIt = row.sel.value === "" ? null : row.shown[+row.sel.value];
+    row.bsel.replaceChildren(el("option", { value: "", textContent: "請選擇品牌" }), ...brands.map(b => el("option", { value: b, textContent: b })));
+    row.bsel.value = brands.includes(curB) ? curB : (brands.length === 1 ? brands[0] : "");
+    fillItems(row, curIt && vis.includes(curIt) ? curIt.label : undefined);
+    row.box.hidden = !vis.length;
+    const chip = $("catnav").querySelector('.chip[data-cat="' + CSS.escape(row.cat.name) + '"]');
+    if (chip) chip.hidden = !vis.length;
+  });
+  const sb = $("stockChip");
+  if (sb) { sb.classList.toggle("on", onlyStock); sb.setAttribute("aria-pressed", String(onlyStock)); }
+  $("partsTitle").textContent = onlyStock ? "現貨零件" : "全部零件";
+  $("stockHint").hidden = !onlyStock;
+  updateRows(); syncActive();
+}
+function setOnlyStock(v) {
+  onlyStock = v;
+  if (!/^#list=/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search + (v ? "#stock" : ""));   // 「#stock」網址可以直接分享現貨清單
+  applyStockFilter(); showResults();
+  if (v) jumpTo($("secParts"));
+}
+$("stockOff").addEventListener("click", () => setOnlyStock(false));
 
 /* ---------- 分類導覽 ---------- */
 function stickyOffset() { return document.querySelector(".searchwrap").offsetHeight + 10; }
@@ -2629,6 +2666,13 @@ function renderNav() {
     b.addEventListener("click", () => jumpTo(target));
     nav.append(b); navTargets.push({ b, target });
   };
+  const nStock = rows.reduce((n, r) => n + r.cat.items.filter(inStock).length, 0);
+  if (nStock) {
+    const sb = el("button", { className: "chip stockchip", type: "button", id: "stockChip" }, "現貨", el("span", { className: "n", textContent: nStock }));
+    sb.setAttribute("aria-pressed", "false");
+    sb.addEventListener("click", () => setOnlyStock(!onlyStock));
+    nav.append(sb);
+  } else onlyStock = false;
   if ((data.bundles || []).length && !$("secBundles").hidden) add("熱門推薦", $("secBundles"));
   rows.forEach(r => add(r.cat.name, r.box, r.cat.name));
   if ((data.notice || []).length) add("購物須知", $("secNotice"));
@@ -2738,7 +2782,7 @@ function buildIndex() {
 function search(q) {
   const words = q.trim().toLowerCase().split(/\s+/).map(norm).filter(Boolean);
   if (!words.length) return [];
-  return index.filter(x => words.every(w => x.hay.includes(w))).slice(0, 30);
+  return index.filter(x => (!onlyStock || inStock(x.it)) && words.every(w => x.hay.includes(w))).slice(0, 30);
 }
 function showResults() {
   const q = $("q").value, box = $("results");
