@@ -50,6 +50,24 @@ h1{font-family:var(--disp);font-weight:800;font-size:clamp(30px,6.4vw,52px);line
 h1 .nw{display:inline-block}
 h1 .zh{color:var(--accent)}
 .sub{color:var(--mute);margin:10px 0 22px;max-width:62ch}
+.steps{list-style:none;margin:18px 0 10px;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.steps li{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.steps b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-family:var(--disp);font-size:16px;line-height:24px;text-align:center}
+.steps strong{display:block;font-size:15px;line-height:1.3}
+.steps small{display:block;color:var(--mute);font-size:12px;line-height:1.4;margin-top:2px}
+.points{list-style:none;margin:0 0 22px;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px;color:#cfcfc8;font-size:13px}
+.points li::before{content:"✓";color:var(--accent);font-weight:700;margin-right:5px}
+.points .more{background:none;border:0;padding:0;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer}
+.points li.lk::before{content:none}
+.cnotes{margin:16px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);font-size:13px;color:#cfcfc8}
+.cnotes h3{margin:0 0 6px;font-size:14px;color:var(--ink)}
+.cnotes ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.cnotes li::before{content:"✓";color:var(--accent);font-weight:700;margin-right:6px}
+.cnotes p{margin:8px 0 0;color:var(--mute)}
+.cnotes button{background:none;border:0;padding:0;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer}
+.faq h3{margin:14px 0 2px;font-size:14px;color:var(--mute);font-weight:600;letter-spacing:.06em}
+.faq h3:first-child{margin-top:0}
+@media (max-width:640px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .shop{margin:0 0 2px;font-weight:800;font-size:15px;letter-spacing:.18em;color:var(--accent)}
 .slogan{margin:6px 0 0;color:var(--mute);font-size:14px;letter-spacing:.06em}
 .stk{display:inline-block;margin:0 6px 4px 0;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;line-height:20px;vertical-align:middle;white-space:nowrap}
@@ -310,7 +328,13 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <main>
   <header>
     <div class="brandhead"><img src="logo.png" alt="山稜RC選物" width="88" height="88"><div><p class="shop">山稜RC選物</p><h1><span class="nw">Axial SCX30</span> <span class="nw zh">改裝零件報價</span></h1><p class="slogan">小車，也要走上大稜線。</p></div></div>
-    <p class="sub">搜尋或依分類選擇品牌與品項，輸入數量後加入購物車，再到購物車送出訂單（新台幣報價）。</p>
+    <ol class="steps" aria-label="訂購流程">
+      <li><b>1</b><span><strong>選零件</strong><small>搜尋或依分類加入購物車</small></span></li>
+      <li><b>2</b><span><strong>送出訂單</strong><small>填 LINE ID 與取貨方式</small></span></li>
+      <li><b>3</b><span><strong>確認後匯款</strong><small>匯款資訊在「我的訂單」</small></span></li>
+      <li><b>4</b><span><strong>出貨取貨</strong><small>7-11 店到店或面交</small></span></li>
+    </ol>
+    <ul class="points" id="points" hidden></ul>
     <div class="hero" id="hero" hidden>
       <div class="track" id="heroTrack" aria-label="實車照片"></div>
       <button class="nav prev" id="heroPrev" type="button" aria-label="上一張">‹</button>
@@ -345,13 +369,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div class="list" id="list"><div class="row">載入中…</div></div>
   </section>
 
-  <section class="sec" id="secNotice" hidden>
-    <h2>購物須知</h2>
-    <div class="faq" id="notice"></div>
-  </section>
-
   <section class="sec" id="secFaq" hidden>
-    <h2>常見問題</h2>
+    <h2>購物須知與常見問題</h2>
     <div class="faq" id="faq"></div>
   </section>
   <p class="note" id="footnote"></p>
@@ -404,6 +423,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <p class="privacy"><span aria-hidden="true">🔒</span><span>寄件資料僅用於本次訂單出貨與取件通知，不會提供給第三方，也不會用於行銷或其他用途。</span></p>
       </div>
       <input id="cHp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="cnotes" id="cartNotes" hidden>
+        <h3>下單前請確認</h3>
+        <ul id="cnList"></ul>
+        <p>送出訂單即表示同意本店購物須知。<button type="button" id="cnMore">看完整購物須知</button></p>
+      </div>
       <a class="btn lineapp lineoa" id="cartOA" href="#" target="_blank" rel="noopener noreferrer" hidden>有問題？加入 LINE 官方帳號聯繫我們</a>
     </div>
   </div>
@@ -2441,19 +2465,23 @@ select:disabled{opacity:.45;cursor:not-allowed}
   },
   {
    "q": "到貨時間",
-   "a": "現貨商品於確認匯款後 3 天內寄出。\n需向國外訂購的商品，一般約 2～3週到貨，實際時間依品牌出貨、國際物流與海關而定，確認訂單時會告知預估時間。"
+   "a": "現貨商品於確認匯款後 3 天內寄出。\n需向國外訂購的商品，一般約 2～3週到貨，實際時間依品牌出貨、國際物流與海關而定，確認訂單時會告知預估時間。",
+   "k": "現貨 3 天內出貨，國外訂購約 2～4 週"
   },
   {
    "q": "報價與匯率",
-   "a": "網頁價格依各品牌官網售價換算為新台幣。若官網調價或匯率大幅變動，會在確認訂單時先告知，你可以決定是否繼續購買。"
+   "a": "網頁價格依各品牌官網售價換算為新台幣。若官網調價或匯率大幅變動，會在確認訂單時先告知，你可以決定是否繼續購買。",
+   "k": "官網調價或匯率大變動，會先告知再成交"
   },
   {
    "q": "取消、退換貨",
-   "a": "店家確認訂單前，可以在「我的訂單」自行取消；已向國外下單的商品，取消前請先透過 LINE 官方帳號聯繫。\n收到商品如有瑕疵或寄錯，請拍照透過 LINE 官方帳號聯繫，確認後協助換貨或退款，運費由店家負擔。"
+   "a": "店家確認訂單前，可以在「我的訂單」自行取消；已向國外下單的商品，取消前請先透過 LINE 官方帳號聯繫。\n收到商品如有瑕疵或寄錯，請拍照透過 LINE 官方帳號聯繫，確認後協助換貨或退款，運費由店家負擔。",
+   "k": "店家確認前可自行取消，瑕疵或寄錯免費換貨"
   },
   {
    "q": "付款方式",
-   "a": "目前提供銀行轉帳。訂單確認後，匯款帳號只會顯示在你自己的「我的訂單」裡；匯款後請回報帳號後五碼，方便對帳。"
+   "a": "目前提供銀行轉帳。訂單確認後，匯款帳號只會顯示在你自己的「我的訂單」裡；匯款後請回報帳號後五碼，方便對帳。",
+   "k": "訂單確認後再匯款"
   },
   {
    "q": "個人資料說明",
@@ -2486,7 +2514,7 @@ const PAGE_VERSION = "v6.4"; // 網頁程式有改動時，請手動調高這個
 const CHANGELOG_DATE = "2026-11-22";
 const CHANGELOG = [
   "店名改為「山稜RC選物」，用 LINE 分享網址時會顯示預覽卡片。",
-  "新增「購物須知」：訂購流程、到貨時間、退換貨與個資說明。",
+  "首頁新增訂購四步驟與重點提醒，購物車送出前也會列出重點；購物須知與常見問題合併在頁面下方。",
   "品項會顯示庫存狀態，例如現貨或預計到貨時間。",
   "分類列最前面新增「現貨」按鈕，一鍵只顯示有現貨的商品。"
 ];
@@ -2675,8 +2703,7 @@ function renderNav() {
   } else onlyStock = false;
   if ((data.bundles || []).length && !$("secBundles").hidden) add("熱門推薦", $("secBundles"));
   rows.forEach(r => add(r.cat.name, r.box, r.cat.name));
-  if ((data.notice || []).length) add("購物須知", $("secNotice"));
-  if ((data.faq || []).length) add("常見問題", $("secFaq"));
+  if ((data.notice || []).length || (data.faq || []).length) add("須知與問答", $("secFaq"));
   markNav(); syncActive();
 }
 function markNav() {                                                    // 購物車裡有東西的分類打勾
@@ -2733,13 +2760,31 @@ function linkify(text) {                                               // 回答
 }
 function renderFaq() {
   const box = $("faq"); box.replaceChildren();
-  const list = data.faq || [];
-  $("secFaq").hidden = !list.length;
-  list.forEach(f => box.append(el("details", {}, el("summary", { textContent: f.q }), el("div", { className: "ans" }, ...linkify(f.a || "")))));
-  const nb = $("notice"); nb.replaceChildren();
-  const nl = data.notice || [];
-  $("secNotice").hidden = !nl.length;
-  nl.forEach(f => nb.append(el("details", {}, el("summary", { textContent: f.q }), el("div", { className: "ans" }, ...linkify(f.a || "")))));
+  const nl = data.notice || [], fl = data.faq || [];
+  $("secFaq").hidden = !nl.length && !fl.length;
+  const acc = f => el("details", {}, el("summary", { textContent: f.q }), el("div", { className: "ans" }, ...linkify(f.a || "")));
+  if (nl.length) box.append(el("h3", { textContent: "購物須知" }), ...nl.map(acc));
+  if (fl.length) box.append(el("h3", { textContent: "常見問題" }), ...fl.map(acc));
+  renderPoints();
+}
+/* ---------- 重點提醒（首頁＋購物車） ---------- */
+function keyPoints() {
+  const out = [];
+  if (SHIP_FEE_711 != null) out.push("7-11 運費 " + fmt(SHIP_FEE_711) + (FREE_SHIP_OVER > 0 ? "，滿 " + fmt(FREE_SHIP_OVER) + " 免運" : ""));
+  (data.notice || []).forEach(n => { if (n.k) out.push(n.k); });
+  return out;
+}
+function goInfo() { if (curD) closeD(); setTimeout(() => jumpTo($("secFaq")), curD ? 0 : 30); }
+function renderPoints() {
+  const pts = keyPoints(), hasInfo = !$("secFaq").hidden;
+  const top = $("points");
+  top.replaceChildren(...pts.map(t => el("li", { textContent: t })));
+  if (hasInfo) { const b = el("button", { className: "more", type: "button", textContent: "完整購物須知 ›" }); b.onclick = goInfo; top.append(el("li", { className: "lk" }, b)); }
+  top.hidden = !pts.length;
+  const cn = $("cartNotes");
+  cn.hidden = !pts.length;
+  $("cnList").replaceChildren(...pts.map(t => el("li", { textContent: t })));
+  $("cnMore").hidden = !hasInfo;
 }
 /* ---------- 庫存標籤 ---------- */
 function stockKind(s) { s = String(s || ""); return /現貨|有貨/.test(s) ? "ok" : /缺貨|售完|停產|停售|暫停/.test(s) ? "no" : "wait"; }
@@ -3152,6 +3197,7 @@ function closeD(switching) {
   $("backdrop").classList.remove("open"); document.body.classList.remove("locked");
   if (lastFocus) lastFocus.focus({ preventScroll: true });
 }
+$("cnMore").addEventListener("click", goInfo);
 function openCart() { $("cartMsg").textContent = ""; openD("drawer"); }
 function closeCart() { closeD(); }
 function openOrders() { renderOrders(); openD("odrawer"); refreshStatus(Date.now() - lastStatusAt > 15000); }
