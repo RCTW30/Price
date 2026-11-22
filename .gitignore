@@ -1,0 +1,11 @@
+*.xlsx
+~$*
+*.py
+*.command
+*.bat
+*.gs
+image_cache.json
+index.html.bak
+.venv/
+.DS_Store
+__pycache__/
