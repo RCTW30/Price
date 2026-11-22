@@ -203,6 +203,45 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .st.wait{border-color:#3b6fb6;color:#7fb2ff}
 .st.cancel{border-color:#5a2a26;color:var(--danger)}
 .ostamp{color:#6f6f69;font-size:13px;margin-top:6px}
+.st.ship{border-color:#7a5cd6;color:#b9a4ff}
+.ord .extra{display:grid;gap:8px}
+.paybox{background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:12px;display:grid;gap:8px}
+.paybox h4{margin:0;font-size:15px}
+.paybox .ptxt{white-space:pre-line;font-size:14px;color:var(--ink);word-break:break-word}
+.paybox .pdue{font-family:var(--disp);font-weight:800;font-size:22px;color:var(--accent)}
+.paybox .prow{display:flex;gap:8px;flex-wrap:wrap}
+.paybox input{width:120px;min-height:38px;padding:6px 10px;font-size:16px;letter-spacing:.15em;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.okline{color:var(--accent);font-size:14px;font-weight:600}
+.trk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
+.trk b{font-family:var(--disp);font-size:20px;letter-spacing:.04em}
+
+/* 實車照輪播 */
+.hero{position:relative;margin:6px 0 22px;border-radius:16px;overflow:hidden;background:var(--panel);border:1px solid var(--line)}
+.hero .track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.hero .track::-webkit-scrollbar{display:none}
+.hero .slide{flex:0 0 100%;scroll-snap-align:start;aspect-ratio:16/9;max-height:460px}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero .dots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:8px}
+.hero .dot{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:rgba(255,255,255,.45);cursor:pointer}
+.hero .dot.on{background:var(--accent);width:22px;border-radius:5px}
+.hero .nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:20px;cursor:pointer}
+.hero .prev{left:10px}.hero .next{right:10px}
+@media (max-width:640px){.hero .nav{display:none}}
+
+/* 分享清單 */
+.sharebox .card2{background:var(--panel);border:1px solid var(--accent);border-radius:14px;padding:16px;display:grid;gap:10px}
+.sharebox ul{margin:0;padding-left:18px;color:#cfcfc8;font-size:14px}
+.sharebox .sbt{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* 取貨方式與金額 */
+.shipm{display:grid;gap:8px}
+.shipm .opt{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);cursor:pointer}
+.shipm .opt:has(input:checked){border-color:var(--accent);background:var(--accent-dim)}
+.shipm input{width:20px;height:20px;min-height:0;margin:0;accent-color:var(--accent)}
+.shipm small{display:block;color:var(--mute);font-size:13px}
+.tots{display:grid;gap:4px;font-size:14px;color:var(--mute)}
+.tots div{display:flex;justify-content:space-between}
+@media (max-width:640px){.dfoot{gap:8px;padding-top:10px}.dtotal strong{font-size:28px}.dfoot .btn{min-height:42px}}
 .faq{display:grid;gap:8px}
 .faq details{background:var(--panel);border:1px solid var(--line);border-radius:12px}
 .faq summary{cursor:pointer;padding:14px 44px 14px 16px;font-weight:600;list-style:none;position:relative}
@@ -239,6 +278,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
   <header>
     <div class="brandhead"><img src="logo.png" alt="SCX30 RC Community" width="88" height="88"><h1><span class="nw">Axial SCX30</span> <span class="nw zh">改裝零件報價系統</span></h1></div>
     <p class="sub">搜尋或依分類選擇品牌與品項，輸入數量後加入購物車，再到購物車送出訂單（新台幣報價）。</p>
+    <div class="hero" id="hero" hidden>
+      <div class="track" id="heroTrack" aria-label="實車照片"></div>
+      <button class="nav prev" id="heroPrev" type="button" aria-label="上一張">‹</button>
+      <button class="nav next" id="heroNext" type="button" aria-label="下一張">›</button>
+      <div class="dots" id="heroDots"></div>
+    </div>
   </header>
 
   <div class="searchwrap">
@@ -250,6 +295,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
     </div>
     <nav class="catnav" id="catnav" aria-label="分類導覽"></nav>
   </div>
+
+  <section class="sec sharebox" id="secShare" hidden>
+    <h2>分享的改裝清單</h2>
+    <div class="card2" id="shareCard"></div>
+  </section>
 
   <section class="sec" id="secBundles" hidden>
     <h2>熱門推薦 <small>一鍵整組加入購物車</small></h2>
@@ -295,26 +345,34 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <label>姓名／稱呼<input id="cName" maxlength="40" autocomplete="name"></label>
       <label>聯絡方式（電話、LINE ID 或 Email）<input id="cContact" maxlength="80" autocomplete="off"></label>
       <label>其他備註（例如：交貨時間）<textarea id="cRemark" maxlength="300" rows="3"></textarea></label>
-      <h3 class="ship">寄件資料（7-11 店到店）</h3>
-      <p class="hint">需要寄送才填寫，面交或自取可以留空。</p>
+      <h3 class="ship">取貨方式</h3>
+      <div class="shipm" role="radiogroup" aria-label="取貨方式">
+        <label class="opt"><input type="radio" name="shipm" value="711"><span>7-11 店到店<small id="feeLbl">運費另計</small></span></label>
+        <label class="opt"><input type="radio" name="shipm" value="pickup"><span>面交自取<small>不收運費，時間地點另外約</small></span></label>
+      </div>
+      <div class="contact" id="shipBox" hidden style="padding:0">
+      <h3>寄件資料</h3>
       <label class="chk"><input type="checkbox" id="sSame"> 收件人同上方聯絡人</label>
       <label>收件人姓名（請填寫與證件相同的真實姓名）<input id="sName" maxlength="20" autocomplete="name"></label>
       <label>收件人手機（取件通知會傳到這支手機）<input id="sPhone" maxlength="12" inputmode="tel" autocomplete="tel" placeholder="例如 0912345678"></label>
       <label>7-11 收件門市（門市名稱或店號）<input id="sStore" maxlength="40" autocomplete="off" placeholder="例如 鑫華門市 或 123456"></label>
       <p class="hint" id="storeHint" hidden>不知道門市名稱？<a id="storeLink" href="#" target="_blank" rel="noopener noreferrer">查詢 7-11 門市 ↗</a></p>
       <p class="privacy"><span aria-hidden="true">🔒</span><span>寄件資料僅用於本次訂單出貨與取件通知，不會提供給第三方，也不會用於行銷或其他用途。</span></p>
+      </div>
       <input id="cHp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <a class="btn lineapp lineoa" id="cartOA" href="#" target="_blank" rel="noopener noreferrer" hidden>有問題？加入 LINE 官方帳號聯繫我們</a>
     </div>
   </div>
   <div class="dfoot">
+    <div class="tots"><div><span>商品小計</span><span id="cartSub">NT$ 0</span></div><div><span>運費</span><span id="cartFee">請選擇取貨方式</span></div></div>
     <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
     <div class="dbtns">
       <button id="cartSend" type="button" class="btn primary wide" hidden>送出訂單</button>
       <button id="cartCopy" type="button" class="btn">複製訂單內容</button>
-      <button id="cartClear" type="button" class="btn danger">清空購物車</button>
+      <button id="cartShare" type="button" class="btn">分享清單</button>
+      <button id="cartClear" type="button" class="btn danger wide">清空購物車</button>
     </div>
     <div class="dmsg" id="cartMsg" role="status"></div>
-    <a class="btn lineapp lineoa" id="cartOA" href="#" target="_blank" rel="noopener noreferrer" hidden>有問題？加入 LINE 官方帳號聯繫我們</a>
   </div>
 </aside>
 
@@ -327,7 +385,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
 {
- "version": "1.9",
+ "version": "1.5",
  "updated": "2026-11-22",
  "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
@@ -1731,7 +1789,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
    "q": "圖片和實際商品一樣嗎？",
    "a": "商品圖片來自原廠官網，同款不同顏色或套組可能共用同一張圖，請以文字說明為準，有疑問歡迎先詢問。"
   }
- ]
+ ],
+ "hero": []
 }
 </script>
 
@@ -1743,11 +1802,19 @@ const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiS
 const LINE_OA_ID = "@293ljwzr";
 // 7-11 門市查詢網址，顯示在「收件門市」下方讓客人查詢。留空就不顯示連結。
 const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";
-const PAGE_VERSION = "v5.7"; // 網頁程式有改動時，請手動調高這個版本號
+// 運費（要和 Apps Script 的 SHIP_FEE_711、FREE_SHIP_OVER 一樣）
+const SHIP_FEE_711 = 60;   // 7-11 店到店運費，例如 60；null＝還沒設定，顯示「運費另計」
+const FREE_SHIP_OVER = 0;    // 商品滿多少免運，例如 2000；0＝不提供免運
+const HERO_SECONDS = 4;      // 首頁實車照幾秒換一張
+const PAGE_VERSION = "v6.0"; // 網頁程式有改動時，請手動調高這個版本號
 // 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
 const CHANGELOG_DATE = "2026-11-21";
 const CHANGELOG = [
-  "商品圖片改用店家實拍照片（部分品項）"
+  "購物車新增取貨方式（7-11 店到店／面交自取），自動計算運費與合計",
+  "訂單確認後，「我的訂單」會顯示匯款資訊，可以直接回報帳號後五碼",
+  "出貨後可以在「我的訂單」看到物流單號",
+  "新增「分享清單」：把購物車做成連結傳給朋友或店家",
+  "首頁新增實車照片"
 ];
 /* ================================================== */
 
@@ -1872,6 +1939,7 @@ function render(raw) {
     rows.push(row);
   });
   buildIndex();
+  renderHero(raw.hero);
   renderBundles();
   renderFaq();
   renderNav();
@@ -2045,7 +2113,13 @@ document.addEventListener("click", e => { if (!$("search").contains(e.target)) $
 function setQty(c, v) { c.qty = clampQ(v); saveCart(); renderCart(); }
 function renderCart() {
   const { count, total } = cartTotals();
-  $("cbCount").textContent = "購物車 " + count + " 件"; $("cbTotal").textContent = fmt(total); $("cartTotal").textContent = fmt(total);
+  const m = shipMethod(), fee = feeFor(total, m);
+  $("cbCount").textContent = "購物車 " + count + " 件"; $("cbTotal").textContent = fmt(total);
+  $("cartSub").textContent = fmt(total);
+  $("cartFee").textContent = !m ? "請選擇取貨方式" : fee == null ? "另計" : fee === 0 ? (m === "711" ? "免運" : "NT$ 0") : fmt(fee);
+  $("cartTotal").textContent = fmt(total + (fee || 0)) + (m === "711" && fee == null ? " ＋運費" : "");
+  $("feeLbl").textContent = SHIP_FEE_711 == null ? "運費另計" : "運費 " + fmt(SHIP_FEE_711) + (FREE_SHIP_OVER > 0 ? "，商品滿 " + fmt(FREE_SHIP_OVER) + " 免運" : "");
+  $("shipBox").hidden = m !== "711";
   $("cbBadge").textContent = count; $("cbBadge").hidden = !count;
   const body = $("cartLines"); body.replaceChildren();
   if (!cart.length) body.append(el("div", { className: "empty-cart", textContent: "購物車是空的，先搜尋或選幾樣零件加進來吧。" }));
@@ -2066,15 +2140,24 @@ function renderCart() {
       el("div", { className: "sub2" }, it ? fmt(it.price * c.qty) : "—", it ? el("small", { textContent: "單價 " + fmt(it.price) }) : ""),
       el("div", { className: "stepper" }, minus, inp, plus), del, lnote));
   });
-  ["cartCopy", "cartSend"].forEach(id => $(id).disabled = !count);
+  ["cartCopy", "cartSend", "cartShare"].forEach(id => $(id).disabled = !count);
   $("cartClear").disabled = !cart.length;
   markNav();
 }
 
 // 聯絡與寄件資料只存在客人自己的瀏覽器，方便下次不用重填
 const contactEls = { name: $("cName"), contact: $("cContact"), remark: $("cRemark"), shipName: $("sName"), shipPhone: $("sPhone"), shipStore: $("sStore") };
-function loadContact() { try { const o = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}"); for (const k in contactEls) contactEls[k].value = o[k] || ""; $("sSame").checked = !!o.same; } catch (e) {} }
-function saveContact() { try { const o = { same: $("sSame").checked }; for (const k in contactEls) o[k] = contactEls[k].value; localStorage.setItem(CONTACT_KEY, JSON.stringify(o)); } catch (e) {} }
+const shipRadios = [...document.querySelectorAll('input[name="shipm"]')];
+const shipMethod = () => (shipRadios.find(r => r.checked) || {}).value || "";
+function feeFor(total, m) {                                            // 運費：面交 0；7-11 依設定，滿額免運；沒設定回傳 null（另計）
+  if (m === "pickup") return 0;
+  if (m !== "711") return null;
+  if (FREE_SHIP_OVER > 0 && total >= FREE_SHIP_OVER) return 0;
+  return SHIP_FEE_711;
+}
+function loadContact() { try { const o = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}"); for (const k in contactEls) contactEls[k].value = o[k] || ""; $("sSame").checked = !!o.same; shipRadios.forEach(r => r.checked = r.value === o.ship); } catch (e) {} }
+function saveContact() { try { const o = { same: $("sSame").checked, ship: shipMethod() }; for (const k in contactEls) o[k] = contactEls[k].value; localStorage.setItem(CONTACT_KEY, JSON.stringify(o)); } catch (e) {} }
+shipRadios.forEach(r => r.addEventListener("change", () => { saveContact(); renderCart(); $("cartMsg").textContent = ""; }));
 Object.values(contactEls).forEach(e => e.addEventListener("input", saveContact));
 const phoneOf = s => String(s || "").replace(/[\s\-()]/g, "");
 const isTwMobile = s => /^09\d{8}$/.test(phoneOf(s));
@@ -2089,10 +2172,12 @@ $("sSame").addEventListener("change", () => { syncSame(); saveContact(); });
 [contactEls.name, contactEls.contact].forEach(e => e.addEventListener("input", syncSame));
 [contactEls.shipName, contactEls.shipPhone].forEach(e => e.addEventListener("input", () => { if ($("sSame").checked) { $("sSame").checked = false; saveContact(); } }));
 if (STORE_LOOKUP_URL) { $("storeLink").href = STORE_LOOKUP_URL; $("storeHint").hidden = false; }
-// 寄件資料：全部留空＝不寄送；有填任何一欄就要三欄都填，手機要是 09 開頭 10 碼
+// 取貨方式必選；選 7-11 時三欄都要填，手機要是 09 開頭 10 碼
 function shipCheck() {
+  const m = shipMethod();
+  if (!m) return [shipRadios[0], "請選擇取貨方式。"];
+  if (m !== "711") return "";
   const n = contactEls.shipName.value.trim(), ph = contactEls.shipPhone.value.trim(), st = contactEls.shipStore.value.trim();
-  if (!n && !ph && !st) return "";
   if (!n) return [contactEls.shipName, "請填寫收件人姓名。"];
   if (!isTwMobile(ph)) return [contactEls.shipPhone, "收件人手機格式不正確，請填 09 開頭的 10 碼手機號碼。"];
   if (!st) return [contactEls.shipStore, "請填寫 7-11 收件門市。"];
@@ -2103,9 +2188,11 @@ function orderText() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
   return ["【Axial SCX30 改裝零件訂單】", ""].concat(
     lines.map(({ c, it }, i) => (i + 1) + ". [" + c.brand + "] " + nameOf(it) + (it.sku ? "（" + it.sku + "）" : "") + " × " + c.qty + " = " + fmt(it.price * c.qty) + (c.note && c.note.trim() ? "\n   顏色／備註：" + c.note.trim() : "")),
-    ["", "合計：" + fmt(total)],
+    (() => { const m = shipMethod(), fee = feeFor(total, m);
+      return ["", "商品小計：" + fmt(total), "取貨方式：" + (m === "711" ? "7-11 店到店" : m === "pickup" ? "面交自取" : "未選擇"),
+        "運費：" + (!m ? "—" : fee == null ? "另計" : fmt(fee)), "合計：" + fmt(total + (fee || 0)) + (m === "711" && fee == null ? " ＋運費" : "")]; })(),
     v("name") ? ["姓名：" + v("name")] : [], v("contact") ? ["聯絡方式：" + v("contact")] : [], v("remark") ? ["其他備註：" + v("remark")] : [],
-    v("shipName") || v("shipStore") ? ["", "【7-11 寄件】收件人：" + v("shipName") + "｜手機：" + phoneOf(v("shipPhone")) + "｜門市：" + v("shipStore")] : [],
+    shipMethod() === "711" && (v("shipName") || v("shipStore")) ? ["", "【7-11 寄件】收件人：" + v("shipName") + "｜手機：" + phoneOf(v("shipPhone")) + "｜門市：" + v("shipStore")] : [],
     ["（價格版本 v" + data.version + "，更新於 " + data.updated + "）"]).join("\n");
 }
 function fallbackBox(text) {
@@ -2124,7 +2211,8 @@ function orderPayload() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
   return { sentAt: new Date().toISOString(), priceVersion: data.version, pageVersion: PAGE_VERSION,
     name: v("name"), contact: v("contact"), remark: v("remark"), website: $("cHp").value,
-    shipName: v("shipName"), shipPhone: phoneOf(v("shipPhone")), shipStore: v("shipStore"),
+    shipMethod: shipMethod(),
+    shipName: shipMethod() === "711" ? v("shipName") : "", shipPhone: shipMethod() === "711" ? phoneOf(v("shipPhone")) : "", shipStore: shipMethod() === "711" ? v("shipStore") : "",
     items: lines.map(({ c, it }) => ({ category: c.cat, brand: c.brand, label: it.label, sku: it.sku || "", qty: c.qty, unitPrice: it.price, subtotal: it.price * c.qty, note: (c.note || "").trim() })),
     total, text: orderText() };
 }
@@ -2140,7 +2228,9 @@ async function sendOrder() {
     if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認聯絡方式後再試一次，或改用「複製訂單內容」傳給店家。"; return; }
     if (j.id && j.token) {                                             // 記住這張訂單，之後可以在「我的訂單」查狀態或取消
       const pl = orderPayload();
+      const f = feeFor(pl.total, pl.shipMethod);
       myOrders.unshift({ id: j.id, token: j.token, at: Date.now(), total: pl.total, status: "待確認",
+        due: j.due != null ? j.due : pl.total + (f || 0), method: pl.shipMethod,
         items: pl.items.map(x => ({ name: (findItem({ cat: x.category, brand: x.brand, label: x.label }) ? nameOf(findItem({ cat: x.category, brand: x.brand, label: x.label })) : x.label), qty: x.qty, note: x.note })) });
       myOrders = myOrders.slice(0, 20); saveOrders(); renderOrders(); renderNav();
     }
@@ -2158,7 +2248,7 @@ function loadOrders() {
   catch (e) { return []; }
 }
 function saveOrders() { try { localStorage.setItem(ORDERS_KEY, JSON.stringify(myOrders)); } catch (e) {} }
-const stClass = s => s === "待確認" ? "pending" : s === "已取消" ? "cancel" : s === "已確認" ? "ok" : s === "待貨中" ? "wait" : "";
+const stClass = s => s === "待確認" ? "pending" : s === "已取消" ? "cancel" : s === "已確認" ? "ok" : s === "待貨中" ? "wait" : s === "已出貨" ? "ship" : "";
 async function api(body) {
   const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
   return r.json();
@@ -2179,14 +2269,35 @@ function renderOrders() {
       const b = el("button", { className: "btn", type: "button", textContent: "從清單移除" });
       b.addEventListener("click", () => { myOrders = myOrders.filter(x => x !== o); saveOrders(); renderOrders(); renderNav(); });
       acts.append(b);
-    } else {
-      omsg.textContent = "店家已處理這張訂單，如需更改或取消，請用 LINE 聯繫我們。";
     }
+    const extra = el("div", { className: "extra" }), dt = o.detail || {};
+    if (dt.pay && o.status !== "已取消") {                               // 店家確認後才會收到匯款資訊
+      const inp = el("input", { inputMode: "numeric", maxLength: 5, placeholder: "後五碼", value: dt.last5 || "" });
+      inp.setAttribute("aria-label", "匯款帳號後五碼");
+      const pmsg = el("div", { className: "omsg", textContent: dt.last5 ? "已回報後五碼 " + dt.last5 + "，等待店家對帳確認。" : "" });
+      const send = el("button", { className: "btn primary", type: "button", textContent: dt.last5 ? "更新後五碼" : "回報匯款" });
+      send.addEventListener("click", () => reportPaid(o, inp, send, pmsg));
+      const cp = el("button", { className: "btn", type: "button", textContent: "複製匯款資訊" });
+      cp.addEventListener("click", async () => { pmsg.textContent = (await copyText(dt.pay + "\n應付金額：" + fmt(+dt.due || o.due || o.total))) ? "已複製匯款資訊。" : "無法自動複製，請手動選取。"; });
+      extra.append(el("div", { className: "paybox" }, el("h4", { textContent: "匯款資訊" }),
+        el("div", { className: "ptxt", textContent: dt.pay }),
+        el("div", {}, "應付金額 ", el("span", { className: "pdue", textContent: fmt(+dt.due || o.due || o.total) })),
+        el("div", { className: "prow" }, cp),
+        el("div", { className: "omsg", textContent: "匯款後請填帳號後五碼，方便我們對帳：" }),
+        el("div", { className: "prow" }, inp, send), pmsg));
+    }
+    if (dt.paid) extra.append(el("div", { className: "okline", textContent: "✅ 店家已確認收款" }));
+    if (dt.tracking) {
+      const cp = el("button", { className: "btn", type: "button", textContent: "複製" });
+      cp.addEventListener("click", async () => { cp.textContent = (await copyText(dt.tracking)) ? "已複製" : "請手動複製"; });
+      extra.append(el("div", { className: "trk" }, "物流單號", el("b", { textContent: dt.tracking }), cp));
+    }
+    if (o.status !== "待確認" && o.status !== "已取消") omsg.textContent = "如需更改或取消，請用 LINE 聯繫我們。";
     box.append(el("article", { className: "ord" + (o.status === "已取消" ? " cancelled" : "") },
       el("div", { className: "top" }, el("span", {}, el("span", { className: "oid", textContent: o.id }), " ", el("span", { className: "when", textContent: when })),
         el("span", { className: "st " + stClass(o.status), textContent: o.status })),
       el("ul", {}, ...o.items.map(x => el("li", { textContent: x.name + " × " + x.qty + (x.note ? "（" + x.note + "）" : "") }))),
-      el("div", { className: "bot" }, el("span", { className: "ot", textContent: fmt(o.total) }), acts), omsg));
+      el("div", { className: "bot" }, el("span", { className: "ot", textContent: fmt(+dt.due || o.due || o.total) }), acts), ...(extra.childNodes.length ? [extra] : []), omsg));
   });
 }
 async function refreshStatus(force) {
@@ -2196,7 +2307,11 @@ async function refreshStatus(force) {
   try {
     const j = await api({ action: "status", orders: myOrders.map(o => ({ id: o.id, token: o.token })) });
     if (!j.ok) return;
-    myOrders.forEach(o => { if (j.statuses && j.statuses[o.id]) o.status = String(j.statuses[o.id]).slice(0, 20); });
+    myOrders.forEach(o => {
+      if (j.statuses && j.statuses[o.id]) o.status = String(j.statuses[o.id]).slice(0, 20);
+      const dt = j.details && j.details[o.id];
+      if (dt) o.detail = { paid: !!dt.paid, last5: String(dt.last5 || "").slice(0, 5), tracking: String(dt.tracking || "").slice(0, 40), due: +dt.due || 0, pay: String(dt.pay || "").slice(0, 300) };
+    });
     saveOrders(); renderOrders();
     const d = new Date(); $("ostamp").textContent = "狀態更新於 " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
   } catch (e) { $("ostamp").textContent = "暫時無法取得最新狀態，稍後重新整理再試。"; }
@@ -2211,6 +2326,92 @@ async function cancelMine(o, btn, omsg) {
     btn.disabled = false; omsg.textContent = "取消沒有成功，請稍後再試，或用 LINE 聯繫我們。";
   } catch (e) { btn.disabled = false; omsg.textContent = "無法連線，請稍後再試，或用 LINE 聯繫我們。"; }
 }
+
+async function reportPaid(o, inp, btn, pmsg) {
+  const v = inp.value.trim();
+  if (!/^\d{5}$/.test(v)) { pmsg.textContent = "請輸入 5 位數字。"; inp.focus(); return; }
+  btn.disabled = true; pmsg.textContent = "回報中…";
+  try {
+    const j = await api({ action: "paid", id: o.id, token: o.token, last5: v });
+    if (j.ok) { o.detail = Object.assign({}, o.detail, { last5: v }); saveOrders(); renderOrders(); return; }
+    btn.disabled = false;
+    pmsg.textContent = j.reason === "state" ? "這張訂單目前無法回報匯款，請重新整理或用 LINE 聯繫我們。" : "回報沒有成功，請稍後再試，或用 LINE 聯繫我們。";
+  } catch (e) { btn.disabled = false; pmsg.textContent = "無法連線，請稍後再試。"; }
+}
+
+/* ---------- 分享清單：購物車轉成連結 ---------- */
+function itemKey(cat, it) {                                            // 每個品項的短代碼（分類＋品牌＋品名）
+  let x = 2166136261; const s = cat + "|" + brandOf(it) + "|" + it.label;
+  for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = Math.imul(x, 16777619); }
+  return (x >>> 0).toString(36);
+}
+function shareUrl() {
+  const parts = cartLines().filter(x => x.it).map(({ c, it }) => itemKey(c.cat, it) + (c.qty > 1 ? "*" + c.qty : ""));
+  return location.href.split("#")[0].split("?")[0] + "#list=" + parts.join(".");
+}
+async function shareList() {
+  const url = shareUrl(), msg = $("cartMsg");
+  if (navigator.share) { try { await navigator.share({ title: "我的 SCX30 改裝清單", url }); msg.textContent = ""; return; } catch (e) { if (e && e.name === "AbortError") return; } }
+  msg.textContent = (await copyText(url)) ? "已複製清單連結，貼給朋友或店家，打開就是同一份清單。" : "無法自動複製，請手動複製：" + url;
+}
+function readShared() {
+  const m = location.hash.match(/^#list=([0-9a-z.*]{1,2000})$/);
+  if (!m) { $("secShare").hidden = true; return; }
+  const map = {};
+  data.categories.forEach(cat => cat.items.forEach(it => { map[itemKey(cat.name, it)] = { cat: cat.name, it }; }));
+  const got = [], miss = [];
+  m[1].split(".").filter(Boolean).forEach(p => { const [k, q] = p.split("*"); const hit = map[k]; if (hit) got.push({ ...hit, qty: clampQ(q || 1) }); else miss.push(k); });
+  const card = $("shareCard"); card.replaceChildren();
+  if (!got.length) { card.append(el("p", { textContent: "這份清單裡的商品已經下架或改名，沒有可以加入的品項。" })); }
+  const total = got.reduce((s, g) => s + g.it.price * g.qty, 0);
+  const add = el("button", { className: "btn primary", type: "button", textContent: "全部加入購物車", disabled: !got.length });
+  add.addEventListener("click", () => {
+    got.forEach(g => { const hit = cart.find(c => c.cat === g.cat && c.brand === brandOf(g.it) && c.label === g.it.label);
+      if (hit) hit.qty = Math.min(MAXQ, hit.qty + g.qty); else cart.push({ cat: g.cat, brand: brandOf(g.it), label: g.it.label, qty: g.qty }); });
+    saveCart(); renderCart(); closeShared(); openCart();
+  });
+  const skip = el("button", { className: "btn", type: "button", textContent: "略過" });
+  skip.addEventListener("click", closeShared);
+  if (got.length) card.append(el("ul", {}, ...got.map(g => el("li", { textContent: nameOf(g.it) + " × " + g.qty + "　" + fmt(g.it.price * g.qty) }))));
+  if (miss.length) card.append(el("div", { className: "omsg", textContent: miss.length + " 項商品已下架或改名，沒有列出。" }));
+  card.append(el("div", { className: "sbt" }, el("span", { className: "ot", textContent: fmt(total) }), el("span", { className: "acts" }, skip, add)));
+  $("secShare").hidden = false;
+}
+function closeShared() { $("secShare").hidden = true; history.replaceState(null, "", location.pathname + location.search); }
+addEventListener("hashchange", readShared);
+$("cartShare").onclick = shareList;
+
+/* ---------- 首頁實車照輪播 ---------- */
+let heroKey = "", heroTimer = null, heroPaused = false;
+function renderHero(list) {
+  list = (Array.isArray(list) ? list : []).filter(u => typeof u === "string" && (isLocal(u) || isHttp(u))).slice(0, 12);
+  const key = list.join("|"); if (key === heroKey) return; heroKey = key;
+  const track = $("heroTrack"), dots = $("heroDots");
+  track.replaceChildren(); dots.replaceChildren(); clearInterval(heroTimer);
+  $("hero").hidden = !list.length; if (!list.length) return;
+  list.forEach((u, i) => {
+    const im = el("img", { src: u, alt: "實車照片 " + (i + 1), loading: i ? "lazy" : "eager" });
+    im.addEventListener("error", () => im.closest(".slide").remove());
+    track.append(el("div", { className: "slide" }, im));
+    const d = el("button", { className: "dot" + (i ? "" : " on"), type: "button" }); d.setAttribute("aria-label", "第 " + (i + 1) + " 張");
+    d.addEventListener("click", () => heroGo(i)); dots.append(d);
+  });
+  const multi = list.length > 1;
+  [$("heroPrev"), $("heroNext"), dots].forEach(x => x.hidden = !multi);
+  if (multi && !matchMedia("(prefers-reduced-motion: reduce)").matches)
+    heroTimer = setInterval(() => { if (!heroPaused && !document.hidden) heroGo(heroIdx() + 1); }, Math.max(2, HERO_SECONDS) * 1000);
+}
+const heroIdx = () => Math.round($("heroTrack").scrollLeft / Math.max(1, $("heroTrack").clientWidth));
+function heroGo(i) {
+  const t = $("heroTrack"), n = t.children.length; if (!n) return;
+  i = (i + n) % n; t.scrollTo({ left: i * t.clientWidth, behavior: "smooth" });
+}
+$("heroTrack").addEventListener("scroll", () => { const i = heroIdx(); [...$("heroDots").children].forEach((d, k) => d.classList.toggle("on", k === i)); }, { passive: true });
+$("heroPrev").onclick = () => heroGo(heroIdx() - 1);
+$("heroNext").onclick = () => heroGo(heroIdx() + 1);
+["pointerenter", "touchstart", "focusin"].forEach(ev => $("hero").addEventListener(ev, () => heroPaused = true, { passive: true }));
+["pointerleave", "focusout"].forEach(ev => $("hero").addEventListener(ev, () => heroPaused = false));
+$("hero").addEventListener("touchend", () => setTimeout(() => heroPaused = false, 6000), { passive: true });
 
 /* ---------- 側邊購物車開關 ---------- */
 let lastFocus = null;
@@ -2257,6 +2458,7 @@ if (CHANGELOG.length) {
   $("chg").hidden = false;
 }
 render(EMBED);
+readShared();
 refresh();
 refreshStatus(true);
 </script>
