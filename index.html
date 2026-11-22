@@ -215,7 +215,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .paybox h4{margin:0;font-size:15px}
 .paybox .ptxt{white-space:pre-line;font-size:14px;color:var(--ink);word-break:break-word}
 .paybox .pdue{font-family:var(--disp);font-weight:800;font-size:22px;color:var(--accent)}
-.paybox .prow{display:flex;gap:8px;flex-wrap:wrap}
+.paybox .prow,.ord .prow{display:flex;gap:8px;flex-wrap:wrap}
 .paybox input{width:120px;min-height:38px;padding:6px 10px;font-size:16px;letter-spacing:.15em;background:var(--panel);border:1px solid var(--line);border-radius:8px}
 .okline{color:var(--accent);font-size:14px;font-weight:600}
 .trk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
@@ -1819,14 +1819,17 @@ const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiS
 const LINE_OA_ID = "@293ljwzr";
 // 7-11 門市查詢網址，顯示在「收件門市」下方讓客人查詢。留空就不顯示連結。
 const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";
+// 7-11 交貨便官方貨態查詢頁（需要輸入單號和驗證碼）
+const TRACK_URL = "https://eservice.7-11.com.tw/e-tracking/search.aspx";
 // 運費（要和 Apps Script 的 SHIP_FEE_711、FREE_SHIP_OVER 一樣）
 const SHIP_FEE_711 = 60;   // 7-11 店到店運費，例如 60；null＝還沒設定，顯示「運費另計」
 const FREE_SHIP_OVER = 0;    // 商品滿多少免運，例如 2000；0＝不提供免運
 const HERO_SECONDS = 4;      // 首頁實車照幾秒換一張
-const PAGE_VERSION = "v6.1"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v6.2"; // 網頁程式有改動時，請手動調高這個版本號
 // 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
 const CHANGELOG_DATE = "2026-11-21";
 const CHANGELOG = [
+  "已出貨的訂單新增「查詢物流進度」，一鍵複製單號並打開 7-11 官方查詢頁",
   "「我的訂單」移到畫面下方的按鈕，從側邊打開，需要付款時會有紅點提醒",
   "聯絡資料改為填寫 LINE ID，電話只在 7-11 寄件時填寫"
 ];
@@ -2302,9 +2305,12 @@ function renderOrders() {
     }
     if (dt.paid) extra.append(el("div", { className: "okline", textContent: "✅ 店家已確認收款" }));
     if (dt.tracking) {
-      const cp = el("button", { className: "btn", type: "button", textContent: "複製" });
+      const cp = el("button", { className: "btn", type: "button", textContent: "複製單號" });
       cp.addEventListener("click", async () => { cp.textContent = (await copyText(dt.tracking)) ? "已複製" : "請手動複製"; });
-      extra.append(el("div", { className: "trk" }, "物流單號", el("b", { textContent: dt.tracking }), cp));
+      const go = el("a", { className: "btn primary lineoa", href: TRACK_URL, target: "_blank", rel: "noopener noreferrer", textContent: "查詢物流進度 ↗" });
+      const tip = el("div", { className: "omsg", textContent: "按「查詢物流進度」會自動複製單號並打開 7-11 官方查詢頁，貼上單號、輸入驗證碼即可查詢。" });
+      go.addEventListener("click", () => { copyText(dt.tracking); });
+      extra.append(el("div", { className: "trk" }, "交貨便單號", el("b", { textContent: dt.tracking })), el("div", { className: "prow" }, go, cp), tip);
     }
     if (o.status !== "待確認" && o.status !== "已取消") omsg.textContent = "如需更改或取消，請用 LINE 聯繫我們。";
     box.append(el("article", { className: "ord" + (o.status === "已取消" ? " cancelled" : "") },
