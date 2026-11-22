@@ -110,6 +110,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .cartbar .cnt{color:var(--mute);font-size:14px}
 .cartbar strong{font-family:var(--disp);font-weight:800;font-size:28px;margin-left:10px;color:var(--accent);font-variant-numeric:tabular-nums}
 .cartbar .btn{min-width:132px}
+.cbl{display:flex;align-items:center;gap:12px;min-width:0}
+.cbsum{min-width:0;white-space:nowrap}
+.cartbar .obtn{min-width:0;position:relative;padding:0 14px}
+.ndot{position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:#ff6b5b;border:2px solid var(--bg)}
+.obody{padding:14px 16px 24px}
+.ohint{margin:0 0 12px;color:var(--mute);font-size:13px}
 .badge{display:inline-block;min-width:22px;padding:0 6px;margin-left:6px;border-radius:11px;background:var(--accent-ink);color:var(--accent);font-size:13px;line-height:22px;text-align:center}
 .bump{animation:bump .35s ease}
 @keyframes bump{40%{transform:scale(1.08)}}
@@ -268,7 +274,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
   .pickrow{flex-direction:column}.pickrow select:first-child{flex:none;width:100%}
   .thumb{width:84px;height:84px}
   .drawer{top:auto;left:0;width:100%;height:90vh;height:90dvh;border-left:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;transform:translateY(102%)}
-  .cartbar .btn{min-width:0}
+  .cartbar .btn{min-width:0;padding:0 12px}
+  .cartbar .cnt{display:none}
+  .cartbar strong{font-size:22px;margin-left:0}
+  .cbl{gap:8px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -311,12 +320,6 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div class="list" id="list"><div class="row">載入中…</div></div>
   </section>
 
-  <section class="sec" id="secOrders" hidden>
-    <h2>我的訂單 <small>只顯示在這台裝置送出的訂單</small></h2>
-    <div class="orders" id="orders"></div>
-    <div class="ostamp" id="ostamp"></div>
-  </section>
-
   <section class="sec" id="secFaq" hidden>
     <h2>常見問題</h2>
     <div class="faq" id="faq"></div>
@@ -331,11 +334,22 @@ select:disabled{opacity:.45;cursor:not-allowed}
 </main>
 
 <div class="cartbar"><div class="in">
-  <div><span class="cnt" id="cbCount">購物車 0 件</span><strong id="cbTotal">NT$ 0</strong></div>
+  <div class="cbl">
+    <button id="ordOpen" type="button" class="btn obtn" hidden>我的訂單<span class="ndot" id="ordDot" hidden></span></button>
+    <div class="cbsum"><span class="cnt" id="cbCount">購物車 0 件</span><strong id="cbTotal">NT$ 0</strong></div>
+  </div>
   <button id="cartOpen" type="button" class="btn primary">檢視購物車<span class="badge" id="cbBadge" hidden>0</span></button>
 </div></div>
 
 <div class="backdrop" id="backdrop"></div>
+<aside class="drawer" id="odrawer" role="dialog" aria-modal="true" aria-labelledby="ordTitle" aria-hidden="true">
+  <div class="dhead"><h2 id="ordTitle">我的訂單</h2><button id="ordClose" class="btn" type="button">關閉</button></div>
+  <div class="dbody obody">
+    <p class="ohint">只顯示在這台裝置送出的訂單，可以查看狀態、取消或付款。</p>
+    <div class="orders" id="orders"></div>
+    <div class="ostamp" id="ostamp"></div>
+  </div>
+</aside>
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" aria-hidden="true">
   <div class="dhead"><h2 id="cartTitle">購物車</h2><button id="cartClose" class="btn" type="button">關閉</button></div>
   <div class="dbody">
@@ -343,7 +357,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div class="contact">
       <h3>聯絡資料與備註</h3>
       <label>姓名／稱呼<input id="cName" maxlength="40" autocomplete="name"></label>
-      <label>聯絡方式（電話、LINE ID 或 Email）<input id="cContact" maxlength="80" autocomplete="off"></label>
+      <label>LINE ID（我們會用 LINE 跟你確認訂單）<input id="cContact" maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="例如 abc123"></label>
       <label>其他備註（例如：交貨時間）<textarea id="cRemark" maxlength="300" rows="3"></textarea></label>
       <h3 class="ship">取貨方式</h3>
       <div class="shipm" role="radiogroup" aria-label="取貨方式">
@@ -352,7 +366,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
       </div>
       <div class="contact" id="shipBox" hidden style="padding:0">
       <h3>寄件資料</h3>
-      <label class="chk"><input type="checkbox" id="sSame"> 收件人同上方聯絡人</label>
+      <label class="chk"><input type="checkbox" id="sSame"> 收件人姓名同上方姓名</label>
       <label>收件人姓名（請填寫與證件相同的真實姓名）<input id="sName" maxlength="20" autocomplete="name"></label>
       <label>收件人手機（取件通知會傳到這支手機）<input id="sPhone" maxlength="12" inputmode="tel" autocomplete="tel" placeholder="例如 0912345678"></label>
       <label>7-11 收件門市（門市名稱或店號）<input id="sStore" maxlength="40" autocomplete="off" placeholder="例如 鑫華門市 或 123456"></label>
@@ -385,7 +399,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
 {
- "version": "1.6",
+ "version": "1.5",
  "updated": "2026-11-22",
  "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
@@ -1809,15 +1823,12 @@ const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";
 const SHIP_FEE_711 = 60;   // 7-11 店到店運費，例如 60；null＝還沒設定，顯示「運費另計」
 const FREE_SHIP_OVER = 0;    // 商品滿多少免運，例如 2000；0＝不提供免運
 const HERO_SECONDS = 4;      // 首頁實車照幾秒換一張
-const PAGE_VERSION = "v6.0"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v6.1"; // 網頁程式有改動時，請手動調高這個版本號
 // 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
 const CHANGELOG_DATE = "2026-11-21";
 const CHANGELOG = [
-  "購物車新增取貨方式（7-11 店到店／面交自取），自動計算運費與合計",
-  "訂單確認後，「我的訂單」會顯示匯款資訊，可以直接回報帳號後五碼",
-  "出貨後可以在「我的訂單」看到物流單號",
-  "新增「分享清單」：把購物車做成連結傳給朋友或店家",
-  "首頁新增實車照片"
+  "「我的訂單」移到畫面下方的按鈕，從側邊打開，需要付款時會有紅點提醒",
+  "聯絡資料改為填寫 LINE ID，電話只在 7-11 寄件時填寫"
 ];
 /* ================================================== */
 
@@ -1863,7 +1874,7 @@ function openLb(it) {
 }
 function closeLb() {
   $("lb").hidden = true; $("lbImg").removeAttribute("src");
-  if (!$("drawer").classList.contains("open")) document.body.classList.remove("locked");
+  if (!curD) document.body.classList.remove("locked");
   if (lbFocus) lbFocus.focus({ preventScroll: true });
 }
 $("lbClose").onclick = closeLb;
@@ -1967,7 +1978,6 @@ function renderNav() {
   };
   if ((data.bundles || []).length && !$("secBundles").hidden) add("熱門推薦", $("secBundles"));
   rows.forEach(r => add(r.cat.name, r.box, r.cat.name));
-  if (myOrders.length) add("我的訂單", $("secOrders"));
   if ((data.faq || []).length) add("常見問題", $("secFaq"));
   markNav(); syncActive();
 }
@@ -2164,16 +2174,14 @@ shipRadios.forEach(r => r.addEventListener("change", () => { saveContact(); rend
 Object.values(contactEls).forEach(e => e.addEventListener("input", saveContact));
 const phoneOf = s => String(s || "").replace(/[\s\-()]/g, "");
 const isTwMobile = s => /^09\d{8}$/.test(phoneOf(s));
-function syncSame() {                                                  // 勾選「收件人同上方聯絡人」時帶入姓名和手機
+function syncSame() {                                                  // 勾選「收件人姓名同上方姓名」時帶入姓名
   if (!$("sSame").checked) return;
   contactEls.shipName.value = contactEls.name.value.trim();
-  const m = String(contactEls.contact.value).match(/09[\d\s\-]{8,12}/);
-  if (m && isTwMobile(m[0])) contactEls.shipPhone.value = phoneOf(m[0]);
   saveContact();
 }
 $("sSame").addEventListener("change", () => { syncSame(); saveContact(); });
-[contactEls.name, contactEls.contact].forEach(e => e.addEventListener("input", syncSame));
-[contactEls.shipName, contactEls.shipPhone].forEach(e => e.addEventListener("input", () => { if ($("sSame").checked) { $("sSame").checked = false; saveContact(); } }));
+contactEls.name.addEventListener("input", syncSame);
+contactEls.shipName.addEventListener("input", () => { if ($("sSame").checked) { $("sSame").checked = false; saveContact(); } });
 if (STORE_LOOKUP_URL) { $("storeLink").href = STORE_LOOKUP_URL; $("storeHint").hidden = false; }
 // 取貨方式必選；選 7-11 時三欄都要填，手機要是 09 開頭 10 碼
 function shipCheck() {
@@ -2194,7 +2202,7 @@ function orderText() {
     (() => { const m = shipMethod(), fee = feeFor(total, m);
       return ["", "商品小計：" + fmt(total), "取貨方式：" + (m === "711" ? "7-11 店到店" : m === "pickup" ? "面交自取" : "未選擇"),
         "運費：" + (!m ? "—" : fee == null ? "另計" : fmt(fee)), "合計：" + fmt(total + (fee || 0)) + (m === "711" && fee == null ? " ＋運費" : "")]; })(),
-    v("name") ? ["姓名：" + v("name")] : [], v("contact") ? ["聯絡方式：" + v("contact")] : [], v("remark") ? ["其他備註：" + v("remark")] : [],
+    v("name") ? ["姓名：" + v("name")] : [], v("contact") ? ["LINE ID：" + v("contact")] : [], v("remark") ? ["其他備註：" + v("remark")] : [],
     shipMethod() === "711" && (v("shipName") || v("shipStore")) ? ["", "【7-11 寄件】收件人：" + v("shipName") + "｜手機：" + phoneOf(v("shipPhone")) + "｜門市：" + v("shipStore")] : [],
     ["（價格版本 v" + data.version + "，更新於 " + data.updated + "）"]).join("\n");
 }
@@ -2222,13 +2230,13 @@ function orderPayload() {
 async function sendOrder() {
   const msg = $("cartMsg");
   if (!cartTotals().count) return;
-  if (!contactEls.contact.value.trim()) { msg.textContent = "請先填寫聯絡方式，店家才能聯絡你。"; contactEls.contact.focus(); return; }
+  if (!contactEls.contact.value.trim()) { msg.textContent = "請先填寫 LINE ID，我們才能跟你確認訂單。"; contactEls.contact.focus(); return; }
   const sc = shipCheck(); if (sc) { msg.textContent = sc[1]; sc[0].focus(); return; }
   $("cartSend").disabled = true; msg.textContent = "送出中…";
   try {
     const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(orderPayload()) });
     const j = await r.json();
-    if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認聯絡方式後再試一次，或改用「複製訂單內容」傳給店家。"; return; }
+    if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認 LINE ID 後再試一次，或改用「複製訂單內容」傳給店家。"; return; }
     if (j.id && j.token) {                                             // 記住這張訂單，之後可以在「我的訂單」查狀態或取消
       const pl = orderPayload();
       const f = feeFor(pl.total, pl.shipMethod);
@@ -2238,7 +2246,7 @@ async function sendOrder() {
       myOrders = myOrders.slice(0, 20); saveOrders(); renderOrders(); renderNav();
     }
     cart = []; saveCart(); contactEls.remark.value = ""; saveContact();
-    renderCart(); msg.textContent = "訂單已送出" + (j.id ? "（編號 " + j.id + "）" : "") + "，店家會用你留的聯絡方式與你確認。" + (j.token ? "可以在頁面下方「我的訂單」查看狀態或取消。" : "");
+    renderCart(); msg.textContent = "訂單已送出" + (j.id ? "（編號 " + j.id + "）" : "") + "，我們會用 LINE 跟你確認。" + (j.token ? "之後可以按畫面下方的「我的訂單」查看狀態、取消或付款。" : "");
   } catch (e) {
     renderCart(); msg.textContent = "無法確認訂單是否送出成功，請不要重複送出，改按「複製訂單內容」傳給店家。";
   }
@@ -2258,7 +2266,10 @@ async function api(body) {
 }
 function renderOrders() {
   const box = $("orders"); box.replaceChildren();
-  $("secOrders").hidden = !myOrders.length;
+  $("ordOpen").hidden = !myOrders.length;
+  // 紅點：有訂單需要付款（已收到匯款資訊但還沒回報後五碼）
+  $("ordDot").hidden = !myOrders.some(o => o.detail && o.detail.pay && !o.detail.last5 && o.status !== "已取消");
+  if (!myOrders.length && curD === $("odrawer")) closeD();
   myOrders.forEach(o => {
     const d = new Date(o.at), pad = n => String(n).padStart(2, "0");
     const when = d.getFullYear() + "/" + pad(d.getMonth() + 1) + "/" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
@@ -2417,26 +2428,35 @@ $("heroNext").onclick = () => heroGo(heroIdx() + 1);
 $("hero").addEventListener("touchend", () => setTimeout(() => heroPaused = false, 6000), { passive: true });
 
 /* ---------- 側邊購物車開關 ---------- */
-let lastFocus = null;
-function openCart() {
-  lastFocus = document.activeElement; $("cartMsg").textContent = "";
-  $("drawer").classList.add("open"); $("backdrop").classList.add("open");
-  $("drawer").setAttribute("aria-hidden", "false"); document.body.classList.add("locked");
-  setTimeout(() => $("cartClose").focus(), 50);
+let lastFocus = null, curD = null;                                    // 目前打開的側邊面板（購物車或我的訂單）
+function openD(id) {
+  const keep = curD ? lastFocus : document.activeElement;
+  if (curD) closeD(true);
+  lastFocus = keep; curD = $(id);
+  curD.classList.add("open"); $("backdrop").classList.add("open");
+  curD.setAttribute("aria-hidden", "false"); document.body.classList.add("locked");
+  setTimeout(() => curD && curD.querySelector(".dhead .btn").focus(), 50);
 }
-function closeCart() {
-  $("drawer").classList.remove("open"); $("backdrop").classList.remove("open");
-  $("drawer").setAttribute("aria-hidden", "true"); document.body.classList.remove("locked");
+function closeD(switching) {
+  if (!curD) return;
+  curD.classList.remove("open"); curD.setAttribute("aria-hidden", "true"); curD = null;
+  if (switching) return;
+  $("backdrop").classList.remove("open"); document.body.classList.remove("locked");
   if (lastFocus) lastFocus.focus({ preventScroll: true });
 }
+function openCart() { $("cartMsg").textContent = ""; openD("drawer"); }
+function closeCart() { closeD(); }
+function openOrders() { renderOrders(); openD("odrawer"); refreshStatus(Date.now() - lastStatusAt > 15000); }
 $("cartOpen").onclick = openCart;
 $("cartClose").onclick = closeCart;
-$("backdrop").onclick = closeCart;
+$("ordOpen").onclick = openOrders;
+$("ordClose").onclick = () => closeD();
+$("backdrop").onclick = () => closeD();
 document.addEventListener("keydown", e => {
-  if (!$("drawer").classList.contains("open")) return;
-  if (e.key === "Escape") closeCart();
-  if (e.key === "Tab") {                                               // 鍵盤操作時，焦點留在購物車裡
-    const f = [...$("drawer").querySelectorAll("button:not(:disabled),input:not(.hp),textarea,a[href]:not([hidden])")].filter(x => x.offsetParent);
+  if (!curD) return;
+  if (e.key === "Escape") closeD();
+  if (e.key === "Tab") {                                               // 鍵盤操作時，焦點留在面板裡
+    const f = [...curD.querySelectorAll("button:not(:disabled),input:not(.hp),textarea,a[href]:not([hidden])")].filter(x => x.offsetParent);
     if (!f.length) return;
     if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
     else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
