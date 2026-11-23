@@ -453,7 +453,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
 {
- "version": "1.12",
+ "version": "1.10",
  "updated": "2026-11-23",
  "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
@@ -3241,6 +3241,12 @@ document.addEventListener("keydown", e => {
 $("cartCopy").onclick = copyOrder;
 $("cartSend").onclick = sendOrder;
 $("cartSend").hidden = !ORDER_ENDPOINT;
+if (!ORDER_ENDPOINT) {   // 讀不到設定時，直接在購物車說明原因，不會讓按鈕默默消失
+  $("cartMsg").before(el("p", { className: "dmsg", style: "color:var(--danger)", textContent: (window.SITE_SETTINGS
+    ? "店家尚未設定訂單接收網址（settings.js 的 ORDER_ENDPOINT），"
+    : "讀不到店家設定檔 settings.js，") + "暫時無法線上送出訂單，請按「複製訂單內容」貼到 LINE 給我們。" }));
+  console.warn("ORDER_ENDPOINT 未設定：", window.SITE_SETTINGS ? "settings.js 有載入但沒有 ORDER_ENDPOINT" : "settings.js 沒有載入或有語法錯誤");
+}
 if (!ORDER_ENDPOINT) $("cartCopy").classList.add("primary");          // 沒有後台時，「複製訂單內容」當主要按鈕
 if (LINE_OA_ID) ["cartOA", "footOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; });
 $("cartClear").onclick = () => { if (confirm("確定清空購物車？")) { cart = []; saveCart(); renderCart(); } };
