@@ -2519,19 +2519,16 @@ select:disabled{opacity:.45;cursor:not-allowed}
 }
 </script>
 
-<script src="settings.js"></script>
 <script>
-/* ===================== 設定區 ===================== */
-// 店家設定（後台網址、LINE、運費…）放在 settings.js，更新網頁時不會被蓋掉；這裡只是 settings.js 沒載入時的預設值
-const S_ = window.SITE_SETTINGS || {};
-const ORDER_ENDPOINT = S_.ORDER_ENDPOINT || "";
-const LINE_OA_ID = S_.LINE_OA_ID || "";
-const STORE_LOOKUP_URL = S_.STORE_LOOKUP_URL || "https://emap.pcsc.com.tw/";
-const TRACK_URL = S_.TRACK_URL || "https://eservice.7-11.com.tw/e-tracking/search.aspx";
-const SHIP_FEE_711 = (typeof S_.SHIP_FEE_711 === "number") ? S_.SHIP_FEE_711 : null;
-const FREE_SHIP_OVER = (typeof S_.FREE_SHIP_OVER === "number") ? S_.FREE_SHIP_OVER : 0;
-const HERO_SECONDS = S_.HERO_SECONDS || 4;
-const PAGE_VERSION = "v6.4"; // 網頁程式有改動時，請手動調高這個版本號
+/* ===================== 設定區（店家可修改） ===================== */
+const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec"; // 訂單接收網址（Google Apps Script）
+const LINE_OA_ID = "@293ljwzr";                                                  // LINE 官方帳號 ID
+const SHIP_FEE_711 = 60;                                                         // 7-11 店到店運費（要和 Apps Script 後台一致）
+const FREE_SHIP_OVER = 0;                                                        // 滿多少免運，0＝不設免運
+const HERO_SECONDS = 4;                                                          // 首頁實車照幾秒換一張
+const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";                             // 查詢 7-11 門市
+const TRACK_URL = "https://eservice.7-11.com.tw/e-tracking/search.aspx";          // 查詢物流進度
+const PAGE_VERSION = "v6.5"; // 網頁程式有改動時，請手動調高這個版本號
 // 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
 const CHANGELOG_DATE = "2026-11-22";
 const CHANGELOG = [
@@ -3241,11 +3238,8 @@ document.addEventListener("keydown", e => {
 $("cartCopy").onclick = copyOrder;
 $("cartSend").onclick = sendOrder;
 $("cartSend").hidden = !ORDER_ENDPOINT;
-if (!ORDER_ENDPOINT) {   // 讀不到設定時，直接在購物車說明原因，不會讓按鈕默默消失
-  $("cartMsg").before(el("p", { className: "dmsg", style: "color:var(--danger)", textContent: (window.SITE_SETTINGS
-    ? "店家尚未設定訂單接收網址（settings.js 的 ORDER_ENDPOINT），"
-    : "讀不到店家設定檔 settings.js，") + "暫時無法線上送出訂單，請按「複製訂單內容」貼到 LINE 給我們。" }));
-  console.warn("ORDER_ENDPOINT 未設定：", window.SITE_SETTINGS ? "settings.js 有載入但沒有 ORDER_ENDPOINT" : "settings.js 沒有載入或有語法錯誤");
+if (!ORDER_ENDPOINT) {   // 沒有設定訂單網址時，直接在購物車說明，不會讓按鈕默默消失
+  $("cartMsg").before(el("p", { className: "dmsg", style: "color:var(--danger)", textContent: "目前暫時無法線上送出訂單，請按「複製訂單內容」貼到 LINE 給我們。" }));
 }
 if (!ORDER_ENDPOINT) $("cartCopy").classList.add("primary");          // 沒有後台時，「複製訂單內容」當主要按鈕
 if (LINE_OA_ID) ["cartOA", "footOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; });
