@@ -104,6 +104,45 @@ h1 .zh{color:var(--accent)}
 
 /* 分類列 */
 .list{display:grid;gap:12px}
+.ptabs{position:sticky;z-index:4;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:8px 0;margin:0 0 4px;background:var(--bg)}
+.ptabs::-webkit-scrollbar{display:none}
+.ptab{flex:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
+.ptab.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.ptab .ck{margin-left:4px;font-weight:700}
+.ptab:not(.on) .ck{color:var(--accent)}
+.pbrands{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 10px}
+.pbrands::-webkit-scrollbar{display:none}
+.pbrand{flex:none;border:1px solid var(--line);background:none;color:var(--mute);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.pbrand.on{border-color:var(--accent);color:var(--accent)}
+.plist{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.pi{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);cursor:pointer}
+.pi:first-child{border-top:0}
+.pi.flash{background:rgba(177,242,0,.10)}
+.pi .pth{width:56px;height:56px;border-radius:8px;object-fit:contain;background:#fff;display:block}
+.pi .pth.none{background:var(--panel2)}
+.pi .pn{font-weight:700;font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pi .pm{color:var(--mute);font-size:12px;margin-top:2px;display:flex;flex-wrap:wrap;gap:2px 6px;align-items:center}
+.pi .pm .stk{margin:0;font-size:11px;line-height:17px;padding:0 6px}
+.pi .pr{font-weight:800;color:var(--accent);font-size:15px;text-align:right;white-space:nowrap}
+.pi .pc{display:flex;justify-content:flex-end;margin-top:6px}
+.padd{width:34px;height:34px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font-size:22px;line-height:34px;font-weight:700;cursor:pointer;padding:0}
+.pstep{display:flex;align-items:center;gap:2px;background:var(--panel2);border:1px solid var(--accent);border-radius:999px;padding:2px}
+.pstep button{width:28px;height:28px;border-radius:50%;border:0;background:none;color:var(--ink);font-size:18px;cursor:pointer;padding:0}
+.pstep span{min-width:22px;text-align:center;font-weight:700;font-size:14px}
+.pempty{color:var(--mute);text-align:center;padding:28px 0}
+.pdcard{max-height:88vh;overflow:auto}
+.pdcard .pdimg{width:100%;aspect-ratio:1;object-fit:contain;background:#fff;border-radius:12px;cursor:zoom-in;display:block}
+.pdcard h3{font-size:18px;line-height:1.35}
+.pdcard .pdfull{color:var(--mute);font-size:13px;margin:-6px 0 0}
+.pdcard .sm{color:var(--mute);font-size:13px}
+.pdcard dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:14px}
+.pdcard dt{color:var(--mute)}
+.pdcard dd{margin:0;min-width:0;word-break:break-word}
+.pdcard .pdp{font-size:22px;font-weight:800;color:var(--accent)}
+.pdcard .pdrow{display:flex;gap:8px;align-items:center}
+.pdcard .pdrow .qty{width:70px;text-align:center}
+.pdcard .pdrow .btn{flex:1}
+.pdcard .x{position:sticky;top:0;justify-self:end;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;z-index:1;margin-bottom:-46px}
 .row{display:grid;grid-template-columns:150px minmax(0,1fr) 220px;gap:16px;align-items:start;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;transition:border-color .3s,box-shadow .3s}
 .row.flash{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
 .cat{font-family:var(--disp);font-weight:700;font-size:21px;line-height:1.2;padding-top:8px}
@@ -415,7 +454,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
   <section class="sec" id="secParts">
     <h2 id="partsTitle">全部零件</h2>
     <p class="stockhint" id="stockHint" hidden>目前只顯示有現貨的商品。<button type="button" id="stockOff">顯示全部商品</button></p>
-    <div class="list" id="list"><div class="row">載入中…</div></div>
+    <div class="ptabs" id="ptabs" role="tablist" aria-label="零件分類"></div>
+    <div class="pbrands" id="pbrands"></div>
+    <div class="plist" id="list"><div class="pempty">載入中…</div></div>
     <div id="stockGrid" hidden></div>
   </section>
 
@@ -496,6 +537,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
   </div>
 </aside>
 
+<div class="bm" id="pd" role="dialog" aria-modal="true" aria-label="商品詳細" hidden>
+  <div class="card pdcard" id="pdCard"></div>
+</div>
 <div class="bm" id="bindModal" role="dialog" aria-modal="true" aria-labelledby="bmTitle" hidden>
   <div class="card">
     <div class="ok" id="bmOk">🎉 訂單已送出</div>
@@ -2644,6 +2688,7 @@ const CHANGELOG = [
   "姓名、手機改為必填，LINE ID 改為選填；寄件時可以勾選「收件人姓名、手機同上」。",
   "送出訂單後可一鍵開啟 LINE 訂單通知；首頁新增加入 LINE 官方帳號的按鈕。",
   "現貨會顯示剩餘數量；店家確認訂單後自動扣庫存，賣完自動變成預購。",
+  "「全部零件」改版：上方分類分頁、品牌篩選，商品直接列出圖片與價格，按「＋」就加入購物車，點商品看詳細。",
   "按「現貨」直接列出現貨商品卡，可以直接加入購物車；現貨與熱門推薦改成左右滑動，比較不佔版面。",
   "新增直達網址：#orders 打開我的訂單、#info 跳到購物須知，可放在 LINE 官方帳號的圖文選單。",
   "LINE ID 欄位加上查詢說明與檢查；送出訂單後可以「用 LINE 接收訂單通知」，訂單確認、收款、出貨都會自動傳 LINE。"
@@ -2672,7 +2717,7 @@ const bigUrl = it => imgSrc(it, 1000);
 function thumb(it, cls, zoom) {
   const u = imgUrl(it); if (!u) return null;
   const im = el("img", { className: (cls || "thumb") + (zoom ? " zoom" : ""), src: u, alt: nameOf(it), loading: "lazy", referrerPolicy: "no-referrer" });
-  im.addEventListener("error", () => { if (cls === "ph" || cls === "simg") im.replaceWith(el(cls === "ph" ? "span" : "div", { className: cls + " none" })); else im.remove(); });   // 搜尋結果保留空白位置，版面不會跑掉
+  im.addEventListener("error", () => { if (cls === "ph" || cls === "simg" || cls === "pth") im.replaceWith(el(cls === "ph" ? "span" : "div", { className: cls + " none" })); else im.remove(); });   // 搜尋結果保留空白位置，版面不會跑掉
   if (zoom) {
     im.tabIndex = 0; im.setAttribute("role", "button"); im.setAttribute("aria-label", "放大圖片：" + nameOf(it));
     im.addEventListener("click", e => { e.stopPropagation(); openLb(it); });
@@ -2726,15 +2771,112 @@ async function loadData() {
 async function refresh() { try { render(await loadData()); } catch (e) {} }
 
 /* ---------- 選品區 ---------- */
-function fillItems(row, want) {
-  const b = row.bsel.value;
-  row.shown = b ? visibleItems(row.cat).filter(it => brandOf(it) === b) : [];
-  row.sel.replaceChildren(el("option", { value: "", textContent: b ? "請選擇品項" : "請先選擇品牌" }));
-  row.shown.forEach((it, i) => row.sel.append(el("option", { value: i, textContent: nameOf(it) + (it.stock ? "｜" + it.stock : "") })));
-  row.sel.disabled = !b;
-  const idx = want ? row.shown.findIndex(it => it.label === want) : -1;
-  row.sel.value = idx >= 0 ? String(idx) : "";
+/* ---------- 全部零件：分類分頁＋品牌篩選＋商品清單 ---------- */
+let curCat = "", curBrand = "";
+const cartKeyOf = (catName, it) => cart.find(c => c.cat === catName && c.brand === brandOf(it) && c.label === it.label);
+function setCartQty(catName, it, q) {
+  const hit = cartKeyOf(catName, it);
+  q = Math.max(0, Math.min(MAXQ, q));
+  if (hit) { if (q) hit.qty = q; else cart = cart.filter(c => c !== hit); }
+  else if (q) cart.push({ cat: catName, brand: brandOf(it), label: it.label, qty: q });
+  saveCart(); renderCart();
+  const bar = $("cbTotal"); bar.classList.remove("bump"); void bar.offsetWidth; bar.classList.add("bump");
 }
+function qtyCtl(catName, it) {
+  const hit = cartKeyOf(catName, it);
+  if (!hit) {
+    const b = el("button", { className: "padd", type: "button", textContent: "＋" });
+    b.setAttribute("aria-label", "加入購物車：" + nameOf(it));
+    b.addEventListener("click", e => { e.stopPropagation(); setCartQty(catName, it, 1); });
+    return b;
+  }
+  const m = el("button", { type: "button", textContent: "−" }), p = el("button", { type: "button", textContent: "＋" });
+  m.setAttribute("aria-label", "減少"); p.setAttribute("aria-label", "增加");
+  m.addEventListener("click", e => { e.stopPropagation(); setCartQty(catName, it, hit.qty - 1); });
+  p.addEventListener("click", e => { e.stopPropagation(); setCartQty(catName, it, hit.qty + 1); });
+  const box = el("div", { className: "pstep" }, m, el("span", { textContent: hit.qty }), p);
+  box.addEventListener("click", e => e.stopPropagation());
+  return box;
+}
+function renderTabs() {
+  const box = $("ptabs");
+  const inCart = new Set(cartLines().filter(x => x.it).map(x => x.c.cat));
+  box.replaceChildren(...rows.map(r => {
+    const b = el("button", { className: "ptab" + (r.cat.name === curCat ? " on" : ""), type: "button", role: "tab" }, r.cat.name,
+      inCart.has(r.cat.name) ? el("span", { className: "ck", textContent: "✓" }) : "");
+    b.setAttribute("aria-selected", String(r.cat.name === curCat));
+    b.addEventListener("click", () => { selectCat(r.cat.name); });
+    return b;
+  }));
+  const on = box.querySelector(".ptab.on");
+  if (on && (on.offsetLeft < box.scrollLeft || on.offsetLeft + on.offsetWidth > box.scrollLeft + box.clientWidth)) box.scrollTo({ left: on.offsetLeft - 16 });
+  box.style.top = stickyOffset() - 10 + "px";
+}
+function selectCat(name) {
+  if (curCat !== name) { curCat = name; curBrand = ""; }
+  renderList();
+  const top = $("ptabs").getBoundingClientRect().top;
+  if (top > stickyOffset() + 4 || top < 0) jumpTo($("partsTitle"));
+}
+function renderList() {
+  if (!rows.length) return;
+  renderTabs();
+  const row = rows.find(r => r.cat.name === curCat) || rows[0];
+  const items = row.cat.items;
+  const brands = [...new Set(items.map(brandOf))];
+  if (curBrand && !brands.includes(curBrand)) curBrand = "";
+  const bb = $("pbrands");
+  bb.hidden = brands.length < 2;
+  bb.replaceChildren(...["", ...brands].map(b => {
+    const x = el("button", { className: "pbrand" + (curBrand === b ? " on" : ""), type: "button", textContent: b || "全部品牌" });
+    x.addEventListener("click", () => { curBrand = b; renderList(); });
+    return x;
+  }));
+  const shown = curBrand ? items.filter(it => brandOf(it) === curBrand) : items;
+  const list = $("list");
+  if (!shown.length) { list.replaceChildren(el("div", { className: "pempty", textContent: "這個分類目前沒有商品" })); return; }
+  list.replaceChildren(...shown.map(it => {
+    const img = thumb(it, "pth") || el("div", { className: "pth none" });
+    const r = el("div", { className: "pi", tabIndex: 0 }, img,
+      el("div", {}, el("div", { className: "pn", textContent: nameOf(it) }),
+        el("div", { className: "pm" }, brandOf(it), ...[stockTag(it)].filter(Boolean))),
+      el("div", {}, el("div", { className: "pr", textContent: fmt(it.price) }), el("div", { className: "pc" }, qtyCtl(row.cat.name, it))));
+    r.dataset.label = it.label;
+    r.setAttribute("role", "button"); r.setAttribute("aria-label", "查看詳細：" + nameOf(it));
+    r.addEventListener("click", () => openPd(row.cat.name, it));
+    r.addEventListener("keydown", e => { if (e.key === "Enter" && e.target === r) openPd(row.cat.name, it); });
+    return r;
+  }));
+}
+/* 商品詳細（點清單的一列） */
+function openPd(catName, it) {
+  const big = thumb(it, "pdimg", true);
+  const qty = el("input", { className: "qty", type: "number", min: 1, max: MAXQ, step: 1, value: 1 });
+  qty.setAttribute("inputmode", "numeric"); qty.setAttribute("aria-label", "數量");
+  const add = el("button", { className: "btn primary", type: "button", textContent: "加入購物車" });
+  add.addEventListener("click", () => {
+    const hit = cartKeyOf(catName, it);
+    setCartQty(catName, it, (hit ? hit.qty : 0) + clampQ(qty.value));
+    add.textContent = "已加入 ✓"; setTimeout(() => closePd(), 500);
+  });
+  const x = el("button", { className: "x", type: "button", textContent: "✕" }); x.setAttribute("aria-label", "關閉");
+  x.addEventListener("click", closePd);
+  const info = [["型號", it.sku], ["顏色", it.color], ["官網價", it.usd], ["備註", it.note]].filter(v => v[1]);
+  const link = isHttp(it.url) ? el("a", { className: "plink", href: it.url, target: "_blank", rel: "noopener noreferrer", textContent: "查看官網商品頁 ↗" }) : null;
+  $("pdCard").replaceChildren(...[x, big, stockTag(it) ? el("div", {}, stockTag(it)) : null, el("h3", { textContent: nameOf(it) }),
+    it.short ? el("p", { className: "pdfull", textContent: it.label }) : null,
+    el("div", { className: "sm", textContent: brandOf(it) + "｜" + catName }),
+    info.length ? el("dl", {}, ...info.flatMap(v => [el("dt", { textContent: v[0] }), el("dd", { textContent: v[1] })])) : null,
+    link, el("div", { className: "pdp", textContent: fmt(it.price) }),
+    el("div", { className: "pdrow" }, qty, add),
+    el("small", { textContent: "顏色或其他需求，可以在購物車裡每一項的備註欄填寫。" })].filter(Boolean));
+  $("pd").hidden = false; document.body.classList.add("locked");
+  $("pdCard").scrollTop = 0;
+}
+function closePd() { $("pd").hidden = true; if (!curD) document.body.classList.remove("locked"); }
+$("pd").addEventListener("click", e => { if (e.target === $("pd")) closePd(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("pd").hidden && $("lb").hidden) closePd(); });
+addEventListener("resize", () => { const t = $("ptabs"); if (t) t.style.top = stickyOffset() - 10 + "px"; });
 /* ---------- 即時庫存：店家在後台設定的現貨數量，會蓋過 Excel 的庫存文字 ---------- */
 let liveStock = null;
 const stockKey = it => brandOf(it) + "|" + it.label;
@@ -2763,37 +2905,8 @@ function render(raw) {
   data = applyLive(raw);
   $("ver").textContent = "網頁 " + PAGE_VERSION + "　價格 v" + raw.version + "（更新於 " + raw.updated + "）";
   $("footnote").textContent = raw.footnote || "";
-  const keep = {};
-  rows.forEach(r => { const it = r.sel.value === "" ? null : r.shown[+r.sel.value]; keep[r.cat.name] = { brand: r.bsel.value, label: it ? it.label : "", qty: r.qty.value }; });
-  const list = $("list"); list.replaceChildren(); rows = [];
-  raw.categories.forEach((cat, ci) => {
-    const brands = [...new Set(cat.items.map(brandOf))];
-    const bsel = el("select", { id: "brand" + ci }, el("option", { value: "", textContent: "請選擇品牌" }));
-    bsel.setAttribute("aria-label", cat.name + "的品牌");
-    brands.forEach(b => bsel.append(el("option", { value: b, textContent: b })));
-    const sel = el("select", { id: "cat" + ci }); sel.setAttribute("aria-label", cat.name + "的品項");
-    const detail = el("div", { className: "detail" });
-    const price = el("div", { className: "price empty", textContent: "—" }); price.setAttribute("aria-live", "polite");
-    const k = keep[cat.name];
-    const qty = el("input", { id: "qty" + ci, className: "qty", type: "number", min: 1, max: MAXQ, step: 1, value: (k && k.qty) || 1 });
-    qty.setAttribute("inputmode", "numeric"); qty.setAttribute("aria-label", cat.name + "的數量");
-    const add = el("button", { className: "btn primary", type: "button", textContent: "加入購物車", disabled: true });
-    const box = el("div", { className: "row", id: "row" + ci });
-    const row = { cat, brands, bsel, sel, qty, add, price, detail, box, shown: [] };
-    if (brands.length === 1) bsel.value = brands[0];
-    else if (k && brands.includes(k.brand)) bsel.value = k.brand;
-    fillItems(row, k && k.label);
-    bsel.addEventListener("change", () => { fillItems(row); updateRows(); });
-    sel.addEventListener("change", updateRows);
-    qty.addEventListener("input", updateRows);
-    qty.addEventListener("change", () => { qty.value = clampQ(qty.value); updateRows(); });
-    add.addEventListener("click", () => addToCart(row));
-    box.append(el("label", { className: "cat", htmlFor: "brand" + ci, textContent: cat.name }),
-      el("div", { className: "pick" }, el("div", { className: "pickrow" }, bsel, sel), detail),
-      el("div", { className: "buy" }, price, el("div", { className: "buyrow" }, qty, add)));
-    list.append(box);
-    rows.push(row);
-  });
+  rows = raw.categories.map((cat, ci) => ({ cat, ci }));
+  if (!rows.some(r => r.cat.name === curCat)) curCat = rows.length ? rows[0].cat.name : "";
   buildIndex();
   renderHero(raw.hero);
   renderBundles();
@@ -2808,26 +2921,15 @@ let onlyStock = /^#stock$/.test(location.hash);
 function inStock(it) { return !!it.stock && stockKind(it.stock) === "ok"; }
 function visibleItems(cat) { return onlyStock ? cat.items.filter(inStock) : cat.items; }
 function applyStockFilter() {
-  rows.forEach(row => {
-    const vis = visibleItems(row.cat);
-    const brands = [...new Set(vis.map(brandOf))];
-    const curB = row.bsel.value, curIt = row.sel.value === "" ? null : row.shown[+row.sel.value];
-    row.bsel.replaceChildren(el("option", { value: "", textContent: "請選擇品牌" }), ...brands.map(b => el("option", { value: b, textContent: b })));
-    row.bsel.value = brands.includes(curB) ? curB : (brands.length === 1 ? brands[0] : "");
-    fillItems(row, curIt && vis.includes(curIt) ? curIt.label : undefined);
-    row.box.hidden = !vis.length;
-    const chip = $("catnav").querySelector('.chip[data-cat="' + CSS.escape(row.cat.name) + '"]');
-    if (chip) chip.hidden = onlyStock || !vis.length;      // 只看現貨時改用下面的商品卡，分類按鈕先收起來
-  });
-  $("list").hidden = onlyStock;
-  renderStockGrid();
   const sb = $("stockChip");
   if (sb) { sb.classList.toggle("on", onlyStock); sb.setAttribute("aria-pressed", String(onlyStock)); }
   $("partsTitle").textContent = onlyStock ? "現貨零件" : "全部零件";
   $("stockHint").hidden = !onlyStock;
-  updateRows(); syncActive();
-}
-/* 只看現貨：直接列出商品卡，不用再選分類、品牌 */
+  ["ptabs", "list"].forEach(id => { $(id).hidden = onlyStock; });
+  if (onlyStock) $("pbrands").hidden = true; else renderList();
+  renderStockGrid();
+  syncActive();
+}/* 只看現貨：直接列出商品卡，不用再選分類、品牌 */
 function renderStockGrid() {
   const box = $("stockGrid");
   box.hidden = !onlyStock;
@@ -2888,17 +2990,11 @@ function renderNav() {
     nav.append(sb);
   } else onlyStock = false;
   if ((data.bundles || []).length && !$("secBundles").hidden) add("熱門推薦", $("secBundles"));
-  rows.forEach(r => add(r.cat.name, r.box, r.cat.name));
+  if (rows.length) add("全部零件", $("secParts"));
   if ((data.notice || []).length || (data.faq || []).length) add("須知與問答", $("secFaq"));
   markNav(); syncActive();
 }
-function markNav() {                                                    // 購物車裡有東西的分類打勾
-  const inCart = new Set(cartLines().filter(x => x.it).map(x => x.c.cat));
-  $("catnav").querySelectorAll(".chip[data-cat]").forEach(b => {
-    const has = inCart.has(b.dataset.cat), ck = b.querySelector(".ck");
-    if (has && !ck) b.append(el("span", { className: "ck", textContent: "✓" })); else if (!has && ck) ck.remove();
-  });
-}
+function markNav() { if (rows.length && !onlyStock && $("ptabs").childElementCount) renderTabs(); }   // 購物車裡有東西的分類，在分類分頁上打勾
 let ticking = false;
 function syncActive() {
   const off = stickyOffset() + 40; let cur = null;
@@ -2976,33 +3072,8 @@ function renderPoints() {
 /* ---------- 庫存標籤 ---------- */
 function stockKind(s) { s = String(s || ""); return /現貨|有貨/.test(s) ? "ok" : /缺貨|售完|停產|停售|暫停/.test(s) ? "no" : "wait"; }
 function stockTag(it) { return it.stock ? el("span", { className: "stk " + stockKind(it.stock), textContent: it.stock }) : null; }
-function updateRows() {
-  rows.forEach(({ sel, shown, qty, add, price, detail }) => {
-    if (sel.value === "") { price.textContent = "—"; price.className = "price empty"; detail.replaceChildren(); delete detail.dataset.key; add.disabled = true; return; }
-    const it = shown[+sel.value], q = clampQ(qty.value);
-    price.textContent = fmt(it.price * q); price.className = "price"; add.disabled = false;
-    const txt = ["單價：" + fmt(it.price) + " × " + q, it.sku && "型號：" + it.sku, it.color && "顏色：" + it.color, it.usd && "官網價：" + it.usd, it.note && "備註：" + it.note].filter(Boolean).join("\n");
-    if (detail.dataset.key !== it.label) {
-      detail.dataset.key = it.label;
-      const t = el("div", { className: "txt" });
-      detail.replaceChildren(...[thumb(it, "thumb", true), t].filter(Boolean));
-    }
-    const t = detail.querySelector(".txt");
-    const link = isHttp(it.url) ? [document.createTextNode("\n"), el("a", { className: "plink", href: it.url, target: "_blank", rel: "noopener noreferrer", textContent: "查看商品頁 ↗" })] : [];
-    t.replaceChildren(...[stockTag(it)].filter(Boolean), ...(it.short ? [el("span", { className: "full", textContent: it.label })] : []), document.createTextNode(txt), ...link);
-  });
-}
-function addToCart(row) {
-  if (row.sel.value === "") return;
-  const it = row.shown[+row.sel.value], q = clampQ(row.qty.value), brand = brandOf(it);
-  const hit = cart.find(c => c.cat === row.cat.name && c.brand === brand && c.label === it.label);
-  if (hit) hit.qty = Math.min(MAXQ, hit.qty + q); else cart.push({ cat: row.cat.name, brand, label: it.label, qty: q });
-  saveCart(); renderCart();
-  row.sel.value = ""; row.qty.value = 1; updateRows();
-  row.add.textContent = "已加入 ✓"; setTimeout(() => { row.add.textContent = "加入購物車"; }, 1200);
-  const bar = $("cbTotal"); bar.classList.remove("bump"); void bar.offsetWidth; bar.classList.add("bump");
-}
-
+function updateRows() { if (!onlyStock) renderList(); }
+function addToCart() {}
 /* ---------- 搜尋 ---------- */
 let index = [];
 const norm = s => String(s || "").toLowerCase().replace(/[\s\-_/()（）"'.,]+/g, "");
@@ -3037,13 +3108,16 @@ function showResults() {
 }
 function pick(ri, it) {
   const row = rows[ri];
-  row.bsel.value = brandOf(it); fillItems(row, it.label); row.qty.value = 1; updateRows();
   $("q").value = ""; showResults();
-  row.box.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
-  row.box.classList.add("flash"); setTimeout(() => row.box.classList.remove("flash"), 1600);
-  setTimeout(() => row.add.focus({ preventScroll: true }), 350);
-}
-$("q").addEventListener("input", showResults);
+  if (onlyStock && !inStock(it)) setOnlyStock(false);
+  if (!onlyStock) { curCat = row.cat.name; curBrand = ""; renderList(); }
+  jumpTo($("partsTitle"));
+  setTimeout(() => {
+    const r = [...$("list").querySelectorAll(".pi")].find(x => x.dataset.label === it.label);
+    if (r) { r.classList.add("flash"); setTimeout(() => r.classList.remove("flash"), 1600); }
+    openPd(row.cat.name, it);
+  }, 250);
+}$("q").addEventListener("input", showResults);
 $("q").addEventListener("focus", showResults);
 $("q").addEventListener("keydown", e => {
   if (e.key === "Escape") { $("q").value = ""; showResults(); }
@@ -3093,6 +3167,7 @@ function renderCart() {
   ["cartCopy", "cartSend", "cartShare"].forEach(id => $(id).disabled = !count);
   $("cartClear").disabled = !cart.length;
   markNav();
+  if (rows.length && !onlyStock) renderList();
 }
 
 // 聯絡與寄件資料只存在客人自己的瀏覽器，方便下次不用重填
