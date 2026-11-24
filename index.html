@@ -127,6 +127,21 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .lineoa{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;text-align:center}
 .footbtns{display:flex;gap:8px;flex-wrap:wrap}
 .btn.lineapp{background:#06c755;border-color:#06c755;color:#fff;font-weight:700}
+.oaband{display:flex;align-items:center;gap:12px;margin:-8px 0 22px;padding:12px 14px;border:1px solid #1d5c34;border-radius:12px;background:rgba(6,199,85,.08)}
+.oaband>div{flex:1;min-width:0}
+.oaband strong{display:block;font-size:15px}
+.oaband small{display:block;color:#cfcfc8;font-size:13px;line-height:1.5;margin-top:2px}
+.oaband .btn{flex:none}
+.bm{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:20px}
+.bm[hidden]{display:none}
+.bm .card{width:min(420px,100%);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 20px;display:grid;gap:12px}
+.bm h3{margin:0;font-size:20px}
+.bm .ok{color:var(--accent);font-weight:700;font-size:14px}
+.bm ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:14px;color:#cfcfc8}
+.bm li::before{content:"✓";color:#06c755;font-weight:700;margin-right:6px}
+.bm .btn{width:100%;padding:14px;font-size:16px}
+.bm .later{background:none;border:0;color:var(--mute);font:inherit;font-size:14px;cursor:pointer;padding:4px;text-decoration:underline}
+.bm small{color:var(--mute);font-size:12px;line-height:1.5}
 .btn.danger{color:var(--danger)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .buyrow .btn{flex:1;padding:0 8px}
@@ -335,11 +350,15 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div class="brandhead"><img src="logo.png" alt="山稜RC選物" width="88" height="88"><div><p class="shop">山稜RC選物</p><h1><span class="nw">Axial SCX30</span> <span class="nw zh">改裝零件報價</span></h1><p class="slogan">小車，也要走上大稜線。</p></div></div>
     <ol class="steps" aria-label="訂購流程">
       <li><b>1</b><span><strong>選零件</strong><small>搜尋或依分類加入購物車</small></span></li>
-      <li><b>2</b><span><strong>送出訂單</strong><small>填 LINE ID 與取貨方式</small></span></li>
-      <li><b>3</b><span><strong>確認後匯款</strong><small>匯款資訊在「我的訂單」</small></span></li>
+      <li><b>2</b><span><strong>送出訂單</strong><small>填姓名、手機與取貨方式</small></span></li>
+      <li><b>3</b><span><strong>確認後匯款</strong><small>匯款資訊傳到 LINE 或「我的訂單」</small></span></li>
       <li><b>4</b><span><strong>出貨取貨</strong><small>7-11 店到店或面交</small></span></li>
     </ol>
     <ul class="points" id="points" hidden></ul>
+    <div class="oaband" id="oaBand" hidden>
+      <div><strong>歡迎加入「山稜RC選物」LINE 官方帳號</strong><small>新品到貨、現貨補貨、優惠活動第一時間通知你，有任何問題也能直接在 LINE 詢問。</small></div>
+      <a class="btn lineapp lineoa" id="bandOA" href="#" target="_blank" rel="noopener noreferrer">加入好友</a>
+    </div>
     <div class="hero" id="hero" hidden>
       <div class="track" id="heroTrack" aria-label="實車照片"></div>
       <button class="nav prev" id="heroPrev" type="button" aria-label="上一張">‹</button>
@@ -410,10 +429,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div id="cartLines"></div>
     <div class="contact">
       <h3>聯絡資料與備註</h3>
-      <label>姓名／稱呼<input id="cName" maxlength="40" autocomplete="name"></label>
-      <label>LINE ID（是「ID」，不是 LINE 名稱）<input id="cContact" maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="例如 shanleng_rc"></label>
+      <label>姓名（必填）<input id="cName" maxlength="40" autocomplete="name"></label>
+      <label>手機（必填）<input id="cPhone" maxlength="12" inputmode="tel" autocomplete="tel" placeholder="例如 0912345678"></label>
+      <label>LINE ID（選填，是「ID」不是 LINE 名稱）<input id="cContact" maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="例如 shanleng_rc"></label>
       <p class="hint" id="cIdHint">查詢方式：打開 LINE →「主頁」→ 右上角齒輪 →「個人檔案」→「ID」。LINE ID 只會有英文小寫、數字和 . _ -，不會有中文或空格。</p>
-      <label class="chk"><input type="checkbox" id="cNoId"> 我沒有設定 LINE ID（送出訂單後，請按「用 LINE 接收訂單通知」，我們會用官方帳號跟你聯繫）</label>
       <label>其他備註（例如：交貨時間）<textarea id="cRemark" maxlength="300" rows="3"></textarea></label>
       <h3 class="ship">取貨方式</h3>
       <div class="shipm" role="radiogroup" aria-label="取貨方式">
@@ -422,7 +441,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
       </div>
       <div class="contact" id="shipBox" hidden style="padding:0">
       <h3>寄件資料</h3>
-      <label class="chk"><input type="checkbox" id="sSame"> 收件人姓名同上方姓名</label>
+      <label class="chk"><input type="checkbox" id="sSame"> 收件人姓名、手機同上</label>
       <label>收件人姓名（請填寫與證件相同的真實姓名）<input id="sName" maxlength="20" autocomplete="name"></label>
       <label>收件人手機（取件通知會傳到這支手機）<input id="sPhone" maxlength="12" inputmode="tel" autocomplete="tel" placeholder="例如 0912345678"></label>
       <label>7-11 收件門市（門市名稱或店號）<input id="sStore" maxlength="40" autocomplete="off" placeholder="例如 鑫華門市 或 123456"></label>
@@ -435,7 +454,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
         <ul id="cnList"></ul>
         <p>送出訂單即表示同意本店購物須知。<button type="button" id="cnMore">看完整購物須知</button></p>
       </div>
-      <a class="btn lineapp lineoa" id="cartOA" href="#" target="_blank" rel="noopener noreferrer" hidden>有問題？加入 LINE 官方帳號聯繫我們</a>
+      <a class="btn lineapp lineoa" id="cartOA" href="#" target="_blank" rel="noopener noreferrer" hidden>加入 LINE 官方帳號（新品、現貨消息＋線上詢問）</a>
     </div>
   </div>
   <div class="dfoot">
@@ -451,6 +470,20 @@ select:disabled{opacity:.45;cursor:not-allowed}
   </div>
 </aside>
 
+<div class="bm" id="bindModal" role="dialog" aria-modal="true" aria-labelledby="bmTitle" hidden>
+  <div class="card">
+    <div class="ok" id="bmOk">🎉 訂單已送出</div>
+    <h3 id="bmTitle">最後一步：用 LINE 接收訂單通知</h3>
+    <ul>
+      <li>訂單確認後，匯款資訊直接傳到 LINE</li>
+      <li>匯款後在 LINE 回覆帳號後五碼就完成回報</li>
+      <li>出貨時通知你 7-11 物流單號</li>
+    </ul>
+    <a class="btn lineapp lineoa" id="bmGo" href="#" target="_blank" rel="noopener noreferrer">打開 LINE 開啟通知</a>
+    <small>按下後會打開 LINE 官方帳號並帶好一句訊息，按「傳送」就完成。還沒加好友的話，請一併加入好友才收得到通知。</small>
+    <button class="later" type="button" id="bmLater">稍後再說（之後可以在「我的訂單」開啟）</button>
+  </div>
+</div>
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="商品大圖" hidden>
   <button class="btn x" id="lbClose" type="button">關閉</button>
   <img id="lbImg" alt="">
@@ -2554,6 +2587,8 @@ const CHANGELOG = [
   "首頁新增訂購四步驟與重點提醒，購物車送出前也會列出重點；購物須知與常見問題合併在頁面下方。",
   "品項會顯示庫存狀態，例如現貨或預計到貨時間。",
   "分類列最前面新增「現貨」按鈕，一鍵只顯示有現貨的商品。",
+  "姓名、手機改為必填，LINE ID 改為選填；寄件時可以勾選「收件人姓名、手機同上」。",
+  "送出訂單後可一鍵開啟 LINE 訂單通知；首頁新增加入 LINE 官方帳號的按鈕。",
   "LINE ID 欄位加上查詢說明與檢查；送出訂單後可以「用 LINE 接收訂單通知」，訂單確認、收款、出貨都會自動傳 LINE。"
 ];
 /* ================================================== */
@@ -2947,7 +2982,7 @@ function renderCart() {
 }
 
 // 聯絡與寄件資料只存在客人自己的瀏覽器，方便下次不用重填
-const contactEls = { name: $("cName"), contact: $("cContact"), remark: $("cRemark"), shipName: $("sName"), shipPhone: $("sPhone"), shipStore: $("sStore") };
+const contactEls = { name: $("cName"), phone: $("cPhone"), contact: $("cContact"), remark: $("cRemark"), shipName: $("sName"), shipPhone: $("sPhone"), shipStore: $("sStore") };
 const shipRadios = [...document.querySelectorAll('input[name="shipm"]')];
 const shipMethod = () => (shipRadios.find(r => r.checked) || {}).value || "";
 function feeFor(total, m) {                                            // 運費：面交 0；7-11 依設定，滿額免運；沒設定回傳 null（另計）
@@ -2956,20 +2991,22 @@ function feeFor(total, m) {                                            // 運費
   if (FREE_SHIP_OVER > 0 && total >= FREE_SHIP_OVER) return 0;
   return SHIP_FEE_711;
 }
-function loadContact() { try { const o = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}"); for (const k in contactEls) contactEls[k].value = o[k] || ""; $("sSame").checked = !!o.same; $("cNoId").checked = !!o.noId; if (o.noId) { contactEls.contact.value = NO_ID_TEXT; contactEls.contact.disabled = true; } shipRadios.forEach(r => r.checked = r.value === o.ship); } catch (e) {} }
-function saveContact() { try { const o = { same: $("sSame").checked, noId: $("cNoId").checked, ship: shipMethod() }; for (const k in contactEls) o[k] = contactEls[k].value; localStorage.setItem(CONTACT_KEY, JSON.stringify(o)); } catch (e) {} }
+function loadContact() { try { const o = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}"); for (const k in contactEls) contactEls[k].value = o[k] || ""; $("sSame").checked = !!o.same; shipRadios.forEach(r => r.checked = r.value === o.ship); } catch (e) {} }
+function saveContact() { try { const o = { same: $("sSame").checked, ship: shipMethod() }; for (const k in contactEls) o[k] = contactEls[k].value; localStorage.setItem(CONTACT_KEY, JSON.stringify(o)); } catch (e) {} }
 shipRadios.forEach(r => r.addEventListener("change", () => { saveContact(); renderCart(); $("cartMsg").textContent = ""; }));
 Object.values(contactEls).forEach(e => e.addEventListener("input", saveContact));
 const phoneOf = s => String(s || "").replace(/[\s\-()]/g, "");
 const isTwMobile = s => /^09\d{8}$/.test(phoneOf(s));
-function syncSame() {                                                  // 勾選「收件人姓名同上方姓名」時帶入姓名
+function syncSame() {                                                  // 勾選「收件人姓名、手機同上」時帶入上方的姓名和手機
   if (!$("sSame").checked) return;
   contactEls.shipName.value = contactEls.name.value.trim();
+  contactEls.shipPhone.value = contactEls.phone.value.trim();
   saveContact();
 }
 $("sSame").addEventListener("change", () => { syncSame(); saveContact(); });
 contactEls.name.addEventListener("input", syncSame);
-contactEls.shipName.addEventListener("input", () => { if ($("sSame").checked) { $("sSame").checked = false; saveContact(); } });
+contactEls.phone.addEventListener("input", syncSame);
+[contactEls.shipName, contactEls.shipPhone].forEach(x => x.addEventListener("input", () => { if ($("sSame").checked) { $("sSame").checked = false; saveContact(); } }));
 if (STORE_LOOKUP_URL) { $("storeLink").href = STORE_LOOKUP_URL; $("storeHint").hidden = false; }
 // 取貨方式必選；選 7-11 時三欄都要填，手機要是 09 開頭 10 碼
 function shipCheck() {
@@ -2990,7 +3027,7 @@ function orderText() {
     (() => { const m = shipMethod(), fee = feeFor(total, m);
       return ["", "商品小計：" + fmt(total), "取貨方式：" + (m === "711" ? "7-11 店到店" : m === "pickup" ? "面交自取" : "未選擇"),
         "運費：" + (!m ? "—" : fee == null ? "另計" : fmt(fee)), "合計：" + fmt(total + (fee || 0)) + (m === "711" && fee == null ? " ＋運費" : "")]; })(),
-    v("name") ? ["姓名：" + v("name")] : [], v("contact") ? ["LINE ID：" + v("contact")] : [], v("remark") ? ["其他備註：" + v("remark")] : [],
+    v("name") ? ["姓名：" + v("name")] : [], v("phone") ? ["手機：" + phoneOf(v("phone"))] : [], v("contact") ? ["LINE ID：" + v("contact")] : [], v("remark") ? ["其他備註：" + v("remark")] : [],
     shipMethod() === "711" && (v("shipName") || v("shipStore")) ? ["", "【7-11 寄件】收件人：" + v("shipName") + "｜手機：" + phoneOf(v("shipPhone")) + "｜門市：" + v("shipStore")] : [],
     ["（價格版本 v" + data.version + "，更新於 " + data.updated + "）"]).join("\n");
 }
@@ -3009,35 +3046,27 @@ const lineUrl = () => "https://line.me/R/ti/p/" + encodeURIComponent(LINE_OA_ID)
 function orderPayload() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
   return { sentAt: new Date().toISOString(), priceVersion: data.version, pageVersion: PAGE_VERSION,
-    name: v("name"), contact: v("contact"), remark: v("remark"), website: $("cHp").value,
+    name: v("name"), phone: phoneOf(v("phone")), contact: v("contact").replace(/^@/, "") || "未填", remark: v("remark"), website: $("cHp").value,
     shipMethod: shipMethod(),
     shipName: shipMethod() === "711" ? v("shipName") : "", shipPhone: shipMethod() === "711" ? phoneOf(v("shipPhone")) : "", shipStore: shipMethod() === "711" ? v("shipStore") : "",
     items: lines.map(({ c, it }) => ({ category: c.cat, brand: c.brand, label: it.label, sku: it.sku || "", qty: c.qty, unitPrice: it.price, subtotal: it.price * c.qty, note: (c.note || "").trim() })),
     total, text: orderText() };
 }
 /* ---------- LINE ID 檢查：很多人會填成 LINE 名稱 ---------- */
-const NO_ID_TEXT = "（沒有 LINE ID，請用官方帳號聯繫）";
 function lineIdProblem(v) {
   v = String(v || "").trim();
-  if (!v) return "請填寫 LINE ID，或勾選「我沒有設定 LINE ID」。";
+  if (!v) return "";
   const id = v.replace(/^@/, "");
-  if (/[^\x00-\x7F]/.test(id) || /\s/.test(id)) return "「" + v.slice(0, 20) + "」看起來是 LINE 名稱，不是 LINE ID。LINE ID 只有英文、數字和 . _ -，請照上面的方式查詢；沒有設定 ID 的話，請勾選「我沒有設定 LINE ID」。";
+  if (/[^\x00-\x7F]/.test(id) || /\s/.test(id)) return "「" + v.slice(0, 20) + "」看起來是 LINE 名稱，不是 LINE ID。LINE ID 只有英文、數字和 . _ -，請照上面的方式查詢，或直接留空（LINE ID 是選填）。";
   if (!/^[A-Za-z0-9._-]{4,20}$/.test(id)) return "LINE ID 是 4～20 個英文、數字或 . _ - ，請再確認一次。";
   return "";
 }
-function syncNoId() {
-  const no = $("cNoId").checked, inp = contactEls.contact;
-  if (no) { if (inp.value && inp.value !== NO_ID_TEXT) inp.dataset.prev = inp.value; inp.value = NO_ID_TEXT; inp.disabled = true; }
-  else { if (inp.value === NO_ID_TEXT) inp.value = inp.dataset.prev || ""; inp.disabled = false; }
-  checkIdHint(false);
-}
 function checkIdHint(show) {
   const h = $("cIdHint"), v = contactEls.contact.value.trim();
-  const prob = $("cNoId").checked || !v ? "" : lineIdProblem(v);
+  const prob = !v ? "" : lineIdProblem(v);
   h.classList.toggle("bad", !!prob && show !== false);
   h.textContent = prob && show !== false ? prob : "查詢方式：打開 LINE →「主頁」→ 右上角齒輪 →「個人檔案」→「ID」。LINE ID 只會有英文小寫、數字和 . _ -，不會有中文或空格。";
 }
-$("cNoId").addEventListener("change", () => { syncNoId(); saveContact(); });
 contactEls.contact.addEventListener("blur", () => checkIdHint(true));
 contactEls.contact.addEventListener("input", () => { if ($("cIdHint").classList.contains("bad")) checkIdHint(true); });
 
@@ -3049,8 +3078,18 @@ function bindBox(o, big) {
   const a = el("a", { className: "btn primary lineoa", href: bindUrl(o), target: "_blank", rel: "noopener noreferrer", textContent: "📲 用 LINE 接收訂單通知" });
   a.addEventListener("click", () => { o.bindAsked = true; saveOrders(); setTimeout(() => refreshStatus(true), 15000); });
   return el("div", { className: "linebind" }, a,
-    el("p", { textContent: (big ? "推薦！" : "") + "按下後會打開 LINE 並帶好一句訊息，直接按「傳送」就完成。之後訂單確認（附匯款資訊）、收到款項、出貨（附物流單號）都會自動傳 LINE 通知你。請記得先加入好友。" }));
+    el("p", { textContent: (big ? "推薦！" : "") + "按下後會打開 LINE 並帶好一句訊息，直接按「傳送」就完成。之後訂單確認（附匯款資訊）、收到款項、出貨（附物流單號）都會自動傳 LINE 通知你，匯款後也可以直接在 LINE 回覆帳號後五碼。請記得先加入好友。" }));
 }
+function showBindModal(o) {
+  $("bmOk").textContent = "🎉 訂單已送出（編號 " + o.id + "）";
+  $("bmGo").href = bindUrl(o);
+  $("bindModal").hidden = false;
+}
+$("bmGo").addEventListener("click", () => {
+  const o = myOrders[0]; if (o) { o.bindAsked = true; saveOrders(); }
+  $("bindModal").hidden = true; setTimeout(() => refreshStatus(true), 15000);
+});
+$("bmLater").addEventListener("click", () => { $("bindModal").hidden = true; });
 async function fetchBindCodes() {
   if (!ORDER_ENDPOINT || !LINE_OA_ID) return;
   const need = myOrders.filter(o => !o.bindCode && o.status !== "已取消" && o.status !== "已出貨" && !(o.detail && o.detail.line)).slice(0, 20);
@@ -3066,10 +3105,10 @@ async function fetchBindCodes() {
 async function sendOrder() {
   const msg = $("cartMsg");
   if (!cartTotals().count) return;
-  if (!$("cNoId").checked) {
-    const prob = lineIdProblem(contactEls.contact.value);
-    if (prob) { msg.textContent = prob; checkIdHint(true); contactEls.contact.focus(); return; }
-  }
+  if (!contactEls.name.value.trim()) { msg.textContent = "請填寫姓名。"; contactEls.name.focus(); return; }
+  if (!isTwMobile(contactEls.phone.value)) { msg.textContent = "請填寫手機（09 開頭的 10 碼號碼）。"; contactEls.phone.focus(); return; }
+  const idProb = lineIdProblem(contactEls.contact.value);
+  if (idProb) { msg.textContent = idProb; checkIdHint(true); contactEls.contact.focus(); return; }
   const sc = shipCheck(); if (sc) { msg.textContent = sc[1]; sc[0].focus(); return; }
   $("cartSend").disabled = true; msg.textContent = "送出中…";
   try {
@@ -3091,7 +3130,7 @@ async function sendOrder() {
       try {
         const b = await api({ action: "bindcode", orders: [{ id: j.id, token: j.token }] });
         const c = b && b.ok && b.codes && b.codes[j.id];
-        if (o && typeof c === "string" && /^[A-Z0-9]{6}$/.test(c)) { o.bindCode = c; saveOrders(); renderOrders(); msg.after(bindBox(o, true)); }
+        if (o && typeof c === "string" && /^[A-Z0-9]{6}$/.test(c)) { o.bindCode = c; saveOrders(); renderOrders(); msg.after(bindBox(o, true)); showBindModal(o); }
       } catch (e) {}
     }
   } catch (e) {
@@ -3144,7 +3183,7 @@ function renderOrders() {
         el("div", { className: "ptxt", textContent: dt.pay }),
         el("div", {}, "應付金額 ", el("span", { className: "pdue", textContent: fmt(+dt.due || o.due || o.total) })),
         el("div", { className: "prow" }, cp),
-        el("div", { className: "omsg", textContent: "匯款後請填帳號後五碼，方便我們對帳：" }),
+        el("div", { className: "omsg", textContent: dt.line ? "匯款後直接在 LINE 回覆帳號後五碼即可，或在這裡填寫：" : "匯款後請填帳號後五碼，方便我們對帳：" }),
         el("div", { className: "prow" }, inp, send), pmsg));
     }
     if (dt.paid) extra.append(el("div", { className: "okline", textContent: "✅ 店家已確認收款" }));
@@ -3322,7 +3361,7 @@ if (!ORDER_ENDPOINT) {   // 沒有設定訂單網址時，直接在購物車說�
   $("cartMsg").before(el("p", { className: "dmsg", style: "color:var(--danger)", textContent: "目前暫時無法線上送出訂單，請按「複製訂單內容」貼到 LINE 給我們。" }));
 }
 if (!ORDER_ENDPOINT) $("cartCopy").classList.add("primary");          // 沒有後台時，「複製訂單內容」當主要按鈕
-if (LINE_OA_ID) ["cartOA", "footOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; });
+if (LINE_OA_ID) { ["cartOA", "footOA", "bandOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; }); $("oaBand").hidden = false; }
 $("cartClear").onclick = () => { if (confirm("確定清空購物車？")) { cart = []; saveCart(); renderCart(); } };
 loadContact();
 renderOrders();
