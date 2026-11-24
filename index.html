@@ -110,24 +110,27 @@ h1 .zh{color:var(--accent)}
 .ptab.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
 .ptab .ck{margin-left:4px;font-weight:700}
 .ptab:not(.on) .ck{color:var(--accent)}
-.pbrands{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 10px}
-.pbrands::-webkit-scrollbar{display:none}
+.pbrands{display:grid;gap:6px;margin:0 0 10px}
+.pchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.pchips::-webkit-scrollbar{display:none}
+.pbrand.sub{color:var(--ink);background:var(--panel)}
+.pbrand.sub.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
 .pbrand{flex:none;border:1px solid var(--line);background:none;color:var(--mute);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
 .pbrand.on{border-color:var(--accent);color:var(--accent)}
 .plist{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.pi{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);cursor:pointer}
+.pi{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-top:1px solid var(--line);cursor:pointer}
 .pi:first-child{border-top:0}
 .pi.flash{background:rgba(177,242,0,.10)}
-.pi .pth{width:56px;height:56px;border-radius:8px;object-fit:contain;background:#fff;display:block}
+.pi .pth{width:44px;height:44px;border-radius:7px;object-fit:contain;background:#fff;display:block}
 .pi .pth.none{background:var(--panel2)}
-.pi .pn{font-weight:700;font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pi .pm{color:var(--mute);font-size:12px;margin-top:2px;display:flex;flex-wrap:wrap;gap:2px 6px;align-items:center}
+.pi .pn{font-weight:700;font-size:13.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pi .pm{color:var(--mute);font-size:12px;margin-top:1px;display:flex;flex-wrap:wrap;gap:2px 6px;align-items:center}
 .pi .pm .stk{margin:0;font-size:11px;line-height:17px;padding:0 6px}
-.pi .pr{font-weight:800;color:var(--accent);font-size:15px;text-align:right;white-space:nowrap}
-.pi .pc{display:flex;justify-content:flex-end;margin-top:6px}
-.padd{width:34px;height:34px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font-size:22px;line-height:34px;font-weight:700;cursor:pointer;padding:0}
+.pi .pr{font-weight:800;color:var(--accent);font-size:14px;text-align:right;white-space:nowrap}
+.pi .pc{display:flex;justify-content:flex-end;margin-top:4px}
+.padd{width:30px;height:30px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font-size:20px;line-height:30px;font-weight:700;cursor:pointer;padding:0}
 .pstep{display:flex;align-items:center;gap:2px;background:var(--panel2);border:1px solid var(--accent);border-radius:999px;padding:2px}
-.pstep button{width:28px;height:28px;border-radius:50%;border:0;background:none;color:var(--ink);font-size:18px;cursor:pointer;padding:0}
+.pstep button{width:26px;height:26px;border-radius:50%;border:0;background:none;color:var(--ink);font-size:18px;cursor:pointer;padding:0}
 .pstep span{min-width:22px;text-align:center;font-weight:700;font-size:14px}
 .pempty{color:var(--mute);text-align:center;padding:28px 0}
 .pdcard{max-height:88vh;overflow:auto}
@@ -581,6 +584,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "未塗裝素色版本，官網售價較塗裝版低 $2",
      "short": "IR80-30 白色未塗裝",
      "stock": "預購",
+     "sub": "車殼",
      "image": "1_b5b04cff-1a73-4b05-9f25-007febcbb658.jpg?v=1790061854"
     },
     {
@@ -593,6 +597,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "原廠金屬漆塗裝版本（預設綠色為 IR80-30GN）",
      "short": "IR80-30 塗裝版本",
      "stock": "預購",
+     "sub": "車殼",
      "image": "1_b5b04cff-1a73-4b05-9f25-007febcbb658.jpg?v=1790061854"
     },
     {
@@ -605,6 +610,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "透明 PC 車殼版本（附遮蓋貼紙供自行噴漆）",
      "short": "BUG30 透明車殼",
      "stock": "預購",
+     "sub": "車殼",
      "image": "BUG30_8aa073af-38d6-4160-9d36-4451b24554b7.jpg?v=1787640319"
     },
     {
@@ -617,6 +623,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "原廠預塗裝版本（預設黑色為 BUG30-BK）",
      "short": "BUG30 塗裝車殼",
      "stock": "預購",
+     "sub": "車殼",
      "image": "BUG30_8aa073af-38d6-4160-9d36-4451b24554b7.jpg?v=1787640319"
     },
     {
@@ -629,6 +636,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單買 Bronco 鋁合金前保險桿或後保險桿",
      "short": "Bronco 前or後保桿",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "1_8b56cdc8-cf59-4ec8-9cfd-6edd666d9168.jpg?v=1787640334"
     },
     {
@@ -641,6 +649,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "Bronco 鋁合金前後保險桿完整套組",
      "short": "Bronco 前後保桿組",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "1_8b56cdc8-cf59-4ec8-9cfd-6edd666d9168.jpg?v=1787640334"
     },
     {
@@ -653,6 +662,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單買 JLU 鋁合金前保險桿或後保險桿",
      "short": "牧馬人 前or後保桿",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "1_cefd030f-c1f0-4456-892d-3a2cf56ca565.jpg?v=1787640329"
     },
     {
@@ -665,6 +675,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "JLU 鋁合金前後保險桿完整套組",
      "short": "牧馬人 前後保桿組",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "1_cefd030f-c1f0-4456-892d-3a2cf56ca565.jpg?v=1787640329"
     },
     {
@@ -677,6 +688,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單買 JLU Stinger 造型前保險桿或後保險桿",
      "short": "牧馬人 前or後保桿 （尖款）",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "2_78b8a537-f153-4f4a-bed5-ee0a4dace720.jpg?v=1787640321"
     },
     {
@@ -689,6 +701,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "JLU Stinger 造型前後保險桿完整套組",
      "short": "牧馬人 前後保桿組( 尖款 )",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "2_78b8a537-f153-4f4a-bed5-ee0a4dace720.jpg?v=1787640321"
     },
     {
@@ -701,6 +714,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單買 Chevrolet K10 電鍍銀鋁合金前保險桿或後保險桿",
      "short": "單買 Chevrolet K10 電鍍銀鋁合金前保險桿或後保險桿",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "1_37c60713-b42a-4f31-86e0-59f8da676d20.jpg?v=1787640305"
     },
     {
@@ -713,6 +727,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "Chevrolet K10 電鍍銀鋁合金前後保險桿完整套組",
      "short": "Chevrolet K10 電鍍銀鋁合金前後保險桿完整套組",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "1_37c60713-b42a-4f31-86e0-59f8da676d20.jpg?v=1787640305"
     },
     {
@@ -725,6 +740,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "尼龍側踏板",
      "stock": "預購",
+     "sub": "側踏板",
      "image": "DSC09557.jpg?v=1792376836"
     },
     {
@@ -737,6 +753,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "車殼＋尼龍內籠＋車頂燈／大燈＋貼紙；不含底盤車架，不適用 Tacoma",
      "short": "MB30 車殼（藍／紅）",
      "stock": "預購",
+     "sub": "車殼",
      "image": "https://www.meusracing.com/cdn/shop/files/Green_MB30_Body_shell_chassis_frame_kit_1.jpg?v=1784880864",
      "url": "https://www.meusracing.com/products/mb30-body-shell-chassis-frame-kit"
     },
@@ -750,6 +767,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "同上，灰色版官網售價較低；不適用 Tacoma",
      "short": "MB30 車殼（灰）",
      "stock": "預購",
+     "sub": "車殼",
      "image": "https://www.meusracing.com/cdn/shop/files/Green_MB30_Body_shell_chassis_frame_kit_1.jpg?v=1784880864",
      "url": "https://www.meusracing.com/products/mb30-body-shell-chassis-frame-kit"
     },
@@ -763,6 +781,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "透明車殼，需自行噴漆",
      "short": "透明車殼",
      "stock": "預購",
+     "sub": "車殼",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Clear_Body_Shell_1.jpg?v=1787037616",
      "url": "https://www.meusracing.com/products/scx30-clear-body-shell"
     },
@@ -776,6 +795,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "K10 專用鋁合金前保險桿",
      "short": "K10 鋁合金前保桿",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "https://www.meusracing.com/cdn/shop/files/IMG_8580_5ca5a1f4-65ec-4793-999a-4b81333b7222.jpg?v=1772446067",
      "url": "https://www.meusracing.com/products/scx30-front-aluminum-bumper"
     },
@@ -789,6 +809,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "Bronco 鋁合金前＋後保險桿一組",
      "short": "Bronco 鋁合金前後保桿組",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Bronco_Front_Rear_Bumpers.jpg?v=1778487650",
      "url": "https://www.meusracing.com/products/scx30-bronco-front-rear-bumpers"
     },
@@ -802,6 +823,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "Wrangler 鋁合金前＋後保險桿一組，原廠車殼免修改",
      "short": "牧馬人 鋁合金前後保桿組",
      "stock": "預購",
+     "sub": "保險桿",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Wrangler_Bumpers.jpg?v=1778487430",
      "url": "https://www.meusracing.com/products/scx30-wrangler-front-rear-bumper"
     }
@@ -874,6 +896,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "CJ-7 專用黑黃銅高通過性底盤連桿",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "DSC02999.jpg?v=1794897352"
     },
     {
@@ -886,6 +909,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單買 CJ-7 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)",
      "short": "CJ-7 專用不鏽鋼高通過性底盤連桿",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "SCX30-43-29.jpg?v=1793260206"
     },
     {
@@ -898,6 +922,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "CJ-7 專用不鏽鋼底盤連桿 + 轉向連桿完整套組",
      "short": "CJ-7 專用不鏽鋼高通過性底盤連桿(含轉向)",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "SCX30-43-29.jpg?v=1793260206"
     },
     {
@@ -910,6 +935,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "Tacoma 專用黑黃銅高通過性底盤連桿",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "DSC01303.jpg?v=1793172665"
     },
     {
@@ -922,6 +948,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單買 Tacoma 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)",
      "short": "Tacoma 專用不鏽鋼高通過性底盤連桿",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "SCX30-39-29.jpg?v=1792742830"
     },
     {
@@ -934,6 +961,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "Tacoma 專用不鏽鋼底盤連桿 + 轉向連桿完整套組",
      "short": "Tacoma 專用不鏽鋼高通過性底盤連桿(含轉向)",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "SCX30-39-29.jpg?v=1792742830"
     },
     {
@@ -946,6 +974,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "Bronco JLU K10黑黃銅高通過性底盤連桿 (含轉向)",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "DSC00159_98c88aba-59df-4b2c-9eae-bc820009466b.jpg?v=1787640302"
     },
     {
@@ -958,6 +987,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "Bronco JLU K10黑黃銅高通過性底盤連桿",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "DSC07243.jpg?v=1787640382"
     },
     {
@@ -970,6 +1000,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單買 Bronco/JLU/K10 專用不鏽鋼底盤連桿（不含轉向連桿）；官網同頁轉向連桿單買為 $8.99 USD (SCX30-29)",
      "short": "Bronco JLU K10不鏽鋼高通過性底盤連桿",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "SCX30-28-29_77de2a4d-8672-4688-91ee-4762ba962418.jpg?v=1787640272"
     },
     {
@@ -982,6 +1013,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "Bronco/JLU/K10 專用不鏽鋼底盤連桿 + 轉向連桿完整套組",
      "short": "Bronco JLU K10不鏽鋼高通過性底盤連桿(含轉向)",
      "stock": "現貨",
+     "sub": "底盤連桿",
      "image": "SCX30-28-29_77de2a4d-8672-4688-91ee-4762ba962418.jpg?v=1787640272"
     },
     {
@@ -994,6 +1026,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "不鏽鋼+3/+5 後底盤連桿",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "DSC08693_0f91f00a-c499-423a-8bbf-2a953e0cf2ba.jpg?v=1791540742"
     },
     {
@@ -1006,6 +1039,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "不鏽鋼轉向連桿",
      "stock": "預購",
+     "sub": "轉向連桿",
      "image": "DSC05567.jpg?v=1789723105"
     },
     {
@@ -1018,6 +1052,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "黃銅轉向連桿",
      "stock": "預購",
+     "sub": "轉向連桿",
      "image": "DSC08115_a98f9ac8-d2f7-4ab7-8946-abace68a2655.jpg?v=1787640371"
     },
     {
@@ -1029,6 +1064,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 90,
      "note": "僅含 16 顆尼龍連桿球頭（不含金屬球珠與螺絲）",
      "stock": "預購",
+     "sub": "球頭・O環",
      "image": "DSC03458_9644164e-5813-481b-9782-1b4adabf1437.jpg?v=1791881572"
     },
     {
@@ -1040,6 +1076,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 210,
      "note": "尼龍球頭 + 銅球珠、球頭螺絲與墊片完整替換包",
      "stock": "預購",
+     "sub": "球頭・O環",
      "image": "DSC03458_9644164e-5813-481b-9782-1b4adabf1437.jpg?v=1791881572"
     },
     {
@@ -1051,6 +1088,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 60,
      "note": "",
      "stock": "預購",
+     "sub": "球頭・O環",
      "image": "SCX30-30_23a9d56c-2327-4a61-be1f-c2385e62090a.jpg?v=1787640270"
     },
     {
@@ -1063,6 +1101,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "99mm 軸距（Bronco / JLU / K10）高離地連桿＋轉向拉桿",
      "short": "99mm 軸距 高通過性連桿組",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_High_Clearance_Linkages.jpg?v=1778482264",
      "url": "https://www.meusracing.com/products/scx30-high-clearance-linkages"
     },
@@ -1076,6 +1115,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "107mm 軸距 Tacoma 專用連桿",
      "short": "Tacoma 107mm 軸距連桿組",
      "stock": "預購",
+     "sub": "底盤連桿",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Chassis_Links_for_107mm_Wheelbase-1.jpg?v=1792840212",
      "url": "https://www.meusracing.com/products/chassis-links-for-107mm-wheelbase-scx30-toyota-tacoma"
     }
@@ -1135,6 +1175,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "CJ-7 專用不鏽鋼傳動軸",
      "stock": "預購",
+     "sub": "傳動軸",
      "image": "1_3d7864f6-a45c-400a-a0e2-847996460600.jpg?v=1793173233"
     },
     {
@@ -1147,6 +1188,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "Tacoma 專用不鏽鋼傳動軸",
      "stock": "預購",
+     "sub": "傳動軸",
      "image": "DSC00812.jpg?v=1792737487"
     },
     {
@@ -1159,6 +1201,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "Bronco/JLU/K10 不鏽鋼傳動軸",
      "stock": "預購",
+     "sub": "傳動軸",
      "image": "DSC07208.jpg?v=1787640383"
     },
     {
@@ -1171,6 +1214,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "完整波箱總成含黃銅底板",
      "stock": "預購",
+     "sub": "波箱",
      "image": "DSC08668_79e235a2-d211-442a-8097-6f4b1f2cb0d9.jpg?v=1787640212"
     },
     {
@@ -1183,6 +1227,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "鋁合金波箱外殼套件-散裝",
      "stock": "預購",
+     "sub": "波箱",
      "image": "DSC09804_6a7afa36-f238-4a2d-af7a-9a65f6442fb6.jpg?v=1787640356"
     },
     {
@@ -1195,6 +1240,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "原色黃銅波箱底板（無黑色塗層）",
      "short": "銅色黃銅波箱底板（無黑色塗層）",
      "stock": "預購",
+     "sub": "波箱底板",
      "image": "DSC00818_42d6f7c1-06cd-472c-ae32-2af7de3ef370.jpg?v=1787640323"
     },
     {
@@ -1207,6 +1253,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "黑色抗氧化塗層黃銅波箱底板",
      "short": "黑色抗氧化塗層黃銅波箱底板",
      "stock": "預購",
+     "sub": "波箱底板",
      "image": "DSC00818_42d6f7c1-06cd-472c-ae32-2af7de3ef370.jpg?v=1787640323"
     },
     {
@@ -1219,6 +1266,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "5.6g 鋁合金波箱底板",
      "stock": "預購",
+     "sub": "波箱底板",
      "image": "DSC08378.jpg?v=1787640370"
     },
     {
@@ -1230,6 +1278,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 150,
      "note": "波箱專用不鏽鋼培林組（6顆入）",
      "stock": "預購",
+     "sub": "軸承・齒輪",
      "image": "DSC03160_a8cc2f3e-cf79-40de-b4df-b529491a3121.jpg?v=1787640303"
     },
     {
@@ -1241,6 +1290,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 300,
      "note": "前後車橋專用不鏽鋼培林組（14顆入）",
      "stock": "預購",
+     "sub": "軸承・齒輪",
      "image": "DSC03160_a8cc2f3e-cf79-40de-b4df-b529491a3121.jpg?v=1787640303"
     },
     {
@@ -1253,6 +1303,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "組裝好的變速箱＋黃銅底盤護板",
      "short": "變速箱總成（附黃銅護板）",
      "stock": "預購",
+     "sub": "波箱",
      "image": "https://www.meusracing.com/cdn/shop/files/Black_SCX30_Assembled_Transmission.jpg?v=1779268940",
      "url": "https://www.meusracing.com/products/scx30-assembled-transmission"
     },
@@ -1266,6 +1317,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "金屬中央傳動軸",
      "short": "金屬中央傳動軸",
      "stock": "預購",
+     "sub": "傳動軸",
      "image": "https://www.meusracing.com/cdn/shop/files/Black_SCX30_Driveshafts.jpg?v=1793951627",
      "url": "https://www.meusracing.com/products/scx30-driveshaft"
     },
@@ -1279,6 +1331,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "12T 超速 33.3%、13T 超速 23%、14T 超速 14.3%、16T 同原廠、18T 減速 11.1%（請註明齒數）",
      "short": "差速器齒輪組",
      "stock": "預購",
+     "sub": "軸承・齒輪",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Differential_Gear_2-12T.jpg?v=1778488003",
      "url": "https://www.meusracing.com/products/scx30-differential-gears"
     }
@@ -1297,6 +1350,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單買 +4.5mm 行星齒輪加寬前車橋（含雙十字萬向節傳動軸與黃銅轉向杯）",
      "short": "+4.5mm 行星齒輪加寬前車橋",
      "stock": "預購",
+     "sub": "車橋總成",
      "image": "SCX30-34BKFR_SKU_aad9a1c8-fca5-4b4c-ac66-75eefad22fb8.jpg?v=1787640159"
     },
     {
@@ -1309,6 +1363,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "前後車橋",
      "short": "+4.5mm 行星齒輪加寬前後車橋",
      "stock": "預購",
+     "sub": "車橋總成",
      "image": "SCX30-34BKFR_SKU_aad9a1c8-fca5-4b4c-ac66-75eefad22fb8.jpg?v=1787640159"
     },
     {
@@ -1321,6 +1376,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單買 +3mm 行星齒輪加寬前車橋（含黃銅轉向杯）",
      "short": "+3mm 行星齒輪加寬前車橋",
      "stock": "預購",
+     "sub": "車橋總成",
      "image": "SCX30-25BKFRSKU_795138bc-bb79-4802-85e6-0fb236b0f0d9.jpg?v=1787640274"
     },
     {
@@ -1333,6 +1389,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "前後車橋",
      "short": "+3mm 行星齒輪加寬前後車橋",
      "stock": "預購",
+     "sub": "車橋總成",
      "image": "SCX30-25BKFRSKU_795138bc-bb79-4802-85e6-0fb236b0f0d9.jpg?v=1787640274"
     },
     {
@@ -1345,6 +1402,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "原廠寬度金屬車橋含黃銅轉向杯",
      "stock": "預購",
+     "sub": "車橋總成",
      "image": "1_ccde4d73-cea8-4e9b-a3a4-0637dc21b90c.jpg?v=1787640249"
     },
     {
@@ -1357,6 +1415,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "鋁合金前後橋殼",
      "stock": "預購",
+     "sub": "橋殼・轉向座",
      "image": "1_8937ab3e-d2c5-4782-8dcb-fff2c325d100.jpg?v=1787640357"
     },
     {
@@ -1368,6 +1427,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 240,
      "note": "單買前軸 (SCX30-13F 十字萬向節) 或後軸 (SCX30-13R 直軸)，依前後軸規格定價不同（後軸 $5.99 / 前軸 $7.99）",
      "stock": "預購",
+     "sub": "CVD・半軸",
      "image": "DSC00325_2ae3aa31-3a1a-4f50-8ffd-53fafc66f24d.jpg?v=1787640343"
     },
     {
@@ -1380,6 +1440,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "前後軸完整套組",
      "short": "不鏽鋼前後CVD",
      "stock": "預購",
+     "sub": "CVD・半軸",
      "image": "DSC00325_2ae3aa31-3a1a-4f50-8ffd-53fafc66f24d.jpg?v=1787640343"
     },
     {
@@ -1392,6 +1453,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "轉向杯配重",
      "short": "黑黃銅轉向杯配重",
      "stock": "預購",
+     "sub": "橋殼・轉向座",
      "image": "DSC00337_3555ad92-a4b2-455d-9fda-60b070e53fb1.jpg?v=1787640381"
     },
     {
@@ -1403,6 +1465,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 150,
      "note": "",
      "stock": "預購",
+     "sub": "護板・其他",
      "image": "DSC08947_435c38c1-9ef2-4171-9296-f0b9824ff595.jpg?v=1787640354"
     },
     {
@@ -1414,6 +1477,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 420,
      "note": "",
      "stock": "預購",
+     "sub": "齒輪・差速器",
      "image": "DSC03786_9e5a8e1d-6d1f-4d35-ab28-4c2984196afa.jpg?v=1787640291"
     },
     {
@@ -1425,6 +1489,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 270,
      "note": "單車橋份量（1組蝸桿+蝸輪，可選 2/13T 加速 23% 或 2/16T 原廠齒比）",
      "stock": "預購",
+     "sub": "齒輪・差速器",
      "image": "DSC00458_804aab68-6589-48d5-ad06-5df7ffe77f9c.jpg?v=1787640341"
     },
     {
@@ -1436,6 +1501,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 510,
      "note": "前後雙橋份量組合（含 2 Sets 12T / 13T / 16T 或 12T+13T / 13T+16T 搭配組合）",
      "stock": "預購",
+     "sub": "齒輪・差速器",
      "image": "DSC00458_804aab68-6589-48d5-ad06-5df7ffe77f9c.jpg?v=1787640341"
     },
     {
@@ -1447,6 +1513,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 150,
      "note": "",
      "stock": "預購",
+     "sub": "護板・其他",
      "image": "INJORAM2WHEELNUTFORSCX30_5_c2487439-6207-41e2-b073-a4f12b9fd19a.jpg?v=1787640358"
     },
     {
@@ -1459,6 +1526,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "一車份兩個",
      "short": "不鏽鋼車橋護板(一車份)",
      "stock": "預購",
+     "sub": "護板・其他",
      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKvwxMmY_pHpCVwk4Oiak9Ya92je-NrRrpLcNd2NQBvA&s"
     },
     {
@@ -1471,6 +1539,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "+3mm 加寬等速橋，前後一組（黑 KY1246、銀 KY1247）",
      "short": "+3mm 等速橋 前後組",
      "stock": "預購",
+     "sub": "車橋總成",
      "image": "https://www.meusracing.com/cdn/shop/files/Black_SCX30_Isokinetic_Front_Rear_Axles.jpg?v=1782294447",
      "url": "https://www.meusracing.com/products/scx30-isokinetic-axles"
     },
@@ -1484,6 +1553,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "+3mm 加寬等速橋，只有前橋",
      "short": "+3mm 等速橋 單前橋",
      "stock": "預購",
+     "sub": "車橋總成",
      "image": "https://www.meusracing.com/cdn/shop/files/Black_SCX30_Isokinetic_Front_Rear_Axles.jpg?v=1782294447",
      "url": "https://www.meusracing.com/products/scx30-isokinetic-axles"
     },
@@ -1497,6 +1567,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "鋁合金直橋＋萬向節 CVD，前後一組",
      "short": "鋁合金直橋 前後組",
      "stock": "預購",
+     "sub": "車橋總成",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Straight_Axles_with_Universal_CVD_Shafts.jpg?v=1774598099",
      "url": "https://www.meusracing.com/products/scx30-straight-axles-with-universal-axle-shafts"
     },
@@ -1510,6 +1581,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "鋁合金橋殼＋差速器蓋＋黃銅轉向座，長度同原廠",
      "short": "鋁合金橋殼＋黃銅轉向座",
      "stock": "預購",
+     "sub": "橋殼・轉向座",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Axle_Housing_with_Diff_Covers_and_Steering_Knuckles.jpg?v=1767604707",
      "url": "https://www.meusracing.com/products/scx30-axle-housing-with-diff-covers-steering-knuckles"
     },
@@ -1523,6 +1595,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "黃銅轉向座，增加前輪配重",
      "short": "黃銅轉向座",
      "stock": "預購",
+     "sub": "橋殼・轉向座",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Brass_Steering_Knuckles.jpg?v=1767162328",
      "url": "https://www.meusracing.com/products/scx30-brass-steering-knuckles"
     },
@@ -1536,6 +1609,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "原廠車橋用鋼製 CVD",
      "short": "原廠橋用 鋼製CVD",
      "stock": "預購",
+     "sub": "CVD・半軸",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_front_and_rear_Axle_CVD_shafts.jpg?v=1768638771",
      "url": "https://www.meusracing.com/products/scx30-axle-steel-cvd-shaft"
     },
@@ -1549,6 +1623,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "僅適用 MEUS 直橋（備品）",
      "short": "MEUS 直橋用 萬向節CVD",
      "stock": "預購",
+     "sub": "CVD・半軸",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Universal_Joints_CVD_Shaft.jpg?v=1791169543",
      "url": "https://www.meusracing.com/products/scx30-universal-joint-cvd-shafts"
     },
@@ -1562,6 +1637,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "僅適用 MEUS 橋殼的 +3mm CVD",
      "short": "MEUS 橋殼用 +3mm CVD",
      "stock": "預購",
+     "sub": "CVD・半軸",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_3mm_Universal_Joint_CVD_Shafts.jpg?v=1778825684",
      "url": "https://www.meusracing.com/products/scx30-universal-joint-cvd-shafts-3mm"
     },
@@ -1575,6 +1651,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "僅適用 MEUS +3mm 等速橋（備品）",
      "short": "MEUS 等速橋用 三節CVD",
      "stock": "預購",
+     "sub": "CVD・半軸",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Isokinetic_3-Section_CVD_Shafts_1.jpg?v=1780566815",
      "url": "https://www.meusracing.com/products/scx30-isokinetic-3-section-cvd-shafts"
     }
@@ -1593,6 +1670,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "N30 Pro舵機 (JR/Zh1.5)",
      "stock": "預購",
+     "sub": "舵機",
      "image": "DSC0592_48d867c4-6fa3-40ff-96c9-59889f93009b.jpg?v=1787640166"
     },
     {
@@ -1605,6 +1683,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "N30 Pro舵機 黃銅 (JR/Zh1.5)",
      "stock": "預購",
+     "sub": "舵機",
      "image": "DSC08848_521e9ad3-af77-4d06-a4b5-23f066ebac95.jpg?v=1789717298"
     },
     {
@@ -1616,6 +1695,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 1010,
      "note": "",
      "stock": "預購",
+     "sub": "舵機",
      "image": "DSC09161_6d24e61c-ce03-4582-9b91-d38874ddcb39.jpg?v=1787640355"
     },
     {
@@ -1627,6 +1707,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 1830,
      "note": "",
      "stock": "預購",
+     "sub": "無刷動力",
      "image": "1_fefdd17d-0f7a-4801-a852-a6d8939ee976.jpg?v=1787640137"
     },
     {
@@ -1638,6 +1719,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 1830,
      "note": "",
      "stock": "預購",
+     "sub": "無刷動力",
      "image": "1_1_512c157d-2af3-447e-bc64-9186efb6ab2a.jpg?v=1787640287"
     },
     {
@@ -1649,6 +1731,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 1300,
      "note": "",
      "stock": "預購",
+     "sub": "無刷動力",
      "image": "1_1_31466693-0039-4a32-8259-461e68c69cef.jpg?v=1787640354"
     },
     {
@@ -1660,6 +1743,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 660,
      "note": "",
      "stock": "預購",
+     "sub": "無刷動力",
      "image": "DSC08392_9cdc087f-9367-4e72-ac37-bfee85f05615.jpg?v=1787640137"
     },
     {
@@ -1671,6 +1755,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 660,
      "note": "",
      "stock": "預購",
+     "sub": "無刷動力",
      "image": "DSC07753_1_ba2250d8-92f7-4e15-be78-bf4e0d81ed40.jpg?v=1787640289"
     },
     {
@@ -1682,6 +1767,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 30,
      "note": "",
      "stock": "預購",
+     "sub": "配件・電池",
      "image": "DSC04944_c31f02c0-2435-4e6d-b842-1c8953b0693c.jpg?v=1787640280"
     },
     {
@@ -1693,6 +1779,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 600,
      "note": "",
      "stock": "預購",
+     "sub": "有刷動力",
      "image": "1_dc5c13a1-0659-42a3-ae9a-9c0b07e01d87.jpg?v=1787640258"
     },
     {
@@ -1704,6 +1791,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 210,
      "note": "",
      "stock": "預購",
+     "sub": "有刷動力",
      "image": "DSC00122_56335ed6-977e-4a8b-b708-ce5d6e8f237a.jpg?v=1787640342"
     },
     {
@@ -1715,6 +1803,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 210,
      "note": "",
      "stock": "預購",
+     "sub": "有刷動力",
      "image": "DSC03195_a2a7d824-0091-4dcd-8253-aa273ebd0295.jpg?v=1787640297"
     },
     {
@@ -1726,6 +1815,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 1130,
      "note": "",
      "stock": "預購",
+     "sub": "遙控・接收",
      "image": "INT-T6M-T4_e876d671-f550-4477-926a-622a1892b9a5.jpg?v=1787640348"
     },
     {
@@ -1737,6 +1827,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "遙控・接收",
      "image": "T4DCM_7371c08c-8a7b-4cc1-a85c-04bcb6f896aa.jpg?v=1787640658"
     },
     {
@@ -1749,6 +1840,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "4LED 底盤攀岩燈組",
      "stock": "預購",
+     "sub": "配件・電池",
      "image": "DSC09076_922e3d91-9928-45fd-a18f-b9c2fa5f54a2.jpg?v=1787640199"
     },
     {
@@ -1761,6 +1853,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "不可沿用原廠遙控器",
      "short": "SCX30 外轉子套裝",
      "stock": "預購",
+     "sub": "無刷動力",
      "image": "https://img.alicdn.com/imgextra/i4/123392080/O1CN01m55UMO1REgxLRvDVB_!!123392080.webp"
     },
     {
@@ -1773,6 +1866,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "無刷電變＋馬達套組（SCX30 版本）",
      "short": "ME32 無刷電變＋馬達組",
      "stock": "預購",
+     "sub": "無刷動力",
      "image": "https://www.meusracing.com/cdn/shop/files/TRX4M_ME32_ESC_1621_2850KV_Motor.jpg?v=1793841656",
      "url": "https://www.meusracing.com/products/me32-brushless-esc-and-motor-kit"
     },
@@ -1786,6 +1880,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "單無刷馬達（SCX30 版本），需搭配無刷電變",
      "short": "1621 3400KV 無刷馬達",
      "stock": "預購",
+     "sub": "無刷動力",
      "image": "https://www.meusracing.com/cdn/shop/files/1621_2850KV_Brushless_Motor_For_TRX4M.jpg?v=1792840939",
      "url": "https://www.meusracing.com/products/brushless-motors"
     },
@@ -1799,6 +1894,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "有刷迷你電變",
      "short": "ME25 V2 有刷電變",
      "stock": "預購",
+     "sub": "有刷動力",
      "image": "https://www.meusracing.com/cdn/shop/files/ME25-V2_Brushed_Mini_ESC.jpg?v=1773987095",
      "url": "https://www.meusracing.com/products/me25-v2-brushed-esc"
     },
@@ -1812,6 +1908,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "強磁 030 有刷馬達兩顆一組（請註明組合）",
      "short": "030 強磁有刷馬達（2顆）",
      "stock": "預購",
+     "sub": "有刷動力",
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_50T_65T_88T_Motors.jpg?v=1782872202",
      "url": "https://www.meusracing.com/products/scx30-brushed-030-motors"
     },
@@ -1825,6 +1922,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "V2 空心杯高扭力伺服機，鋁殼",
      "short": "V2 空心杯伺服機（鋁殼）",
      "stock": "預購",
+     "sub": "舵機",
      "image": "https://www.meusracing.com/cdn/shop/files/Black_Aluminum_SCX30_V2_coreless_servo_1.jpg?v=1791769461",
      "url": "https://www.meusracing.com/products/scx30-v2-coreless-high-torque-servo"
     },
@@ -1838,6 +1936,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "V2 空心杯高扭力伺服機，黃銅殼較重",
      "short": "V2 空心杯伺服機（黃銅殼）",
      "stock": "預購",
+     "sub": "舵機",
      "image": "https://www.meusracing.com/cdn/shop/files/Brass_SCX30_V2_coreless_servo.jpg?v=1791769565",
      "url": "https://www.meusracing.com/products/scx30-v2-coreless-high-torque-servo"
     },
@@ -1851,6 +1950,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "空心杯微型伺服機，鋁殼",
      "short": "空心杯微型伺服機（鋁殼）",
      "stock": "預購",
+     "sub": "舵機",
      "image": "https://www.meusracing.com/cdn/shop/files/Black_MS30_Coreless_Micro_Aluminum_Servo.jpg?v=1772415156",
      "url": "https://www.meusracing.com/products/scx30-coreless-micro-servo"
     },
@@ -1864,6 +1964,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "空心杯微型伺服機，15.8g 黃銅殼",
      "short": "空心杯微型伺服機（黃銅殼）",
      "stock": "預購",
+     "sub": "舵機",
      "image": "https://www.meusracing.com/cdn/shop/files/Gold_MS30_Coreless_Micro_Brass_Servo.jpg?v=1772415401",
      "url": "https://www.meusracing.com/products/scx30-coreless-micro-servo"
     },
@@ -1877,6 +1978,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "官網未列 SCX30 為相容車款，原廠為一體式接收電變，需另配電變（建議確認後再上架）",
      "short": "ME-8B 遙控器＋接收機",
      "stock": "預購",
+     "sub": "遙控・接收",
      "image": "https://www.meusracing.com/cdn/shop/files/ME-8B_RC_Transmitter_with_M-08A_Receiver.jpg?v=1752653523",
      "url": "https://www.meusracing.com/products/me-8b-rc-transmitter-with-m-08a-receiver"
     },
@@ -1888,6 +1990,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 40,
      "note": "舵機、馬達 轉接迷你接收用",
+     "sub": "配件・電池",
      "image": "images/Jrtozh.png"
     },
     {
@@ -1898,6 +2001,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 250,
      "note": "一顆約可玩30-40分鐘",
+     "sub": "配件・電池",
      "image": "images/BAT.JPG"
     }
    ]
@@ -1914,6 +2018,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7025_0f02a754-866b-4a32-9e7b-157618e5aa7b.jpg?v=1794278265"
     },
     {
@@ -1925,6 +2030,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7014.jpg?v=1794277851"
     },
     {
@@ -1936,6 +2042,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7019.jpg?v=1794277918"
     },
     {
@@ -1947,6 +2054,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7022.jpg?v=1794278084"
     },
     {
@@ -1958,6 +2066,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7027.jpg?v=1794278328"
     },
     {
@@ -1969,6 +2078,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7011.jpg?v=1794277791"
     },
     {
@@ -1980,6 +2090,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7021.jpg?v=1794278028"
     },
     {
@@ -1991,6 +2102,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7024.jpg?v=1794278163"
     },
     {
@@ -2002,6 +2114,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7020_26329157-8cca-4d8e-b83f-b9e262e4e1d5.jpg?v=1794277976"
     },
     {
@@ -2013,6 +2126,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7028.jpg?v=1794278389"
     },
     {
@@ -2024,6 +2138,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7030.jpg?v=1794278455"
     },
     {
@@ -2035,6 +2150,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 390,
      "note": "",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "T7031.jpg?v=1794278507"
     },
     {
@@ -2046,6 +2162,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 330,
      "note": "",
      "stock": "預購",
+     "sub": "內襯",
      "image": "TI07-36-14_9c0fb017-9cb4-4f85-8616-6c25889d1f86.jpg?v=1787640271"
     },
     {
@@ -2057,6 +2174,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 330,
      "note": "",
      "stock": "預購",
+     "sub": "內襯",
      "image": "TI07-40-14_05c2fde9-cb9f-4f4a-9172-49667cab4327.jpg?v=1787640270"
     },
     {
@@ -2069,6 +2187,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "4 顆一組；M0701 Lucky 7S 40×16、M0702 Vipers 40×16、M0704 Super Bouncer 40×16、M0705 Super Bouncer 36×14、M0708 Mud Shredder 40×14、M0709 Mud Shredder 35×12、M0710 Marauder 40×14、M0711 Marauder 35×14（請註明型號）",
      "short": "0.7吋 MS6／Bouncer 系列輪胎",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "https://www.meusracing.com/cdn/shop/files/M0701_MS6_Lucky_7S_Tires_40_16mm_1.jpg?v=1778489551",
      "url": "https://www.meusracing.com/products/0-7-inch-ms6-super-bouncer-tires"
     },
@@ -2082,6 +2201,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "4 顆一組；M0703 36×14、M0706 40×13、M0707 36×12（請註明型號）",
      "short": "0.7吋 MPRO PIN 超軟輪胎",
      "stock": "預購",
+     "sub": "輪胎",
      "image": "https://www.meusracing.com/cdn/shop/files/M0703_MPRO_PIN_36_14mm_1.jpg?v=1778489957",
      "url": "https://www.meusracing.com/products/0-7-inch-super-soft-tires-for-scx30-ascent-32"
     },
@@ -2095,6 +2215,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "超軟矽膠內襯 4 個一組（請註明尺寸）",
      "short": "0.7吋 超軟矽膠內襯",
      "stock": "預購",
+     "sub": "內襯",
      "image": "https://www.meusracing.com/cdn/shop/files/31.5_8mm_silicone_tire_inserts.jpg?v=1785292431",
      "url": "https://www.meusracing.com/products/super-soft-silicone-tire-inserts-for-0-7-inch-tires"
     }
@@ -2112,6 +2233,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 600,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "1_829de8ae-e95c-4294-b8b7-2065c43820c0.jpg?v=1787640363"
     },
     {
@@ -2123,6 +2245,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 600,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "1_cdd634cc-dfca-454e-8981-e487dd22d7b2.jpg?v=1787640361"
     },
     {
@@ -2134,6 +2257,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 600,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "1_21f418bc-edc3-4465-b4dd-9b417ba5fa9d.jpg?v=1787640290"
     },
     {
@@ -2145,6 +2269,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 720,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "W7005BB_917e52c6-dee2-46f9-a75d-8a486bff4c68.jpg?v=1787640282"
     },
     {
@@ -2156,6 +2281,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 690,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "DSC02074_2b51e936-0e04-4346-8cd9-d945b09b5d79.jpg?v=1787640320"
     },
     {
@@ -2167,6 +2293,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 750,
      "note": "黃銅原色版本（4顆入）",
      "stock": "預購",
+     "sub": "輪框",
      "image": "1-1_6db2df04-6f35-4e89-839f-99ee3e8be457.jpg?v=1787640306"
     },
     {
@@ -2178,6 +2305,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 810,
      "note": "表面塗層版本（白色 W7007WH-19 或黑黃銅 W7007BB-19，4顆入）",
      "stock": "預購",
+     "sub": "輪框",
      "image": "1-1_6db2df04-6f35-4e89-839f-99ee3e8be457.jpg?v=1787640306"
     },
     {
@@ -2189,6 +2317,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 600,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "W7008PU-19_9a1a9d21-66ef-48ee-aaa7-8973f749553b.jpg?v=1787640277"
     },
     {
@@ -2200,6 +2329,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 600,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "1_1b478fbd-d192-44d2-a054-0443ba3ab9e7.jpg?v=1787640193"
     },
     {
@@ -2211,6 +2341,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 690,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "1_66c50f8c-3163-4c9f-a310-38db61268674.jpg?v=1787640201"
     },
     {
@@ -2222,6 +2353,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 600,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "W7013SR-19_24e2f209-c6a1-41d2-a9c9-c748f8f03ed4.jpg?v=1787640198"
     },
     {
@@ -2233,6 +2365,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 750,
      "note": "黃銅原色版本（4顆入）",
      "stock": "預購",
+     "sub": "輪框",
      "image": "0_e770e173-7e4a-4ed0-b893-689ab672ccd1.jpg?v=1787640164"
     },
     {
@@ -2244,6 +2377,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 840,
      "note": "白色表面塗層版本（4顆入，塗層版較原色貴 $3）",
      "stock": "預購",
+     "sub": "輪框",
      "image": "0_e770e173-7e4a-4ed0-b893-689ab672ccd1.jpg?v=1787640164"
     },
     {
@@ -2255,6 +2389,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 750,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "1_8710b896-c153-49ff-8cb1-fd46349302d4.jpg?v=1792230547"
     },
     {
@@ -2266,6 +2401,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 870,
      "note": "",
      "stock": "預購",
+     "sub": "輪框",
      "image": "1_8e5f1d5f-9308-44bb-a140-a845bc4f8785.jpg?v=1787640161"
     },
     {
@@ -2278,6 +2414,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "0.7\" D18 輪框用 4.7g 黃銅內夾環",
      "stock": "預購",
+     "sub": "配重環",
      "image": "DSC00283_cead54cb-d21e-410b-800d-f4d0e6fc9dce.jpg?v=1787640341"
     },
     {
@@ -2290,6 +2427,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "",
      "short": "0.7\" D19 輪框用 5.6g 黃銅內夾環",
      "stock": "預購",
+     "sub": "配重環",
      "image": "DSC00644_292a61fe-e2ee-4336-9ff6-e2ef7e902fc8.jpg?v=1787640297"
     },
     {
@@ -2302,6 +2440,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "2 顆裝（僅供前輪配重使用）",
      "short": "0.7\" D18 輪框用 10g 黃銅內夾環 2顆裝",
      "stock": "預購",
+     "sub": "配重環",
      "image": "DSC08050_08c9ff66-406a-4d7e-950a-bbc9884f53a6.jpg?v=1787640238"
     },
     {
@@ -2314,6 +2453,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "4 顆裝（四輪全配重使用）",
      "short": "0.7\" D18 輪框用 10g 黃銅內夾環 4顆裝",
      "stock": "預購",
+     "sub": "配重環",
      "image": "DSC08050_08c9ff66-406a-4d7e-950a-bbc9884f53a6.jpg?v=1787640238"
     },
     {
@@ -2326,6 +2466,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "2 顆裝（僅供前輪配重使用）",
      "short": "0.7\" D19 輪框用 10.1g 黃銅內夾環 2顆裝",
      "stock": "預購",
+     "sub": "配重環",
      "image": "DSC08060_f61374ac-f394-4b7e-8975-fb49ec3cfac2.jpg?v=1787640237"
     },
     {
@@ -2338,6 +2479,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "4 顆裝（四輪全配重使用）",
      "short": "0.7\" D19 輪框用 10.1g 黃銅內夾環 4顆裝",
      "stock": "預購",
+     "sub": "配重環",
      "image": "DSC08060_f61374ac-f394-4b7e-8975-fb49ec3cfac2.jpg?v=1787640237"
     },
     {
@@ -2350,6 +2492,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "鋁合金 Beadlock 深碟輪框 4 顆，附 SCX30 六角轉接（請註明款式＋顏色）",
      "short": "0.7吋 Beadlock 輪框 A／B／C 款",
      "stock": "預購",
+     "sub": "輪框",
      "image": "https://www.meusracing.com/cdn/shop/files/A_-_-_1_ea80cc2a-215b-44e0-94ef-03c077f80c6a.jpg?v=1768646568",
      "url": "https://www.meusracing.com/products/0-7-inch-wheels-rims-for-scx30-ascent-32"
     },
@@ -2363,6 +2506,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "鋁合金 Beadlock 深碟輪框 4 顆，每顆約 4g（請註明款式＋顏色）",
      "short": "0.7吋 深碟 Beadlock 輪框 D／E／F 款",
      "stock": "預購",
+     "sub": "輪框",
      "image": "https://www.meusracing.com/cdn/shop/files/Model_D_Black_0.7-inch_wheels.jpg?v=1780993670",
      "url": "https://www.meusracing.com/products/0-7-inch-aluminum-beadlock-wheels-for-scx30"
     },
@@ -2376,6 +2520,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "note": "黃銅內配重環 4.3g/個，僅適用 MEUS 0.7 吋輪框",
      "short": "黃銅內配重環",
      "stock": "預購",
+     "sub": "配重環",
      "image": "https://www.meusracing.com/cdn/shop/files/0.7_-_1.jpg?v=1776072890",
      "url": "https://www.meusracing.com/products/brass-inner-clamp-rings-for-meus-0-7-inch-wheel-rim"
     },
@@ -2388,6 +2533,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 90,
      "note": "一顆份4顆",
      "short": "黃銅輪框螺母M2",
+     "sub": "螺母",
      "image": "images/Brassnut.JPG"
     }
    ]
@@ -2688,6 +2834,7 @@ const CHANGELOG = [
   "姓名、手機改為必填，LINE ID 改為選填；寄件時可以勾選「收件人姓名、手機同上」。",
   "送出訂單後可一鍵開啟 LINE 訂單通知；首頁新增加入 LINE 官方帳號的按鈕。",
   "現貨會顯示剩餘數量；店家確認訂單後自動扣庫存，賣完自動變成預購。",
+  "商品較多的分類新增「種類」小按鈕（例如車橋總成、CVD・半軸），清單也更精簡。",
   "「全部零件」改版：上方分類分頁、品牌篩選，商品直接列出圖片與價格，按「＋」就加入購物車，點商品看詳細。",
   "按「現貨」直接列出現貨商品卡，可以直接加入購物車；現貨與熱門推薦改成左右滑動，比較不佔版面。",
   "新增直達網址：#orders 打開我的訂單、#info 跳到購物須知，可放在 LINE 官方帳號的圖文選單。",
@@ -2772,7 +2919,7 @@ async function refresh() { try { render(await loadData()); } catch (e) {} }
 
 /* ---------- 選品區 ---------- */
 /* ---------- 全部零件：分類分頁＋品牌篩選＋商品清單 ---------- */
-let curCat = "", curBrand = "";
+let curCat = "", curBrand = "", curSub = "";
 const cartKeyOf = (catName, it) => cart.find(c => c.cat === catName && c.brand === brandOf(it) && c.label === it.label);
 function setCartQty(catName, it, q) {
   const hit = cartKeyOf(catName, it);
@@ -2813,7 +2960,7 @@ function renderTabs() {
   box.style.top = stickyOffset() - 10 + "px";
 }
 function selectCat(name) {
-  if (curCat !== name) { curCat = name; curBrand = ""; }
+  if (curCat !== name) { curCat = name; curBrand = ""; curSub = ""; }
   renderList();
   const top = $("ptabs").getBoundingClientRect().top;
   if (top > stickyOffset() + 4 || top < 0) jumpTo($("partsTitle"));
@@ -2825,16 +2972,19 @@ function renderList() {
   const items = row.cat.items;
   const brands = [...new Set(items.map(brandOf))];
   if (curBrand && !brands.includes(curBrand)) curBrand = "";
+  const subs = [...new Set(items.map(it => it.sub || "").filter(Boolean))].sort((x, y) => /其他/.test(x) - /其他/.test(y));   // 「其他」排最後
+  if (curSub && !subs.includes(curSub)) curSub = "";
+  const chip = (txt, on, fn, cls) => { const x = el("button", { className: "pbrand" + (cls || "") + (on ? " on" : ""), type: "button", textContent: txt }); x.addEventListener("click", fn); return x; };
+  const subRow = subs.length >= 2 ? el("div", { className: "pchips" }, chip("全部", !curSub, () => { curSub = ""; renderList(); }, " sub"),
+    ...subs.map(t => chip(t, curSub === t, () => { curSub = t; renderList(); }, " sub"))) : null;
+  const brandRow = brands.length >= 2 ? el("div", { className: "pchips" }, chip("全部品牌", !curBrand, () => { curBrand = ""; renderList(); }),
+    ...brands.map(b => chip(b, curBrand === b, () => { curBrand = b; renderList(); }))) : null;
   const bb = $("pbrands");
-  bb.hidden = brands.length < 2;
-  bb.replaceChildren(...["", ...brands].map(b => {
-    const x = el("button", { className: "pbrand" + (curBrand === b ? " on" : ""), type: "button", textContent: b || "全部品牌" });
-    x.addEventListener("click", () => { curBrand = b; renderList(); });
-    return x;
-  }));
-  const shown = curBrand ? items.filter(it => brandOf(it) === curBrand) : items;
+  bb.replaceChildren(...[subRow, brandRow].filter(Boolean));
+  bb.hidden = !subRow && !brandRow;
+  const shown = items.filter(it => (!curBrand || brandOf(it) === curBrand) && (!curSub || it.sub === curSub));
   const list = $("list");
-  if (!shown.length) { list.replaceChildren(el("div", { className: "pempty", textContent: "這個分類目前沒有商品" })); return; }
+  if (!shown.length) { list.replaceChildren(el("div", { className: "pempty", textContent: curBrand && curSub ? "這個品牌沒有這類商品，換個品牌或種類看看" : "這個分類目前沒有商品" })); return; }
   list.replaceChildren(...shown.map(it => {
     const img = thumb(it, "pth") || el("div", { className: "pth none" });
     const r = el("div", { className: "pi", tabIndex: 0 }, img,
