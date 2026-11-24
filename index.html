@@ -1819,6 +1819,16 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "price": 40,
      "note": "舵機、馬達 轉接迷你接收用",
      "image": "images/Jrtozh.png"
+    },
+    {
+     "brand": "OP",
+     "label": "2S 7.4V 25C 200mah 電池",
+     "sku": "BAT",
+     "color": "",
+     "usd": "",
+     "price": 250,
+     "note": "一顆約可玩30-40分鐘",
+     "image": "images/BAT.JPG"
     }
    ]
   },
@@ -2589,6 +2599,7 @@ const CHANGELOG = [
   "分類列最前面新增「現貨」按鈕，一鍵只顯示有現貨的商品。",
   "姓名、手機改為必填，LINE ID 改為選填；寄件時可以勾選「收件人姓名、手機同上」。",
   "送出訂單後可一鍵開啟 LINE 訂單通知；首頁新增加入 LINE 官方帳號的按鈕。",
+  "新增直達網址：#orders 打開我的訂單、#info 跳到購物須知，可放在 LINE 官方帳號的圖文選單。",
   "LINE ID 欄位加上查詢說明與檢查；送出訂單後可以「用 LINE 接收訂單通知」，訂單確認、收款、出貨都會自動傳 LINE。"
 ];
 /* ================================================== */
@@ -3155,7 +3166,7 @@ function renderOrders() {
   $("ordOpen").hidden = !myOrders.length;
   // 紅點：有訂單需要付款（已收到匯款資訊但還沒回報後五碼）
   $("ordDot").hidden = !myOrders.some(o => o.detail && o.detail.pay && !o.detail.last5 && o.status !== "已取消");
-  if (!myOrders.length && curD === $("odrawer")) closeD();
+  if (!myOrders.length) box.append(el("p", { className: "omsg", textContent: "這裡還沒有訂單紀錄。訂單只會顯示在下單的那個瀏覽器：在 LINE 裡下的單，請從 LINE 打開本頁查看。" }));
   myOrders.forEach(o => {
     const d = new Date(o.at), pad = n => String(n).padStart(2, "0");
     const when = d.getFullYear() + "/" + pad(d.getMonth() + 1) + "/" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
@@ -3377,6 +3388,16 @@ if (CHANGELOG.length) {
 }
 render(EMBED);
 readShared();
+// LINE 圖文選單用的網址：#orders 直接打開「我的訂單」、#info 直接跳到購物須知（#stock 只看現貨在前面處理）
+function readRoute() {
+  const h = location.hash;
+  if (h !== "#orders" && h !== "#info") return;
+  history.replaceState(null, "", location.pathname + location.search);
+  if (h === "#orders") openOrders();
+  else setTimeout(() => { if (!$("secFaq").hidden) jumpTo($("secFaq")); }, 400);
+}
+readRoute();
+addEventListener("hashchange", readRoute);
 refresh();
 refreshStatus(true);
 </script>
