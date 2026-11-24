@@ -253,7 +253,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .sec h2 small{font-family:var(--body);font-size:14px;font-weight:400;color:var(--mute);text-transform:none}
 
 /* 熱門推薦 */
-.bundles{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.bundles{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 10px;margin:0 -2px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.bundles::-webkit-scrollbar{height:6px}.bundles::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+.bundles .bcard{flex:0 0 min(300px,82%);scroll-snap-align:start}
+.bhint{margin:-6px 0 10px;color:var(--mute);font-size:13px}
 .bcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .bcard h3{margin:0;font-family:var(--disp);font-weight:800;font-size:24px;line-height:1.15}
 .bcard .bdesc{margin:0;color:var(--mute);font-size:14px;white-space:pre-line}
@@ -399,6 +402,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 
   <section class="sec" id="secBundles" hidden>
     <h2>熱門推薦 <small>一鍵整組加入購物車</small></h2>
+    <p class="bhint" id="bHint" hidden>← 左右滑動看更多推薦 →</p>
     <div class="bundles" id="bundles"></div>
   </section>
 
@@ -2634,7 +2638,7 @@ const CHANGELOG = [
   "姓名、手機改為必填，LINE ID 改為選填；寄件時可以勾選「收件人姓名、手機同上」。",
   "送出訂單後可一鍵開啟 LINE 訂單通知；首頁新增加入 LINE 官方帳號的按鈕。",
   "現貨會顯示剩餘數量；店家確認訂單後自動扣庫存，賣完自動變成預購。",
-  "按「現貨」直接列出現貨商品卡，不用再選分類和品牌，可以直接加入購物車。",
+  "按「現貨」直接列出現貨商品卡，可以直接加入購物車；現貨與熱門推薦改成左右滑動，比較不佔版面。",
   "新增直達網址：#orders 打開我的訂單、#info 跳到購物須知，可放在 LINE 官方帳號的圖文選單。",
   "LINE ID 欄位加上查詢說明與檢查；送出訂單後可以「用 LINE 接收訂單通知」，訂單確認、收款、出貨都會自動傳 LINE。"
 ];
@@ -2905,6 +2909,7 @@ function renderBundles() {
   const box = $("bundles"); box.replaceChildren();
   const list = (data.bundles || []).map(bd => ({ bd, lines: bundleLines(bd) })).filter(b => b.lines.length);
   $("secBundles").hidden = !list.length;
+  $("bHint").hidden = list.length < 2;
   list.forEach(({ bd, lines }) => {
     const total = lines.reduce((s, y) => s + y.it.price * y.x.qty, 0);
     const btn = el("button", { className: "btn primary", type: "button", textContent: "整組加入購物車" });
