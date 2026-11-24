@@ -202,11 +202,6 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .note{color:var(--mute);font-size:13px;margin:16px 0 0}
 .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
 .ver{color:#6f6f69;font-size:13px;font-variant-numeric:tabular-nums}
-.chg{margin-top:10px;color:#6f6f69;font-size:13px}
-.chg summary{cursor:pointer;display:inline-block;list-style:none;text-decoration:underline;text-underline-offset:3px}
-.chg summary::-webkit-details-marker{display:none}
-.chg summary:hover{color:var(--mute)}
-.chg ul{margin:8px 0 0;padding-left:18px;color:var(--mute);line-height:1.7}
 .foot .btn{min-height:38px;font-size:14px;font-weight:500}
 
 /* 底部購物車列 */
@@ -313,8 +308,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .chip .ck{color:var(--accent);margin-left:4px;font-weight:700}
 .chip.stockchip{font-weight:700}
 .chip.stockchip .n{color:var(--accent)}
-.chip.stockchip.on .n{color:inherit}
-.chip.stockchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip.stockchip.active .n{color:inherit}
+
 .chip.stockchip .n{margin-left:6px;font-size:12px;opacity:.8}
 .stockhint{margin:-6px 0 12px;color:var(--mute);font-size:13px}
 #stockGrid h3{margin:18px 0 8px;font-size:15px;color:var(--mute);font-weight:600;letter-spacing:.04em}
@@ -506,14 +501,17 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div class="bundles" id="bundles"></div>
   </section>
 
+  <section class="sec" id="secStock" hidden>
+    <h2>現貨 <small>不用等進口，確認後最快出貨</small></h2>
+    <div id="stockGrid"></div>
+  </section>
+
   <section class="sec" id="secParts">
     <h2 id="partsTitle">全部零件</h2>
-    <p class="stockhint" id="stockHint" hidden>目前只顯示有現貨的商品。<button type="button" id="stockOff">顯示全部商品</button></p>
     <div class="mycar" id="mycar" role="group" aria-label="選擇我的車款"></div>
     <div class="ptabs" id="ptabs" role="tablist" aria-label="零件分類"></div>
     <div class="pbrands" id="pbrands"></div>
     <div class="plist" id="list"><div class="pempty">載入中…</div></div>
-    <div id="stockGrid" hidden></div>
   </section>
 
   <section class="sec" id="secFaq" hidden>
@@ -525,7 +523,6 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <span><span class="ver" id="ver">版本載入中…</span><button id="force" class="vlink" type="button">重新整理</button></span>
     <span class="footbtns"><a class="btn lineapp lineoa" id="footOA" href="#" target="_blank" rel="noopener noreferrer" hidden>LINE 官方帳號</a></span>
   </div>
-  <details class="chg" id="chg" hidden><summary id="chgTitle">本次更新內容</summary><ul id="chgList"></ul></details>
 </main>
 
 <div class="cartbar" id="cartbar" hidden><div class="in">
@@ -624,7 +621,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <!-- 價格資料區：請用「更新價格」腳本從 Excel 更新，不建議手動修改 -->
 <script type="application/json" id="data">
 {
- "version": "1.11",
+ "version": "1.10",
  "updated": "2026-11-25",
  "footnote": "價格依各品牌官網售價換算，若官網調價或匯率大幅變動，會在確認訂單時先告知；山稜RC選物保留最終報價權利。",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
@@ -4752,22 +4749,8 @@ const GA_ID = "";                                                               
 const HERO_SECONDS = 4;                                                          // 首頁實車照幾秒換一張
 const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";                             // 查詢 7-11 門市
 const TRACK_URL = "https://eservice.7-11.com.tw/e-tracking/search.aspx";          // 查詢物流進度
-const PAGE_VERSION = "v7.0"; // 網頁程式有改動時，請手動調高這個版本號
-// 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
-const CHANGELOG_DATE = "2026-11-25";
-const CHANGELOG = [
-  "修正：iPhone 開著購物車時在上方滑動會卡住；「現貨」按鈕沒選時不再一直亮著。",
-  "購物車底部改得更精簡，商品清單看得更多；開著購物車捲動時，後面的網頁不會跟著動。",
-  "商品清單的圖片放大一倍；「現貨」和「全部零件」改成切換按鈕，按「全部零件」一定回到全部商品。",
-  "新增「我的車」：選 Bronco、JLU、K10、Tacoma 或 CJ-7，只顯示適用你車款的零件。",
-  "商品詳細新增「搭配加購」，購物車也會推薦常一起買的零件。",
-  "7-11 店到店滿 NT$1,500 免運，購物車會顯示還差多少。",
-  "清單只標示「現貨」，預購商品在商品詳細顯示預估到貨時間。",
-  "品名用字統一（例如 JLU、前或後・單支）；購物車是空的時候，底部列會自動隱藏。",
-  "商品詳細新增官網產品特點與完整商品說明。",
-  "預購商品可以按「有現貨時通知我」，到貨時用 LINE 通知你。",
-  "品牌官網缺貨的商品會自動標示「缺貨」，官網補貨後自動改回預購。"
-];
+const PAGE_VERSION = "v7.2"; // 網頁程式有改動時，請手動調高這個版本號
+// 每一版的更新內容記在後台「總覽 → 更新紀錄」（管理後台.gs），網站上不顯示
 /* ================================================== */
 
 const $ = id => document.getElementById(id);
@@ -4803,7 +4786,7 @@ function renderCar() {
 }
 function setCar(v) {
   myCar = v; try { localStorage.setItem(CAR_KEY, v); } catch (e) {}
-  renderCar(); if (onlyStock) renderStockGrid(); else renderList(); showResults(); renderCart();
+  renderCar(); renderStockGrid(); renderList(); showResults(); renderCart();
   track("select_car", { car: v || "all" });
 }
 function fitLine(it) {
@@ -5074,26 +5057,25 @@ function render(raw) {
 }
 
 /* ---------- 只看現貨 ---------- */
-let onlyStock = /^#stock$/.test(location.hash);
+const onlyStock = false;                                              // 現在「熱門推薦 → 現貨 → 全部零件」依序一起顯示，不再切換
+const wantStock = /^#stock$/.test(location.hash);                     // 舊的「#stock」網址：打開後直接捲到現貨區
 function inStock(it) { return !!it.stock && stockKind(it.stock) === "ok"; }
 function visibleItems(cat) { return onlyStock ? cat.items.filter(inStock) : cat.items; }
 function applyStockFilter() {
-  const sb = $("stockChip");
-  if (sb) { sb.classList.toggle("on", onlyStock); sb.setAttribute("aria-pressed", String(onlyStock)); }
-  $("partsTitle").textContent = onlyStock ? "現貨零件" : "全部零件";
-  $("stockHint").hidden = !onlyStock;
-  ["ptabs", "list"].forEach(id => { $(id).hidden = onlyStock; });
-  if (onlyStock) $("pbrands").hidden = true; else renderList();
+  renderList();
   renderStockGrid();
   syncActive();
 }/* 只看現貨：直接列出商品卡，不用再選分類、品牌 */
 function renderStockGrid() {
-  const box = $("stockGrid");
-  box.hidden = !onlyStock;
-  if (!onlyStock) { box.replaceChildren(); return; }
+  const box = $("stockGrid"), sec = $("secStock");
+  const all = rows.reduce((n, r) => n + r.cat.items.filter(inStock).length, 0);
+  sec.hidden = !all;
+  if (!all) { box.replaceChildren(); return; }
   const cards = [];
   rows.forEach(row => row.cat.items.filter(it => inStock(it) && fits(it)).forEach(it => cards.push(stockCard(row, it))));
-  box.replaceChildren(el("h3", { textContent: "共 " + cards.length + " 項現貨" + (cards.length > 2 ? "　← 左右滑動看更多 →" : "") }),
+  const car = myCar ? (CARS.find(c => c[0] === myCar) || [, myCar])[1] : "";
+  if (!cards.length) { box.replaceChildren(el("h3", { textContent: "目前沒有適用 " + car + " 的現貨，可以看看下面的全部零件。" })); return; }
+  box.replaceChildren(el("h3", { textContent: "共 " + cards.length + " 項現貨" + (car ? "（只顯示適用 " + car + " 的）" : "") + (cards.length > 2 ? "　← 左右滑動看更多 →" : "") }),
     el("div", { className: "sgrid" }, ...cards));      // 全部現貨排成一排，左右滑動
 }
 function stockCard(row, it) {
@@ -5117,13 +5099,7 @@ function stockCard(row, it) {
       el("div", { className: "sp", textContent: fmt(it.price) }),
       el("div", { className: "sf" }, qty, add)));
 }
-function setOnlyStock(v) {
-  onlyStock = v;
-  if (!/^#list=/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search + (v ? "#stock" : ""));   // 「#stock」網址可以直接分享現貨清單
-  applyStockFilter(); showResults();
-  if (v) jumpTo($("secParts"));
-}
-$("stockOff").addEventListener("click", () => setOnlyStock(false));
+function setOnlyStock() {}                                            // 舊功能（現貨／全部切換）已取消，保留空函式相容舊程式
 
 /* ---------- 分類導覽 ---------- */
 function stickyOffset() { return document.querySelector(".searchwrap").offsetHeight + 10; }
@@ -5140,22 +5116,14 @@ function renderNav() {
     b.addEventListener("click", () => jumpTo(target));
     nav.append(b); navTargets.push({ b, target });
   };
-  const nStock = rows.reduce((n, r) => n + r.cat.items.filter(inStock).length, 0);
-  if (nStock) {
-    const sb = el("button", { className: "chip stockchip", type: "button", id: "stockChip" }, "現貨", el("span", { className: "n", textContent: nStock }));
-    sb.setAttribute("aria-pressed", "false");
-    sb.addEventListener("click", () => { if (!onlyStock) setOnlyStock(true); else jumpTo($("secParts")); });   // 再按一次只捲回現貨清單，不會突然切回全部
-    nav.append(sb);
-  } else onlyStock = false;
   if ((data.bundles || []).length && !$("secBundles").hidden) add("熱門推薦", $("secBundles"));
-  if (rows.length) {                                                   // 「全部零件」：一定切回全部商品（不再停在現貨模式）
-    add("全部零件", $("secParts"));
-    let ab = navTargets[navTargets.length - 1].b;
-    ab.id = "allChip";
-    ab.replaceWith(ab = ab.cloneNode(true));
-    navTargets[navTargets.length - 1].b = ab;
-    ab.addEventListener("click", () => { if (onlyStock) setOnlyStock(false); jumpTo($("secParts")); });
+  const nStock = rows.reduce((n, r) => n + r.cat.items.filter(inStock).length, 0);
+  if (nStock) {                                                        // 「現貨」只是跳到現貨區的捷徑，數字提醒有幾件
+    add("現貨", $("secStock"));
+    const sb = navTargets[navTargets.length - 1].b;
+    sb.id = "stockChip"; sb.classList.add("stockchip"); sb.append(el("span", { className: "n", textContent: nStock }));
   }
+  if (rows.length) { add("全部零件", $("secParts")); navTargets[navTargets.length - 1].b.id = "allChip"; }
   if ((data.notice || []).length || (data.faq || []).length) add("須知與問答", $("secFaq"));
   markNav(); syncActive();
 }
@@ -5165,7 +5133,7 @@ function syncActive() {
   const off = stickyOffset() + 40; let cur = null;
   navTargets.forEach(x => { if (!x.target.hidden && x.target.getBoundingClientRect().top <= off) cur = x; });
   if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) { const vis = navTargets.filter(x => !x.target.hidden); if (vis.length) cur = vis[vis.length - 1]; }   // 捲到最底時，最後一個分類亮起
-  navTargets.forEach(x => x.b.classList.toggle("active", x === cur && !(onlyStock && x.b.id === "allChip")));   // 現貨模式時「全部零件」不亮，避免兩個同時亮
+  navTargets.forEach(x => x.b.classList.toggle("active", x === cur));
   if (cur) { const nav = $("catnav"), b = cur.b; if (b.offsetLeft < nav.scrollLeft || b.offsetLeft + b.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollTo({ left: b.offsetLeft - 16 }); }
 }
 addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; syncActive(); }); } }, { passive: true });
@@ -5787,12 +5755,6 @@ renderOrders();
 document.addEventListener("visibilitychange", () => { if (!document.hidden) { refresh(); refreshStatus(); loadLiveStock(); } });
 $("force").addEventListener("click", () => { location.href = location.pathname + "?r=" + Date.now(); });
 if (location.search.startsWith("?r=")) history.replaceState(null, "", location.pathname);
-// 頁面最下方的更新說明
-if (CHANGELOG.length) {
-  $("chgTitle").textContent = PAGE_VERSION + " 更新內容（" + CHANGELOG_DATE + "）";
-  $("chgList").replaceChildren(...CHANGELOG.map(t => el("li", { textContent: t })));
-  $("chg").hidden = false;
-}
 render(EMBED);
 readShared();
 // LINE 圖文選單用的網址：#orders 直接打開「我的訂單」、#info 直接跳到購物須知（#stock 只看現貨在前面處理）
@@ -5804,6 +5766,7 @@ function readRoute() {
   else setTimeout(() => { if (!$("secFaq").hidden) jumpTo($("secFaq")); }, 400);
 }
 readRoute();
+if (wantStock) { history.replaceState(null, "", location.pathname + location.search); setTimeout(() => { if (!$("secStock").hidden) jumpTo($("secStock")); }, 400); }
 addEventListener("hashchange", readRoute);
 loadLiveStock();
 refresh();
