@@ -417,7 +417,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <ol class="steps" aria-label="訂購流程">
       <li><b>1</b><span><strong>選零件</strong><small>搜尋或依分類加入購物車</small></span></li>
       <li><b>2</b><span><strong>送出訂單</strong><small>填姓名、手機與取貨方式</small></span></li>
-      <li><b>3</b><span><strong>確認後匯款</strong><small>匯款資訊傳到 LINE 或「我的訂單」</small></span></li>
+      <li><b>3</b><span><strong>確認後付款</strong><small>匯款，或面交時當面付</small></span></li>
       <li><b>4</b><span><strong>出貨取貨</strong><small>7-11 店到店或面交</small></span></li>
     </ol>
     <ul class="points" id="points" hidden></ul>
@@ -507,7 +507,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <h3 class="ship">取貨方式</h3>
       <div class="shipm" role="radiogroup" aria-label="取貨方式">
         <label class="opt"><input type="radio" name="shipm" value="711"><span>7-11 店到店<small id="feeLbl">運費另計</small></span></label>
-        <label class="opt"><input type="radio" name="shipm" value="pickup"><span>面交自取<small>不收運費，時間地點另外約</small></span></label>
+        <label class="opt"><input type="radio" name="shipm" value="pickup"><span>面交自取<small>不收運費，當面付款，時間地點另外約</small></span></label>
       </div>
       <div class="contact" id="shipBox" hidden style="padding:0">
       <h3>寄件資料</h3>
@@ -2834,6 +2834,7 @@ const CHANGELOG = [
   "姓名、手機改為必填，LINE ID 改為選填；寄件時可以勾選「收件人姓名、手機同上」。",
   "送出訂單後可一鍵開啟 LINE 訂單通知；首頁新增加入 LINE 官方帳號的按鈕。",
   "現貨會顯示剩餘數量；店家確認訂單後自動扣庫存，賣完自動變成預購。",
+  "面交訂單改為當面付款，不會再出現匯款資訊。",
   "商品較多的分類新增「種類」小按鈕（例如車橋總成、CVD・半軸），清單也更精簡。",
   "「全部零件」改版：上方分類分頁、品牌篩選，商品直接列出圖片與價格，按「＋」就加入購物車，點商品看詳細。",
   "按「現貨」直接列出現貨商品卡，可以直接加入購物車；現貨與熱門推薦改成左右滑動，比較不佔版面。",
@@ -3525,6 +3526,11 @@ function renderOrders() {
         el("div", { className: "omsg", textContent: dt.line ? "匯款後直接在 LINE 回覆帳號後五碼即可，或在這裡填寫：" : "匯款後請填帳號後五碼，方便我們對帳：" }),
         el("div", { className: "prow" }, inp, send), pmsg));
     }
+    const isPk = o.method === "pickup" || dt.pickup;
+    if (isPk && !dt.paid && (o.status === "已確認" || o.status === "待貨中"))
+      extra.append(el("div", { className: "paybox" }, el("h4", { textContent: "面交付款" }),
+        el("div", {}, "面交時當面付款 ", el("span", { className: "pdue", textContent: fmt(+dt.due || o.due || o.total) })),
+        el("div", { className: "omsg", textContent: "不需要先匯款，面交的時間和地點會用 LINE 跟你約。" })));
     if (dt.paid) extra.append(el("div", { className: "okline", textContent: "✅ 店家已確認收款" }));
     if (dt.tracking) {
       const cp = el("button", { className: "btn", type: "button", textContent: "複製單號" });
@@ -3554,7 +3560,7 @@ async function refreshStatus(force) {
     myOrders.forEach(o => {
       if (j.statuses && j.statuses[o.id]) o.status = String(j.statuses[o.id]).slice(0, 20);
       const dt = j.details && j.details[o.id];
-      if (dt) o.detail = { line: !!dt.line, paid: !!dt.paid, last5: String(dt.last5 || "").slice(0, 5), tracking: String(dt.tracking || "").slice(0, 40), due: +dt.due || 0, pay: String(dt.pay || "").slice(0, 300) };
+      if (dt) o.detail = { line: !!dt.line, pickup: !!dt.pickup, paid: !!dt.paid, last5: String(dt.last5 || "").slice(0, 5), tracking: String(dt.tracking || "").slice(0, 40), due: +dt.due || 0, pay: String(dt.pay || "").slice(0, 300) };
     });
     saveOrders(); renderOrders(); fetchBindCodes();
     const d = new Date(); $("ostamp").textContent = "狀態更新於 " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
