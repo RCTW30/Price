@@ -127,11 +127,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .lineoa{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;text-align:center}
 .footbtns{display:flex;gap:8px;flex-wrap:wrap}
 .btn.lineapp{background:#06c755;border-color:#06c755;color:#fff;font-weight:700}
-.oaband{display:flex;align-items:center;gap:12px;margin:-8px 0 22px;padding:12px 14px;border:1px solid #1d5c34;border-radius:12px;background:rgba(6,199,85,.08)}
-.oaband>div{flex:1;min-width:0}
-.oaband strong{display:block;font-size:15px}
-.oaband small{display:block;color:#cfcfc8;font-size:13px;line-height:1.5;margin-top:2px}
-.oaband .btn{flex:none}
+.oaband{display:flex;align-items:center;gap:10px;margin:-10px 0 18px;padding:7px 8px 7px 12px;border:1px solid #1d5c34;border-radius:10px;background:rgba(6,199,85,.08)}
+.oaband>div{flex:1;min-width:0;line-height:1.3}
+.oaband strong{display:block;font-size:13px}
+.oaband small{display:block;color:#bdbdb6;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oaband .btn{flex:none;padding:6px 12px;font-size:13px;border-radius:8px}
 .bm{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:20px}
 .bm[hidden]{display:none}
 .bm .card{width:min(420px,100%);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 20px;display:grid;gap:12px}
@@ -232,8 +232,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .stockhint{margin:-6px 0 12px;color:var(--mute);font-size:13px}
 #stockGrid h3{margin:18px 0 8px;font-size:15px;color:var(--mute);font-weight:600;letter-spacing:.04em}
 #stockGrid h3:first-child{margin-top:0}
-.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
-.scard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.sgrid{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 10px;margin:0 -2px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.sgrid::-webkit-scrollbar{height:6px}.sgrid::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+.scard{flex:0 0 168px;scroll-snap-align:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
 .scard .simg{display:block;width:100%;aspect-ratio:1;object-fit:contain;background:#fff;cursor:zoom-in}
 .scard .simg.none{background:var(--panel2)}
 .scard .sb{padding:10px 10px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
@@ -243,7 +244,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .scard .sf{display:flex;gap:6px}
 .scard .sf .qty{width:52px;flex:none;padding:8px 4px;text-align:center}
 .scard .sf .btn{flex:1;padding:8px 6px;font-size:14px;white-space:nowrap}
-@media (max-width:420px){.sgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}}
+@media (max-width:420px){.scard{flex-basis:150px}.sgrid{gap:8px}}
 .stockhint button{background:none;border:0;padding:0;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer}
 
 /* 區塊標題 */
@@ -370,7 +371,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     </ol>
     <ul class="points" id="points" hidden></ul>
     <div class="oaband" id="oaBand" hidden>
-      <div><strong>歡迎加入「山稜RC選物」LINE 官方帳號</strong><small>新品到貨、現貨補貨、優惠活動第一時間通知你，有任何問題也能直接在 LINE 詢問。</small></div>
+      <div><strong>歡迎加入 LINE 官方帳號</strong><small>新品、現貨、優惠第一時間通知</small></div>
       <a class="btn lineapp lineoa" id="bandOA" href="#" target="_blank" rel="noopener noreferrer">加入好友</a>
     </div>
     <div class="hero" id="hero" hidden>
@@ -2821,14 +2822,10 @@ function renderStockGrid() {
   const box = $("stockGrid");
   box.hidden = !onlyStock;
   if (!onlyStock) { box.replaceChildren(); return; }
-  const parts = [];
-  rows.forEach(row => {
-    const its = row.cat.items.filter(inStock);
-    if (!its.length) return;
-    parts.push(el("h3", { textContent: row.cat.name + "（" + its.length + "）" }),
-      el("div", { className: "sgrid" }, ...its.map(it => stockCard(row, it))));
-  });
-  box.replaceChildren(...parts);
+  const cards = [];
+  rows.forEach(row => row.cat.items.filter(inStock).forEach(it => cards.push(stockCard(row, it))));
+  box.replaceChildren(el("h3", { textContent: "共 " + cards.length + " 項現貨" + (cards.length > 2 ? "　← 左右滑動看更多 →" : "") }),
+    el("div", { className: "sgrid" }, ...cards));      // 全部現貨排成一排，左右滑動
 }
 function stockCard(row, it) {
   const img = thumb(it, "simg", true) || el("div", { className: "simg none" });
@@ -2846,7 +2843,7 @@ function stockCard(row, it) {
   return el("article", { className: "scard" }, img,
     el("div", { className: "sb" }, el("div", {}, stockTag(it)),
       el("div", { className: "sn", textContent: nameOf(it) }),
-      el("div", { className: "sm", textContent: brandOf(it) + (it.color ? "｜" + it.color : "") }),
+      el("div", { className: "sm", textContent: brandOf(it) + "｜" + row.cat.name }),
       el("div", { className: "sp", textContent: fmt(it.price) }),
       el("div", { className: "sf" }, qty, add)));
 }
