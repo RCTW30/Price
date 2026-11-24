@@ -214,6 +214,34 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .cartbar .btn{min-width:132px}
 .cbl{display:flex;align-items:center;gap:12px;min-width:0}
 .cbsum{min-width:0;white-space:nowrap}
+.cartbar[hidden]{display:none}
+.cartbar .cbsum[hidden],.cartbar #cartOpen[hidden]{display:none}
+.cartbar .fs{display:block;font-size:12px;color:var(--mute);margin-top:1px}
+.cartbar .fs.ok{color:var(--accent)}
+.fsbar{margin:0 0 10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);font-size:14px}
+.fsbar .tr{height:6px;border-radius:99px;background:var(--line);margin-top:7px;overflow:hidden}
+.fsbar .tr i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.fsbar.ok{border-color:var(--accent);color:var(--accent)}
+.mycar{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 12px;padding-bottom:2px}
+.mycar::-webkit-scrollbar{display:none}
+.mycar .ml{flex:none;color:var(--mute);font-size:13px;font-weight:700}
+.mycar button{flex:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+.mycar button.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:800}
+.fitline{font-size:13px;color:var(--mute);margin:2px 0 0}
+.fitline b{color:var(--ink);font-weight:700}
+.fitline.bad{color:var(--danger)}
+.pdpair{border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
+.pdpair>b,.cpair>b{display:block;font-size:13px;color:var(--accent);margin:0 0 8px}
+.pp{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:6px 0}
+.pp .pth{width:44px;height:44px}
+.pp .n{font-size:14px;font-weight:700;line-height:1.35}
+.pp .p{font-size:13px;color:var(--mute)}
+.pp .padd2{border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.pp .padd2.done{background:var(--accent);color:var(--accent-ink)}
+.cpair{margin:4px 0 14px;padding:12px;border:1px dashed var(--line);border-radius:12px}
+.pi.nofit{opacity:.45}
+.stk.nofit{background:transparent;color:var(--mute);box-shadow:inset 0 0 0 1px var(--line)}
+.vlink{background:none;border:0;color:#6f6f69;font-size:13px;text-decoration:underline;cursor:pointer;padding:0 0 0 8px}
 .cartbar .obtn{min-width:0;position:relative;padding:0 14px}
 .ndot{position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:#ff6b5b;border:2px solid var(--bg)}
 .obody{padding:14px 16px 24px}
@@ -459,6 +487,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
   <section class="sec" id="secParts">
     <h2 id="partsTitle">全部零件</h2>
     <p class="stockhint" id="stockHint" hidden>目前只顯示有現貨的商品。<button type="button" id="stockOff">顯示全部商品</button></p>
+    <div class="mycar" id="mycar" role="group" aria-label="選擇我的車款"></div>
     <div class="ptabs" id="ptabs" role="tablist" aria-label="零件分類"></div>
     <div class="pbrands" id="pbrands"></div>
     <div class="plist" id="list"><div class="pempty">載入中…</div></div>
@@ -470,20 +499,19 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div class="faq" id="faq"></div>
   </section>
   <p class="note" id="footnote"></p>
-  <p class="note">價格僅供參考，實際金額以店家確認的報價為準。</p>
-  <div class="foot">
-    <span class="ver" id="ver">版本載入中…</span>
-    <span class="footbtns"><a class="btn lineapp lineoa" id="footOA" href="#" target="_blank" rel="noopener noreferrer" hidden>LINE 官方帳號</a><button id="force" class="btn" type="button">強制重新整理</button></span>
+    <div class="foot">
+    <span><span class="ver" id="ver">版本載入中…</span><button id="force" class="vlink" type="button">重新整理</button></span>
+    <span class="footbtns"><a class="btn lineapp lineoa" id="footOA" href="#" target="_blank" rel="noopener noreferrer" hidden>LINE 官方帳號</a></span>
   </div>
   <details class="chg" id="chg" hidden><summary id="chgTitle">本次更新內容</summary><ul id="chgList"></ul></details>
 </main>
 
-<div class="cartbar"><div class="in">
+<div class="cartbar" id="cartbar" hidden><div class="in">
   <div class="cbl">
     <button id="ordOpen" type="button" class="btn obtn" hidden>我的訂單<span class="ndot" id="ordDot" hidden></span></button>
-    <div class="cbsum"><span class="cnt" id="cbCount">購物車 0 件</span><strong id="cbTotal">NT$ 0</strong></div>
+    <div class="cbsum" id="cbSum"><span class="cnt" id="cbCount">0 件</span><strong id="cbTotal">NT$ 0</strong><span class="fs" id="cbFree" hidden></span></div>
   </div>
-  <button id="cartOpen" type="button" class="btn primary">檢視購物車<span class="badge" id="cbBadge" hidden>0</span></button>
+  <button id="cartOpen" type="button" class="btn primary">去結帳<span class="badge" id="cbBadge" hidden>0</span></button>
 </div></div>
 
 <div class="backdrop" id="backdrop"></div>
@@ -499,6 +527,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
   <div class="dhead"><h2 id="cartTitle">購物車</h2><button id="cartClose" class="btn" type="button">關閉</button></div>
   <div class="dbody">
     <div id="cartLines"></div>
+    <div class="cpair" id="cartPair" hidden></div>
     <div class="contact">
       <h3>聯絡資料與備註</h3>
       <label>姓名（必填）<input id="cName" maxlength="40" autocomplete="name"></label>
@@ -530,6 +559,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     </div>
   </div>
   <div class="dfoot">
+    <div class="fsbar" id="fsBar" hidden></div>
     <div class="tots"><div><span>商品小計</span><span id="cartSub">NT$ 0</span></div><div><span>運費</span><span id="cartFee">請選擇取貨方式</span></div></div>
     <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
     <div class="dbtns">
@@ -570,7 +600,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 {
  "version": "1.10",
  "updated": "2026-11-24",
- "footnote": "V1 115.12.1 後適用，作者保有最終報價之權利",
+ "footnote": "價格依各品牌官網售價換算，若官網調價或匯率大幅變動，會在確認訂單時先告知；山稜RC選物保留最終報價權利。",
  "imageBase": "https://www.injora.com/cdn/shop/files/",
  "categories": [
   {
@@ -584,9 +614,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$32.99 USD",
      "price": 980,
      "note": "IR80-30 皮卡造型硬殼，適用 Bronco／JLU／K10 底盤。白色未塗裝版，可依喜好自行噴漆、做舊或貼裝，價格也比塗裝版實惠。",
-     "short": "IR80-30 白色未塗裝",
+     "short": "IR80-30 皮卡硬殼（白色未塗裝）",
      "stock": "預購",
      "sub": "車殼",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "ABS 硬殼，經典皮卡造型",
       "細節豐富：保險桿、燈罩、雨刷、車身線條一體成型",
@@ -606,9 +641,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$34.99 USD",
      "price": 1040,
      "note": "IR80-30 皮卡造型硬殼，原廠金屬漆塗裝，開箱即可上車。適用 Bronco／JLU／K10 底盤，提供綠、紫、灰三色（請註明顏色）。",
-     "short": "IR80-30 塗裝版本",
+     "short": "IR80-30 皮卡硬殼（塗裝版）",
      "stock": "預購",
      "sub": "車殼",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "ABS 硬殼，經典皮卡造型",
       "細節豐富：保險桿、燈罩、雨刷、車身線條一體成型",
@@ -628,9 +668,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "BUG30 車殼，磁吸式固定，拆裝免工具。透明 PC 材質並附遮蓋貼紙，適合想自己噴漆、打造個人塗裝的玩家。適用 Bronco／JLU／K10 底盤。",
-     "short": "BUG30 透明車殼",
+     "short": "BUG30 金龜車殼（透明）",
      "stock": "預購",
      "sub": "車殼",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "經典金龜車造型，專為 SCX30 設計",
       "PC 聚碳酸酯材質，耐用；附仿真貼紙",
@@ -649,9 +694,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$26.99 USD",
      "price": 810,
      "note": "BUG30 車殼原廠預塗裝版，磁吸式固定，拆裝免工具。適用 Bronco／JLU／K10 底盤，多色可選（請註明顏色）。",
-     "short": "BUG30 塗裝車殼",
+     "short": "BUG30 金龜車殼（塗裝版）",
      "stock": "預購",
      "sub": "車殼",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "經典金龜車造型，專為 SCX30 設計",
       "PC 聚碳酸酯材質，耐用；附仿真貼紙",
@@ -670,9 +720,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "Bronco 專用 CNC 鋁合金保險桿，黑色本體搭配紅色拖車鉤，強化前後防護並提升越野外觀。此為單支販售，請註明前保桿或後保桿。",
-     "short": "Bronco 前or後保桿",
+     "short": "Bronco 鋁合金保桿（前或後・單支）",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "Bronco"
+     ],
      "feat": [
       "CNC 鋁合金，黑色陽極處理",
       "紅色拖車鉤細節，仿真感更強",
@@ -690,9 +743,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "Bronco 專用 CNC 鋁合金前後保險桿套組，黑色本體搭配紅色拖車鉤，一次完成前後防護與外觀升級。",
-     "short": "Bronco 前後保桿組",
+     "short": "Bronco 鋁合金前後保桿組",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "Bronco"
+     ],
      "feat": [
       "CNC 鋁合金，黑色陽極處理",
       "紅色拖車鉤細節，仿真感更強",
@@ -710,9 +766,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "Wrangler（JLU）專用 CNC 鋁合金保險桿，黑色霧面質感，提升防護與越野氣勢。此為單支販售，請註明前保桿或後保桿。",
-     "short": "牧馬人 前or後保桿",
+     "short": "JLU 鋁合金保桿（前或後・單支）",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "JLU"
+     ],
      "feat": [
       "CNC 鋁合金，黑色陽極處理",
       "經典競技款保桿造型，越野氣勢更強",
@@ -730,9 +789,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "Wrangler（JLU）專用 CNC 鋁合金前後保險桿套組，黑色霧面質感，一次完成前後升級。",
-     "short": "牧馬人 前後保桿組",
+     "short": "JLU 鋁合金前後保桿組",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "JLU"
+     ],
      "feat": [
       "CNC 鋁合金，黑色陽極處理",
       "經典競技款保桿造型，越野氣勢更強",
@@ -750,9 +812,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "Wrangler（JLU）專用 Stinger 尖頭造型鋁合金保險桿，前端導角設計更利於攀爬岩石，外型也更具攻擊性。此為單支販售，請註明前保桿或後保桿。",
-     "short": "牧馬人 前or後保桿 （尖款）",
+     "short": "JLU Stinger 尖頭保桿（前或後・單支）",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "JLU"
+     ],
      "feat": [
       "CNC 鋁合金，黑色陽極處理",
       "經典 Stinger 攀岩保桿造型",
@@ -770,9 +835,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "Wrangler（JLU）專用 Stinger 尖頭造型鋁合金前後保險桿套組，前端導角設計利於攀爬，外型更具攻擊性。",
-     "short": "牧馬人 前後保桿組( 尖款 )",
+     "short": "JLU Stinger 尖頭前後保桿組",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "JLU"
+     ],
      "feat": [
       "CNC 鋁合金，黑色陽極處理",
       "經典 Stinger 攀岩保桿造型",
@@ -790,9 +858,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "Chevrolet K10 專用鋁合金保險桿，電鍍銀表面重現經典老皮卡的鍍鉻質感。此為單支販售，請註明前保桿或後保桿。",
-     "short": "K10 電鍍銀鋁合金保桿（前或後）",
+     "short": "K10 電鍍銀鋁合金保桿（前或後・單支）",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "K10"
+     ],
      "feat": [
       "CNC 精密加工鋁合金",
       "電鍍鉻面處理，復古直桿造型",
@@ -812,6 +883,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "short": "K10 電鍍銀鋁合金前後保桿組",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "K10"
+     ],
      "feat": [
       "CNC 精密加工鋁合金",
       "電鍍鉻面處理，復古直桿造型",
@@ -848,9 +922,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$34.99 USD",
      "price": 1300,
      "note": "MEUS MB30 車殼套組，內含車殼、尼龍內籠、車頂燈與大燈組及貼紙，一套完成整車外觀改造（不含底盤車架，不適用 Tacoma）。提供藍、紅兩色（請註明顏色）。",
-     "short": "MB30 車殼（藍／紅）",
+     "short": "MB30 車殼套組（藍／紅）",
      "stock": "預購",
      "sub": "車殼",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "ABS 射出成型車殼＋尼龍內籠，結構紮實",
       "套件含車殼、尼龍內籠、車頂燈與大燈，螺絲鎖附安裝",
@@ -869,9 +948,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$32.99 USD",
      "price": 1230,
      "note": "MEUS MB30 車殼套組灰色版，內含車殼、尼龍內籠、車頂燈與大燈組及貼紙（不含底盤車架，不適用 Tacoma）。",
-     "short": "MB30 車殼（灰）",
+     "short": "MB30 車殼套組（灰）",
      "stock": "預購",
      "sub": "車殼",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "ABS 射出成型車殼＋尼龍內籠，結構紮實",
       "套件含車殼、尼龍內籠、車頂燈與大燈，螺絲鎖附安裝",
@@ -890,7 +974,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 740,
      "note": "MEUS 透明車殼，未塗裝，可依個人喜好自行噴漆與貼裝，適合想打造獨一無二外觀的玩家。",
-     "short": "透明車殼",
+     "short": "透明車殼（未塗裝）",
      "stock": "預購",
      "sub": "車殼",
      "feat": [
@@ -913,6 +997,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "short": "K10 鋁合金前保桿",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "K10"
+     ],
      "feat": [
       "CNC 鋁合金加工，堅固耐用",
       "有效保護車殼前端",
@@ -933,6 +1020,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "short": "Bronco 鋁合金前後保桿組",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "Bronco"
+     ],
      "feat": [
       "CNC 鋁合金加工，堅固耐用",
       "有效保護車殼",
@@ -950,9 +1040,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 930,
      "note": "MEUS Wrangler（JLU）專用鋁合金前後保險桿套組，原廠車殼免修改即可安裝。",
-     "short": "牧馬人 鋁合金前後保桿組",
+     "short": "JLU 鋁合金前後保桿組",
      "stock": "預購",
      "sub": "保險桿",
+     "fit": [
+      "JLU"
+     ],
      "feat": [
       "CNC 鋁合金加工，堅固耐用",
       "有效保護車殼",
@@ -975,8 +1068,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$28.99 USD",
      "price": 870,
      "note": "INJORA 黃銅 LCG 低重心車架，以黃銅增加底盤重量、降低重心，大幅提升爬坡穩定性與抗翻能力。適用 Bronco／JLU／K10／Tacoma。",
-     "short": "黃銅LCG車架",
+     "short": "黃銅 LCG 低重心車架",
      "stock": "預購",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10",
+      "Tacoma"
+     ],
      "feat": [
       "CNC 黃銅車架，噴砂霧面處理；比鋁合金版更重，適合想加重底盤的玩家",
       "底盤滑角優化為 12.5°（原廠 9.5°），更容易滑過障礙",
@@ -985,6 +1084,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "重心偏前設計，陡坡攀爬更穩",
       "規格：黃銅＋碳纖維，26g",
       "注意：黃銅表面久了會氧化變暗屬正常；不適用 CJ-7"
+     ],
+     "pair": [
+      "INJORA|INJORA Nylon Rock Sliders for 1/30 SCX30",
+      "INJORA|INJORA 26mm Aluminum Oil Shocks for 1/30 Axial SCX30"
      ],
      "image": "DSC00629_e2b15747-4f22-40c9-8596-208f8e5a5fe6.jpg?v=1793434931"
     },
@@ -996,8 +1099,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$22.99 USD",
      "price": 690,
      "note": "INJORA 鋁合金 LCG 低重心車架，在輕量化與剛性之間取得平衡，降低重心、提升攀爬穩定性。單車架套件，不含尼龍側踏板。適用 Bronco／JLU／K10／Tacoma。",
-     "short": "鋁合金LCG車架(不含側板)",
+     "short": "鋁合金 LCG 低重心車架（不含側踏板）",
      "stock": "預購",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10",
+      "Tacoma"
+     ],
      "feat": [
       "7075 鋁合金 CNC 車架，剛性高、重心更低",
       "底盤滑角優化為 12.5°（原廠 9.5°），更容易滑過障礙",
@@ -1005,6 +1114,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "三排避震孔（原廠兩排），可升高車身、微調懸吊",
       "重心偏前設計，陡坡攀爬更穩；相容原廠與 INJORA 升級件",
       "規格：車架 9.2g（側踏板 2g）；適用 Bronco／JLU／K10／Tacoma，不適用 CJ-7"
+     ],
+     "pair": [
+      "INJORA|INJORA Nylon Rock Sliders for 1/30 SCX30",
+      "INJORA|INJORA 26mm Aluminum Oil Shocks for 1/30 Axial SCX30"
      ],
      "image": "DSC01558_fd96e762-fc1d-4ee9-b5b2-bfb2bd7671f8.jpg?v=1787640325"
     },
@@ -1016,8 +1129,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "INJORA 鋁合金 LCG 低重心車架＋尼龍側踏板（SCX30-19）套組，一次完成車架與側邊防護升級。適用 Bronco／JLU／K10／Tacoma。",
-     "short": "鋁合金LCG車架(含側板)",
+     "short": "鋁合金 LCG 低重心車架（含側踏板）",
      "stock": "預購",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10",
+      "Tacoma"
+     ],
      "feat": [
       "7075 鋁合金 CNC 車架，剛性高、重心更低",
       "底盤滑角優化為 12.5°（原廠 9.5°），更容易滑過障礙",
@@ -1025,6 +1144,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "三排避震孔（原廠兩排），可升高車身、微調懸吊",
       "重心偏前設計，陡坡攀爬更穩；相容原廠與 INJORA 升級件",
       "規格：車架 9.2g（側踏板 2g）；適用 Bronco／JLU／K10／Tacoma，不適用 CJ-7"
+     ],
+     "pair": [
+      "INJORA|INJORA 26mm Aluminum Oil Shocks for 1/30 Axial SCX30",
+      "INJORA|INJORA Brass Skid Plate for 1/30 SCX30 (17.9g) (Black Brass 黑黃銅塗層)"
      ],
      "image": "DSC01558_fd96e762-fc1d-4ee9-b5b2-bfb2bd7671f8.jpg?v=1787640325"
     },
@@ -1036,7 +1159,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 930,
      "note": "MEUS TC4 鈦合金搭配鋁合金的 LCG 低重心車架，兼具高強度與輕量化，並增加避震安裝孔位，方便調整車高與懸吊幾何。",
-     "short": "TC4 鈦合金 LCG 車架",
+     "short": "TC4 鈦合金 LCG 低重心車架",
      "stock": "預購",
      "feat": [
       "TC4 鈦合金＋鋁合金材質，取代原廠尼龍件",
@@ -1059,9 +1182,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$17.99 USD",
      "price": 540,
      "note": "CJ-7 專用黑色塗層黃銅高通過性底盤連桿，以黃銅配重降低重心，連桿彎曲設計可增加底盤離地空間，減少卡石。",
-     "short": "CJ-7 專用黑黃銅高通過性底盤連桿",
+     "short": "CJ-7 黑黃銅高通過底盤連桿",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "CJ-7"
+     ],
      "feat": [
       "CNC 黃銅加工，精準密合、抗鏽",
       "增加底盤配重，提升攀爬穩定",
@@ -1079,9 +1205,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "CJ-7 專用不鏽鋼高通過性底盤連桿，強度高、不易彎曲變形，彎曲設計提升離地空間。此款僅含底盤連桿，不含轉向連桿。",
-     "short": "CJ-7 專用不鏽鋼高通過性底盤連桿",
+     "short": "CJ-7 不鏽鋼高通過底盤連桿",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "CJ-7"
+     ],
      "feat": [
       "不鏽鋼連桿，耐用抗鏽",
       "彎曲設計，離地更高、攀爬時更順滑過岩石",
@@ -1089,6 +1218,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "球頭結構簡化，免 O 環，安裝保養更容易",
       "附 0.5mm 墊片，可微調連桿長度與前橋角度",
       "重量：底盤連桿 10g、轉向連桿 1.7g；僅適用 SCX30 CJ-7"
+     ],
+     "pair": [
+      "INJORA|INJORA Rod End Replacement Kit for INJORA SCX30 Chassis Links (Link Ball End Screw Set 含五金螺絲包)"
      ],
      "image": "SCX30-43-29.jpg?v=1793260206"
     },
@@ -1100,9 +1232,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "CJ-7 專用不鏽鋼高通過性底盤連桿＋轉向連桿完整套組，一次升級整車連桿，強度與離地空間同步提升。",
-     "short": "CJ-7 專用不鏽鋼高通過性底盤連桿(含轉向)",
+     "short": "CJ-7 不鏽鋼高通過底盤連桿（含轉向連桿）",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "CJ-7"
+     ],
      "feat": [
       "不鏽鋼連桿，耐用抗鏽",
       "彎曲設計，離地更高、攀爬時更順滑過岩石",
@@ -1110,6 +1245,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "球頭結構簡化，免 O 環，安裝保養更容易",
       "附 0.5mm 墊片，可微調連桿長度與前橋角度",
       "重量：底盤連桿 10g、轉向連桿 1.7g；僅適用 SCX30 CJ-7"
+     ],
+     "pair": [
+      "INJORA|INJORA Rod End Replacement Kit for INJORA SCX30 Chassis Links (Link Ball End Screw Set 含五金螺絲包)"
      ],
      "image": "SCX30-43-29.jpg?v=1793260206"
     },
@@ -1121,9 +1259,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$17.99 USD",
      "price": 540,
      "note": "Tacoma 專用黑色塗層黃銅高通過性底盤連桿，以黃銅配重降低重心，彎曲設計增加離地空間。",
-     "short": "Tacoma 專用黑黃銅高通過性底盤連桿",
+     "short": "Tacoma 黑黃銅高通過底盤連桿",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "Tacoma"
+     ],
      "feat": [
       "CNC 黃銅加工，精準密合、抗鏽",
       "增加底盤配重，提升攀爬穩定",
@@ -1141,9 +1282,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "Tacoma 專用不鏽鋼高通過性底盤連桿，強度高、不易變形，彎曲設計提升離地空間。此款僅含底盤連桿，不含轉向連桿。",
-     "short": "Tacoma 專用不鏽鋼高通過性底盤連桿",
+     "short": "Tacoma 不鏽鋼高通過底盤連桿",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "Tacoma"
+     ],
      "feat": [
       "不鏽鋼連桿，耐用抗鏽",
       "彎曲設計，離地更高、攀爬時更順滑過岩石",
@@ -1152,6 +1296,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "附 0.5mm 墊片，可微調連桿長度與前橋角度",
       "重量：底盤連桿 11g、轉向連桿 1.7g；底盤連桿僅適用 107mm 軸距 Tacoma",
       "注意：轉向連桿僅適用原廠寬度車橋，不適用 +3mm／+4.5mm 加寬橋"
+     ],
+     "pair": [
+      "INJORA|INJORA Rod End Replacement Kit for INJORA SCX30 Chassis Links (Link Ball End Screw Set 含五金螺絲包)"
      ],
      "image": "SCX30-39-29.jpg?v=1792742830"
     },
@@ -1163,9 +1310,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "Tacoma 專用不鏽鋼高通過性底盤連桿＋轉向連桿完整套組，一次升級整車連桿。",
-     "short": "Tacoma 專用不鏽鋼高通過性底盤連桿(含轉向)",
+     "short": "Tacoma 不鏽鋼高通過底盤連桿（含轉向連桿）",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "Tacoma"
+     ],
      "feat": [
       "不鏽鋼連桿，耐用抗鏽",
       "彎曲設計，離地更高、攀爬時更順滑過岩石",
@@ -1174,6 +1324,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "附 0.5mm 墊片，可微調連桿長度與前橋角度",
       "重量：底盤連桿 11g、轉向連桿 1.7g；底盤連桿僅適用 107mm 軸距 Tacoma",
       "注意：轉向連桿僅適用原廠寬度車橋，不適用 +3mm／+4.5mm 加寬橋"
+     ],
+     "pair": [
+      "INJORA|INJORA Rod End Replacement Kit for INJORA SCX30 Chassis Links (Link Ball End Screw Set 含五金螺絲包)"
      ],
      "image": "SCX30-39-29.jpg?v=1792742830"
     },
@@ -1185,15 +1338,23 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$17.99 USD",
      "price": 540,
      "note": "Bronco／JLU／K10 專用黑色塗層黃銅高通過性底盤連桿，以黃銅配重降低重心，彎曲設計增加離地空間，減少卡石。",
-     "short": "Bronco JLU K10黑黃銅高通過性底盤連桿 (含轉向)",
+     "short": "Bronco／JLU／K10 黑黃銅高通過底盤連桿",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "CNC 黃銅加工，精準密合、抗鏽",
       "增加底盤配重，提升攀爬穩定",
       "彎曲高通過設計，增加離地空間",
       "附星形起子；8 支共 14g",
       "適用 Bronco／JLU／K10，不適用 Tacoma、CJ-7；出貨為未組裝狀態，需自行裝入球珠"
+     ],
+     "pair": [
+      "INJORA|INJORA 100Pcs Rubber O-rings for INJORA SCX30 Links"
      ],
      "image": "DSC00159_98c88aba-59df-4b2c-9eae-bc820009466b.jpg?v=1787640302"
     },
@@ -1205,15 +1366,23 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$15.99 USD",
      "price": 480,
      "note": "Bronco／JLU／K10 專用鋁合金高通過性底盤連桿，輕量高剛性，彎曲設計增加離地空間，適合重視輕量化的玩家。",
-     "short": "Bronco JLU K10 鋁合金高通過性底盤連桿",
+     "short": "Bronco／JLU／K10 鋁合金高通過底盤連桿",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "CNC 鋁合金加工，精準密合",
       "鋁合金輕量又有可靠強度",
       "彎曲高通過設計，增加離地空間與攀爬能力",
       "附星形起子；黑色，8 支共 6g",
       "適用 Bronco／JLU／K10，不適用 Tacoma、CJ-7；出貨為未組裝狀態，需自行裝入球珠"
+     ],
+     "pair": [
+      "INJORA|INJORA 100Pcs Rubber O-rings for INJORA SCX30 Links"
      ],
      "image": "DSC07243.jpg?v=1787640382"
     },
@@ -1225,9 +1394,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "Bronco／JLU／K10 專用不鏽鋼高通過性底盤連桿，強度高、不易變形，彎曲設計提升離地空間。此款僅含底盤連桿，不含轉向連桿。",
-     "short": "Bronco JLU K10不鏽鋼高通過性底盤連桿",
+     "short": "Bronco／JLU／K10 不鏽鋼高通過底盤連桿",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "不鏽鋼連桿，耐用抗鏽",
       "彎曲設計，離地更高、攀爬時更順滑過岩石",
@@ -1236,6 +1410,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "附 0.5mm 墊片，可微調連桿長度與前橋角度",
       "重量：底盤連桿 11g、轉向連桿 1.7g；底盤連桿適用 Bronco／JLU／K10",
       "注意：轉向連桿僅適用原廠寬度車橋，不適用 +3mm／+4.5mm 加寬橋"
+     ],
+     "pair": [
+      "INJORA|INJORA Rod End Replacement Kit for INJORA SCX30 Chassis Links (Link Ball End Screw Set 含五金螺絲包)"
      ],
      "image": "SCX30-28-29_77de2a4d-8672-4688-91ee-4762ba962418.jpg?v=1787640272"
     },
@@ -1247,9 +1424,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "Bronco／JLU／K10 專用不鏽鋼高通過性底盤連桿＋轉向連桿完整套組，一次升級整車連桿。",
-     "short": "Bronco JLU K10不鏽鋼高通過性底盤連桿(含轉向)",
+     "short": "Bronco／JLU／K10 不鏽鋼高通過底盤連桿（含轉向連桿）",
      "stock": "現貨",
      "sub": "底盤連桿",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "不鏽鋼連桿，耐用抗鏽",
       "彎曲設計，離地更高、攀爬時更順滑過岩石",
@@ -1258,6 +1440,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "附 0.5mm 墊片，可微調連桿長度與前橋角度",
       "重量：底盤連桿 11g、轉向連桿 1.7g；底盤連桿適用 Bronco／JLU／K10",
       "注意：轉向連桿僅適用原廠寬度車橋，不適用 +3mm／+4.5mm 加寬橋"
+     ],
+     "pair": [
+      "INJORA|INJORA Rod End Replacement Kit for INJORA SCX30 Chassis Links (Link Ball End Screw Set 含五金螺絲包)"
      ],
      "image": "SCX30-28-29_77de2a4d-8672-4688-91ee-4762ba962418.jpg?v=1787640272"
     },
@@ -1269,9 +1454,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "Bronco／JLU／K10 專用不鏽鋼高通過性底盤連桿組，後連桿提供 +3mm／+5mm 加長規格，可延長後軸距，提升爬坡穩定性（請註明長度）。",
-     "short": "不鏽鋼+3/+5 後底盤連桿",
+     "short": "Bronco／JLU／K10 不鏽鋼底盤連桿（後 +3／+5mm 加長）",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "後連桿提供 +3mm／+5mm 加長選擇",
       "不鏽鋼連桿，耐用抗鏽；彎曲設計離地更高",
@@ -1279,6 +1469,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "附 0.5mm 墊片，可微調連桿長度",
       "規格：12g；適用 99mm 軸距 Bronco／JLU／K10",
       "注意：加長後軸距不相容原廠車殼，適用 INJORA BUG30 或改裝車殼"
+     ],
+     "pair": [
+      "INJORA|INJORA Rod End Replacement Kit for INJORA SCX30 Chassis Links (Link Ball End Screw Set 含五金螺絲包)"
      ],
      "image": "DSC08693_0f91f00a-c499-423a-8bbf-2a953e0cf2ba.jpg?v=1791540742"
     },
@@ -1310,7 +1503,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$10.99 USD",
      "price": 330,
      "note": "SCX30 黑色塗層黃銅轉向連桿，強度高並增加前端配重，轉向精準度與爬坡抓地同步提升。",
-     "short": "黃銅轉向連桿",
+     "short": "黑黃銅轉向連桿",
      "stock": "預購",
      "sub": "轉向連桿",
      "feat": [
@@ -1319,6 +1512,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "直接替換原廠件，免修改",
       "黑色塗層，質感更高級",
       "重量 2.8g；內容物：轉向連桿×2、星形起子×1"
+     ],
+     "pair": [
+      "INJORA|INJORA 100Pcs Rubber O-rings for INJORA SCX30 Links"
      ],
      "image": "DSC08115_a98f9ac8-d2f7-4ab7-8946-abace68a2655.jpg?v=1787640371"
     },
@@ -1330,7 +1526,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$2.99 USD",
      "price": 90,
      "note": "INJORA SCX30 連桿專用尼龍球頭替換包，共 16 顆，適合球頭磨損或斷裂時更換（不含金屬球珠與螺絲）。",
-     "short": "INJORA 連桿尼龍球頭替換包（16 顆）",
+     "short": "連桿尼龍球頭替換包（16 顆）",
      "stock": "預購",
      "sub": "球頭・O環",
      "feat": [
@@ -1349,7 +1545,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$6.99 USD",
      "price": 210,
      "note": "INJORA SCX30 連桿專用完整替換包，內含尼龍球頭、銅球珠、球頭螺絲與墊片，一包即可完成整組連桿保養。",
-     "short": "INJORA 連桿球頭＋五金替換包",
+     "short": "連桿球頭＋五金替換包",
      "stock": "預購",
      "sub": "球頭・O環",
      "feat": [
@@ -1368,7 +1564,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$1.99 USD",
      "price": 60,
      "note": "INJORA SCX30 連桿專用橡膠 O 環，共 100 個，用於連桿防鬆與緩衝，保養或更換時備用。",
-     "short": "INJORA 連桿用橡膠 O 環（100 個）",
+     "short": "連桿用橡膠 O 環（100 個）",
      "stock": "預購",
      "sub": "球頭・O環",
      "feat": [
@@ -1386,9 +1582,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$16.99 USD",
      "price": 630,
      "note": "MEUS 99mm 軸距（Bronco／JLU／K10）高離地底盤連桿＋轉向拉桿套組，彎曲設計增加離地空間，減少卡底。",
-     "short": "99mm 軸距 高通過性連桿組",
+     "short": "Bronco／JLU／K10 高通過底盤連桿組（含轉向連桿）",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "CNC 鋁合金，耐刮耐磨、輕量又有強度",
       "彎曲連桿設計，攀爬時離地更高、通過性更好",
@@ -1407,9 +1608,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$16.99 USD",
      "price": 630,
      "note": "MEUS Toyota Tacoma（107mm 軸距）專用底盤連桿組。",
-     "short": "Tacoma 107mm 軸距連桿組",
+     "short": "Tacoma 底盤連桿組（107mm 軸距）",
      "stock": "預購",
      "sub": "底盤連桿",
+     "fit": [
+      "Tacoma"
+     ],
      "feat": [
       "不鏽鋼連桿，耐用耐磨",
       "彎曲連桿設計，攀爬時離地更高、通過性更好",
@@ -1455,7 +1659,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$17.99 USD",
      "price": 540,
      "note": "INJORA 23mm／22.5mm 鋁合金油壓避震器，CNC 鋁合金筒身，油壓阻尼提升懸吊平順度與攀爬穩定性。",
-     "short": "23mm/22.5mm 鋁合金油壓避震器",
+     "short": "23mm 鋁合金油壓避震器",
      "stock": "預購",
      "feat": [
       "附軟、硬兩種彈簧",
@@ -1476,7 +1680,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 480,
      "note": "鋁合金前後避震器活動升高套件，可提高車身與避震行程，應付大落差地形，是大落差玩法的必備升級。",
-     "short": "鋁合金前後避震器活動升高套件",
+     "short": "鋁合金前後避震升高套件",
      "stock": "預購",
      "image": "https://img.alicdn.com/imgextra/i3/2331811280/O1CN011nCgrM1LKI5LFL5nc_!!2331811280.png_468x468q50.jpg_.webp"
     }
@@ -1493,9 +1697,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "CJ-7 專用不鏽鋼傳動軸，取代原廠塑膠件，耐扭力、不易斷裂，大馬力或重配重車輛的必備升級。",
-     "short": "CJ-7 專用不鏽鋼傳動軸",
+     "short": "CJ-7 不鏽鋼傳動軸",
      "stock": "預購",
      "sub": "傳動軸",
+     "fit": [
+      "CJ-7"
+     ],
      "feat": [
       "不鏽鋼材質，同相位設計",
       "強化結構，強度與耐久度更高",
@@ -1513,9 +1720,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "Tacoma 專用不鏽鋼傳動軸，耐扭力、不易斷裂，大馬力或重配重車輛的必備升級。",
-     "short": "Tacoma 專用不鏽鋼傳動軸",
+     "short": "Tacoma 不鏽鋼傳動軸",
      "stock": "預購",
      "sub": "傳動軸",
+     "fit": [
+      "Tacoma"
+     ],
      "feat": [
       "不鏽鋼材質，同相位設計",
       "強化結構，強度與耐久度更高",
@@ -1533,9 +1743,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$14.99 USD",
      "price": 450,
      "note": "Bronco／JLU／K10 專用不鏽鋼傳動軸，耐扭力、不易斷裂，大馬力或重配重車輛的必備升級。",
-     "short": "Bronco/JLU/K10 不鏽鋼傳動軸",
+     "short": "Bronco／JLU／K10 不鏽鋼傳動軸",
      "stock": "預購",
      "sub": "傳動軸",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "不鏽鋼材質，同相位設計",
       "強化結構，強度與耐久度更高",
@@ -1553,7 +1768,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$29.99 USD",
      "price": 900,
      "note": "INJORA 完整波箱總成，附黃銅底板，組裝完成可直接替換。黃銅底板同時增加底盤配重、降低重心。",
-     "short": "完整波箱總成含黃銅底板",
+     "short": "鋁合金波箱總成（附黑黃銅底板）",
      "stock": "預購",
      "sub": "波箱",
      "feat": [
@@ -1563,6 +1778,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "組裝完成並附黑色黃銅底板，可直接安裝",
       "相容原廠馬達與 INJORA 1621 無刷馬達；齒比同原廠",
       "總重 38.8g；內容物：波箱×1、黃銅底板×1"
+     ],
+     "pair": [
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Transmission Bearing Set 6pcs 波箱培林組)",
+      "INJORA|INJORA Stainless Steel Drive Shafts for 1/30 SCX30 Bronco JLU K10"
      ],
      "image": "DSC08668_79e235a2-d211-442a-8097-6f4b1f2cb0d9.jpg?v=1787640212"
     },
@@ -1574,7 +1793,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$20.99 USD",
      "price": 630,
      "note": "INJORA 鋁合金波箱外殼套件（散裝），強度與散熱優於原廠塑膠殼，需自行組裝。",
-     "short": "鋁合金波箱外殼套件-散裝",
+     "short": "鋁合金波箱套件（需自行組裝）",
      "stock": "預購",
      "sub": "波箱",
      "feat": [
@@ -1583,6 +1802,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "相容原廠馬達與 INJORA 1621 無刷馬達；齒比同原廠",
       "重量 21g；內含外殼、齒輪、培林",
       "注意：需自行組裝並上齒輪油脂；僅能使用 INJORA 附的螺絲；不含底板（可裝原廠或另購鋁／黃銅底板）"
+     ],
+     "pair": [
+      "INJORA|INJORA Brass Skid Plate for 1/30 SCX30 (17.9g) (Black Brass 黑黃銅塗層)",
+      "INJORA|INJORA Aluminum Skid Plate for 1/30 SCX30 (5.6g)",
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Transmission Bearing Set 6pcs 波箱培林組)"
      ],
      "image": "DSC09804_6a7afa36-f238-4a2d-af7a-9a65f6442fb6.jpg?v=1787640356"
     },
@@ -1594,7 +1818,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$16.99 USD",
      "price": 510,
      "note": "INJORA 17.9g 黃銅波箱底板，原色黃銅（無塗層），增加底盤最低點配重，有效降低重心、提升爬坡穩定度。",
-     "short": "銅色黃銅波箱底板（無黑色塗層）",
+     "short": "黃銅波箱底板 17.8g（原色）",
      "stock": "預購",
      "sub": "波箱底板",
      "feat": [
@@ -1602,6 +1826,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "直接替換原廠件，免修改",
       "低位黃銅配重，降低重心、提升攀爬穩定",
       "總重 17.8g；內容物：黃銅底板×1"
+     ],
+     "pair": [
+      "INJORA|INJORA Aluminum Transmission Kit for 1/30 SCX30 (Unassembled)"
      ],
      "image": "DSC00818_42d6f7c1-06cd-472c-ae32-2af7de3ef370.jpg?v=1787640323"
     },
@@ -1613,7 +1840,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$17.99 USD",
      "price": 540,
      "note": "INJORA 17.9g 黃銅波箱底板，黑色抗氧化塗層，外觀低調且不易氧化，增加底盤配重、降低重心。",
-     "short": "黑色抗氧化塗層黃銅波箱底板",
+     "short": "黑黃銅波箱底板 17.9g",
      "stock": "預購",
      "sub": "波箱底板",
      "feat": [
@@ -1622,6 +1849,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "低位黃銅配重，降低重心、提升攀爬穩定",
       "黑色塗層，外觀更好看並有助抗腐蝕",
       "總重 17.9g；內容物：黃銅底板×1"
+     ],
+     "pair": [
+      "INJORA|INJORA Aluminum Transmission Kit for 1/30 SCX30 (Unassembled)"
      ],
      "image": "DSC00818_42d6f7c1-06cd-472c-ae32-2af7de3ef370.jpg?v=1787640323"
     },
@@ -1633,7 +1863,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$15.99 USD",
      "price": 480,
      "note": "INJORA 5.6g 鋁合金波箱底板，保護波箱底部免於刮傷，同時維持輕量化。",
-     "short": "5.6g 鋁合金波箱底板",
+     "short": "鋁合金波箱底板 5.6g",
      "stock": "預購",
      "sub": "波箱底板",
      "feat": [
@@ -1641,6 +1871,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "黑色陽極處理，抗腐蝕、外觀俐落",
       "直接替換原廠件，免修改",
       "重量 5.6g；內容物：底板×1"
+     ],
+     "pair": [
+      "INJORA|INJORA Aluminum Transmission Kit for 1/30 SCX30 (Unassembled)"
      ],
      "image": "DSC08378.jpg?v=1787640370"
     },
@@ -1652,7 +1885,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$4.99 USD",
      "price": 150,
      "note": "INJORA SCX30 波箱專用不鏽鋼培林組，共 6 顆，取代原廠軸套，降低摩擦、運轉更順暢，並延長傳動壽命。",
-     "short": "INJORA 波箱培林組（6 顆）",
+     "short": "波箱培林組（6 顆）",
      "stock": "預購",
      "sub": "軸承・齒輪",
      "feat": [
@@ -1671,7 +1904,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$9.99 USD",
      "price": 300,
      "note": "INJORA SCX30 前後車橋專用不鏽鋼培林組，共 14 顆，降低傳動阻力，讓車橋運轉更順暢耐用。",
-     "short": "INJORA 車橋培林組（14 顆）",
+     "short": "車橋培林組（14 顆）",
      "stock": "預購",
      "sub": "軸承・齒輪",
      "feat": [
@@ -1690,7 +1923,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 930,
      "note": "MEUS 組裝完成的變速箱總成，附黃銅底盤護板，可直接替換原廠波箱，並增加底盤配重。",
-     "short": "變速箱總成（附黃銅護板）",
+     "short": "鋁合金波箱總成（附黃銅底板）",
      "stock": "預購",
      "sub": "波箱",
      "feat": [
@@ -1710,9 +1943,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$14.99 USD",
      "price": 560,
      "note": "MEUS 金屬中央傳動軸，適用 Bronco／K10／JLU，強度高於原廠，不易斷裂。",
-     "short": "金屬中央傳動軸",
+     "short": "Bronco／JLU／K10 金屬傳動軸",
      "stock": "預購",
      "sub": "傳動軸",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "不鏽鋼材質，CNC 加工，硬度高耐用",
       "長度可調：前軸 26～30mm、後軸 36～50mm",
@@ -1731,7 +1969,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$15.99 USD",
      "price": 600,
      "note": "MEUS 差速器蝸桿齒輪組，可調整前後齒比：12T 超速 33.3%、13T 超速 23%、14T 超速 14.3%、16T 同原廠、18T 減速 11.1%。前橋超速有助於爬坡（請註明齒數）。",
-     "short": "差速器齒輪組",
+     "short": "車橋蝸桿齒輪組（多種齒比）",
      "stock": "預購",
      "sub": "軸承・齒輪",
      "feat": [
@@ -1756,7 +1994,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$41.99 USD",
      "price": 1240,
      "note": "INJORA +4.5mm 加寬前車橋（單前橋），行星造型差速器外殼搭配不鏽鋼雙十字萬向節半軸，最大轉向角約 52°；前橋 2/13T 超速齒比提升攀爬抓地，附黃銅轉向杯與轉向連桿。",
-     "short": "+4.5mm 行星齒輪加寬前車橋",
+     "short": "+4.5mm 加寬車橋（單前橋）",
      "stock": "預購",
      "sub": "車橋總成",
      "feat": [
@@ -1768,6 +2006,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "每個接頭附固定彈簧，防止銷子脫出；附 SCX30 專用 M2 輪框螺母",
       "重量：前橋 27.8g、後橋 11.4g；附星形起子、黃銅螺母扳手、M2 螺母×4",
       "注意：搭配原廠連桿時，需換用套件附的球頭螺柱"
+     ],
+     "pair": [
+      "INJORA|INJORA Stainless Steel Axle Shafts for 1/30 SCX30 (Front & Rear 前後軸套組)",
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)"
      ],
      "image": "SCX30-34BKFR_SKU_aad9a1c8-fca5-4b4c-ac66-75eefad22fb8.jpg?v=1787640159"
     },
@@ -1779,7 +2021,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$59.99 USD",
      "price": 1770,
      "note": "INJORA +4.5mm 加寬前後車橋套組，行星造型差速器外殼，前橋雙十字萬向節半軸最大轉向角約 52°；前 13T／後 16T 前橋超速設計，加寬輪距讓攀爬更穩。",
-     "short": "+4.5mm 行星齒輪加寬前後車橋",
+     "short": "+4.5mm 加寬前後車橋組",
      "stock": "預購",
      "sub": "車橋總成",
      "feat": [
@@ -1792,6 +2034,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "重量：前橋 27.8g、後橋 11.4g；附星形起子、黃銅螺母扳手、M2 螺母×4",
       "注意：搭配原廠連桿時，需換用套件附的球頭螺柱"
      ],
+     "pair": [
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)"
+     ],
      "image": "SCX30-34BKFR_SKU_aad9a1c8-fca5-4b4c-ac66-75eefad22fb8.jpg?v=1787640159"
     },
     {
@@ -1802,7 +2047,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$36.99 USD",
      "price": 1100,
      "note": "INJORA +3mm 加寬前車橋（單前橋），行星造型差速器外殼、斜面差速器蓋更易滑過障礙；前橋 2/13T 超速齒比，附黃銅轉向杯與轉向連桿。",
-     "short": "+3mm 行星齒輪加寬前車橋",
+     "short": "+3mm 加寬車橋（單前橋）",
      "stock": "預購",
      "sub": "車橋總成",
      "feat": [
@@ -1814,6 +2059,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "黃銅轉向杯與轉向連桿，增加前端配重；附 SCX30 專用 M2 輪框螺母",
       "重量：前橋 25.5g、後橋 11.2g；附星形起子、黃銅螺母扳手、M2 螺母×4",
       "注意：不相容原廠尺寸轉向連桿、狗骨半軸與原廠差速器蓋；搭配原廠連桿需換用附的球頭螺柱"
+     ],
+     "pair": [
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)"
      ],
      "image": "SCX30-25BKFRSKU_795138bc-bb79-4802-85e6-0fb236b0f0d9.jpg?v=1787640274"
     },
@@ -1825,7 +2073,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$52.99 USD",
      "price": 1570,
      "note": "INJORA +3mm 加寬前後車橋套組，行星造型差速器外殼、斜面差速器蓋更易滑過障礙；前 13T／後 16T 前橋超速設計，附黃銅轉向杯與轉向連桿。",
-     "short": "+3mm 行星齒輪加寬前後車橋",
+     "short": "+3mm 加寬前後車橋組",
      "stock": "預購",
      "sub": "車橋總成",
      "feat": [
@@ -1838,6 +2086,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "重量：前橋 25.5g、後橋 11.2g；附星形起子、黃銅螺母扳手、M2 螺母×4",
       "注意：不相容原廠尺寸轉向連桿、狗骨半軸與原廠差速器蓋；搭配原廠連桿需換用附的球頭螺柱"
      ],
+     "pair": [
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)"
+     ],
      "image": "SCX30-25BKFRSKU_795138bc-bb79-4802-85e6-0fb236b0f0d9.jpg?v=1787640274"
     },
     {
@@ -1848,7 +2099,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$49.99 USD",
      "price": 1480,
      "note": "INJORA 原廠寬度金屬車橋，附黃銅轉向杯，強度高於原廠塑膠橋，並增加前輪配重、提升爬坡抓地。輪距維持原廠，車殼免修改。",
-     "short": "原廠寬度金屬車橋含黃銅轉向杯",
+     "short": "原廠寬度金屬前後車橋組",
      "stock": "預購",
      "sub": "車橋總成",
      "feat": [
@@ -1859,6 +2110,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "維持原廠輪距，車殼配合不受影響；附 SCX30 專用 M2 輪框螺母",
       "重量：前橋 24.9g、後橋 10.7g；附星形起子、黃銅螺母扳手、M2 螺母×4",
       "注意：搭配原廠連桿時，需換用套件附的球頭螺柱"
+     ],
+     "pair": [
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)",
+      "INJORA|INJORA Black Brass Diff Covers for 1/30 SCX30 Stock Axles"
      ],
      "image": "1_ccde4d73-cea8-4e9b-a3a4-0637dc21b90c.jpg?v=1787640249"
     },
@@ -1880,6 +2135,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "附同款差速器蓋，一次換齊",
       "重量：前 4.7g、後 4.9g；注意：僅能使用 INJORA 附的螺絲"
      ],
+     "pair": [
+      "INJORA|INJORA Black Brass Diff Covers for 1/30 SCX30 Stock Axles",
+      "INJORA|INJORA Stainless Steel Axle Shafts for 1/30 SCX30 (Front & Rear 前後軸套組)",
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)"
+     ],
      "image": "1_8937ab3e-d2c5-4782-8dcb-fff2c325d100.jpg?v=1787640357"
     },
     {
@@ -1890,7 +2150,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$5.99 USD – $7.99 USD (單軸規格)",
      "price": 240,
      "note": "INJORA SCX30 不鏽鋼半軸，強度高、耐扭力。前軸（SCX30-13F）為十字萬向節，後軸（SCX30-13R）為直軸，前後價格不同，請註明前軸或後軸。",
-     "short": "INJORA 不鏽鋼 CVD 半軸（前或後）",
+     "short": "不鏽鋼半軸（前或後）",
      "stock": "預購",
      "sub": "CVD・半軸",
      "feat": [
@@ -1899,6 +2159,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "半軸螺牙加長 1mm，可安裝較寬的輪框",
       "原廠車橋直上，免修改",
       "重量：前軸 3g、後軸 2.7g"
+     ],
+     "pair": [
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)"
      ],
      "image": "DSC00325_2ae3aa31-3a1a-4f50-8ffd-53fafc66f24d.jpg?v=1787640343"
     },
@@ -1910,7 +2173,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA SCX30 不鏽鋼前後半軸完整套組，前軸為十字萬向節、後軸為直軸，耐扭力、不易斷裂。",
-     "short": "不鏽鋼前後CVD",
+     "short": "不鏽鋼前後半軸組",
      "stock": "預購",
      "sub": "CVD・半軸",
      "feat": [
@@ -1919,6 +2182,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "半軸螺牙加長 1mm，可安裝較寬的輪框",
       "原廠車橋直上，免修改",
       "重量：前軸 3g、後軸 2.7g"
+     ],
+     "pair": [
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)"
      ],
      "image": "DSC00325_2ae3aa31-3a1a-4f50-8ffd-53fafc66f24d.jpg?v=1787640343"
     },
@@ -1930,7 +2196,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "INJORA 黑色塗層黃銅轉向杯，增加前輪配重、降低重心，爬坡時前輪更貼地、更有抓地力。",
-     "short": "黑黃銅轉向杯配重",
+     "short": "黑黃銅轉向杯",
      "stock": "預購",
      "sub": "橋殼・轉向座",
      "feat": [
@@ -1950,7 +2216,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$4.99 USD",
      "price": 150,
      "note": "INJORA SCX30 鋁合金舵機保護器（Servo Saver），轉向受到撞擊時吸收衝擊，保護舵機齒輪不受損。",
-     "short": "INJORA 鋁合金舵機保護器",
+     "short": "鋁合金舵機保護器",
      "stock": "預購",
      "sub": "護板・其他",
      "feat": [
@@ -1969,7 +2235,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 420,
      "note": "INJORA SCX30 原廠車橋專用黑色塗層黃銅差速器蓋，增加車橋低處配重，有效降低重心。",
-     "short": "INJORA 黑黃銅差速器蓋",
+     "short": "黑黃銅差速器蓋",
      "stock": "預購",
      "sub": "齒輪・差速器",
      "feat": [
@@ -1978,6 +2244,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "直接替換原廠件，免修改；黑色塗層質感更好",
       "重量：前 3.1g、後 2.4g；內容物：差速器蓋×2",
       "注意：僅適用原廠車橋與 INJORA 鋁合金橋殼（SCX30-10BK），不適用 INJORA +3mm 加寬橋"
+     ],
+     "pair": [
+      "INJORA|INJORA Aluminum Front & Rear Axle Housings for 1/30 SCX30"
      ],
      "image": "DSC03786_9e5a8e1d-6d1f-4d35-ab28-4c2984196afa.jpg?v=1787640291"
     },
@@ -1989,7 +2258,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$8.99 USD",
      "price": 270,
      "note": "INJORA SCX30 車橋蝸桿齒輪組，單一車橋份量（蝸桿＋蝸輪一組），可選 2/13T（加速約 23%）或 2/16T（原廠齒比），請註明齒數。",
-     "short": "INJORA 車橋蝸桿齒輪組（單組）",
+     "short": "車橋蝸桿齒輪組（單橋）",
      "stock": "預購",
      "sub": "齒輪・差速器",
      "feat": [
@@ -1998,6 +2267,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "齒比：2/12T 超速約 33%、2/13T 超速約 23%、2/16T 原廠速度",
       "建議：13T 裝前橋做前橋超速；不建議前 12T 配後 16T，低速可能卡頓",
       "每組含蝸桿×1、蝸輪×1"
+     ],
+     "pair": [
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)"
      ],
      "image": "DSC00458_804aab68-6589-48d5-ad06-5df7ffe77f9c.jpg?v=1787640341"
     },
@@ -2009,7 +2281,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$16.99 USD",
      "price": 510,
      "note": "INJORA SCX30 車橋蝸桿齒輪組，前後雙橋份量，可選 12T、13T、16T 同齒比，或 12T＋13T、13T＋16T 前後超速組合（請註明組合）。",
-     "short": "INJORA 車橋蝸桿齒輪組（前後雙組）",
+     "short": "車橋蝸桿齒輪組（前後橋）",
      "stock": "預購",
      "sub": "齒輪・差速器",
      "feat": [
@@ -2018,6 +2290,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "齒比：2/12T 超速約 33%、2/13T 超速約 23%、2/16T 原廠速度",
       "建議：13T 裝前橋做前橋超速；不建議前 12T 配後 16T，低速可能卡頓",
       "每組含蝸桿×1、蝸輪×1"
+     ],
+     "pair": [
+      "INJORA|INJORA Axle Transmission Bearing Set for 1/30 SCX30 (Axle Bearing Set 14pcs 車橋培林組)"
      ],
      "image": "DSC00458_804aab68-6589-48d5-ad06-5df7ffe77f9c.jpg?v=1787640341"
     },
@@ -2029,7 +2304,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$4.99 USD",
      "price": 150,
      "note": "INJORA SCX30 M2 不鏽鋼螺母，可用於輪框固定，耐鏽、不易滑牙，提供銀色、黑色（請註明顏色）。",
-     "short": "INJORA M2 不鏽鋼螺母",
+     "short": "M2 不鏽鋼輪框螺母",
      "stock": "預購",
      "sub": "護板・其他",
      "feat": [
@@ -2048,7 +2323,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 180,
      "note": "不鏽鋼車橋護板，一車份共兩片，保護車橋底部免於岩石刮傷，同時增加低處配重。",
-     "short": "不鏽鋼車橋護板(一車份)",
+     "short": "不鏽鋼車橋護板（一車份）",
      "stock": "預購",
      "sub": "護板・其他",
      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKvwxMmY_pHpCVwk4Oiak9Ya92je-NrRrpLcNd2NQBvA&s"
@@ -2061,9 +2336,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$59.99 USD",
      "price": 2220,
      "note": "MEUS +3mm 加寬等速車橋前後組，三節式 CVD 等速傳動，大角度轉向時依然順暢不頓挫，加寬輪距提升穩定性。提供黑、銀兩色（請註明顏色）。",
-     "short": "+3mm 等速橋 前後組",
+     "short": "+3mm 等速前後車橋組",
      "stock": "預購",
      "sub": "車橋總成",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "左右各加寬 +3mm，提升穩定性與攀爬表現",
       "三節式等速 CVD，大角度轉向不頓挫，最大轉向角 50°",
@@ -2083,9 +2363,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$39.99 USD",
      "price": 1480,
      "note": "MEUS +3mm 加寬等速前車橋（單前橋），三節式 CVD 等速傳動，大角度轉向更順暢。提供黑、銀兩色（請註明顏色）。",
-     "short": "+3mm 等速橋 單前橋",
+     "short": "+3mm 等速車橋（單前橋）",
      "stock": "預購",
      "sub": "車橋總成",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "左右各加寬 +3mm，提升穩定性與攀爬表現",
       "三節式等速 CVD，大角度轉向不頓挫，最大轉向角 50°",
@@ -2105,9 +2390,14 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$52.99 USD",
      "price": 1970,
      "note": "MEUS 鋁合金直橋前後組，附萬向節 CVD，強度與剛性大幅優於原廠塑膠橋。提供黑、銀兩色（請註明顏色）。",
-     "short": "鋁合金直橋 前後組",
+     "short": "鋁合金直橋前後組（萬向節半軸）",
      "stock": "預購",
      "sub": "車橋總成",
+     "fit": [
+      "Bronco",
+      "JLU",
+      "K10"
+     ],
      "feat": [
       "萬向節 CVD 半軸，轉動比原廠狗骨更順",
       "鋁合金橋殼、鋁合金差速器蓋、黃銅轉向座",
@@ -2127,7 +2417,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$38.99 USD",
      "price": 1450,
      "note": "MEUS 鋁合金橋殼套組，含差速器蓋與黃銅轉向座，長度與原廠相同、可直接替換，兼顧強度與前輪配重。",
-     "short": "鋁合金橋殼＋黃銅轉向座",
+     "short": "鋁合金橋殼組（附黃銅轉向座）",
      "stock": "預購",
      "sub": "橋殼・轉向座",
      "feat": [
@@ -2138,7 +2428,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "注意：不含 CVD 半軸、差速齒輪與轉向連桿"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/SCX30_Axle_Housing_with_Diff_Covers_and_Steering_Knuckles.jpg?v=1767604707",
-     "url": "https://www.meusracing.com/products/scx30-axle-housing-with-diff-covers-steering-knuckles"
+     "url": "https://www.meusracing.com/products/scx30-axle-housing-with-diff-covers-steering-knuckles",
+     "pair": [
+      "MEUS|MEUS Racing +3mm CVD Shafts for MEUS SCX30 Axle Housing",
+      "MEUS|MEUS Racing SCX30 Differential Gear Worm Gear Set"
+     ]
     },
     {
      "brand": "MEUS",
@@ -2169,7 +2463,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 490,
      "note": "MEUS 原廠車橋專用鋼製 CVD 半軸，強度高於原廠，耐扭力、不易斷裂。",
-     "short": "原廠橋用 鋼製CVD",
+     "short": "鋼製 CVD 半軸（原廠車橋用）",
      "stock": "預購",
      "sub": "CVD・半軸",
      "feat": [
@@ -2190,7 +2484,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 490,
      "note": "MEUS 直橋專用萬向節 CVD 半軸（替換備品），僅適用 MEUS 鋁合金直橋。",
-     "short": "MEUS 直橋用 萬向節CVD",
+     "short": "萬向節 CVD 半軸（MEUS 直橋用）",
      "stock": "預購",
      "sub": "CVD・半軸",
      "feat": [
@@ -2210,7 +2504,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 490,
      "note": "MEUS 橋殼專用 +3mm CVD 半軸，僅適用 MEUS 鋁合金橋殼。",
-     "short": "MEUS 橋殼用 +3mm CVD",
+     "short": "+3mm CVD 半軸（MEUS 橋殼／原廠橋用）",
      "stock": "預購",
      "sub": "CVD・半軸",
      "feat": [
@@ -2231,7 +2525,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 520,
      "note": "MEUS +3mm 等速橋專用三節式 CVD 半軸（替換備品），僅適用 MEUS +3mm 等速車橋。",
-     "short": "MEUS 等速橋用 三節CVD",
+     "short": "三節式 CVD 半軸（MEUS 等速橋用）",
      "stock": "預購",
      "sub": "CVD・半軸",
      "feat": [
@@ -2257,7 +2551,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$38.99 USD",
      "price": 1160,
      "note": "INJORA N30 PRO NANO 高扭力舵機，CNC 鋁合金外殼搭配金屬齒輪，6V 下扭力 4kgf·cm、速度 0.045 秒，附舵機保護器。提供 JR 或 ZH1.5 接頭版本（請註明）。",
-     "short": "N30 Pro舵機 (JR/Zh1.5)",
+     "short": "N30 PRO 高扭力舵機（鋁殼）",
      "stock": "預購",
      "sub": "舵機",
      "feat": [
@@ -2278,7 +2572,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$39.99 USD",
      "price": 1180,
      "note": "INJORA N30 PRO NANO 黃銅外殼高扭力舵機，金屬齒輪、6V 下扭力 4kgf·cm，黃銅殼同時增加前端配重，附舵機保護器。提供 JR 或 ZH1.5 接頭版本（請註明）。",
-     "short": "N30 Pro舵機 黃銅 (JR/Zh1.5)",
+     "short": "N30 PRO 高扭力舵機（黃銅殼）",
      "stock": "預購",
      "sub": "舵機",
      "feat": [
@@ -2299,7 +2593,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$33.99 USD",
      "price": 1010,
      "note": "INJORA N30 NANO 鋁合金外殼舵機，附舵機保護器，扭力與精準度優於原廠，鋁殼散熱更好。",
-     "short": "INJORA N30 NANO 鋁殼舵機",
+     "short": "N30 舵機（鋁殼）",
      "stock": "預購",
      "sub": "舵機",
      "feat": [
@@ -2319,7 +2613,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$61.99 USD",
      "price": 1830,
      "note": "INJORA MBL32-NANO 無刷電變搭配 Green Viper 1616 4800KV 無刷馬達，原廠有刷升級無刷的套組，低速細膩、高速有爆發力。注意：原廠遙控器不相容，需另備有 CH2 的遙控設備。",
-     "short": "INJORA MBL32 無刷電變＋1616 4800KV 套組",
+     "short": "MBL32 無刷電變＋1616 4800KV 馬達組",
      "stock": "預購",
      "sub": "無刷動力",
      "feat": [
@@ -2329,6 +2623,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "1616 4800KV 馬達速度高於原廠 88T 有刷與 1621，體積更小好安裝",
       "規格：電變 25A／45A 峰值、9.5g；馬達 Φ15.5×15.5mm、9.7g、11T 小齒",
       "注意：原廠遙控器不相容，需有 CH2 的遙控器與接收機；僅用 2S 鋰電；出廠已設定好（不含程式卡）"
+     ],
+     "pair": [
+      "INJORA|INJORA T6M 2.4GHz Transmitter with Micro 4CH Receiver for 1/30 SCX30",
+      "INJORA|INJORA receiver connector wire for MBL32 ESC"
      ],
      "image": "1_fefdd17d-0f7a-4801-a852-a6d8939ee976.jpg?v=1787640137"
     },
@@ -2340,6 +2638,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$61.99 USD",
      "price": 1830,
      "note": "INJORA MBL32-NANO 無刷電變搭配 Green Viper 1621 4300KV 無刷馬達，馬達較長、扭力更足，適合重配重或攀爬取向。注意：原廠遙控器不相容，需另備有 CH2 的遙控設備。",
+     "short": "MBL32 無刷電變＋1621 4300KV 馬達組",
      "stock": "預購",
      "sub": "無刷動力",
      "feat": [
@@ -2349,6 +2648,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "1621 4300KV 馬達，出線處附保護套更耐用",
       "規格：電變 25A／45A 峰值、9.5g；馬達 Φ15.5×21.5mm、15g、11T 小齒",
       "注意：原廠遙控器不相容，需有 CH2 的遙控器與接收機；僅用 2S 鋰電（3S 可能損壞馬達）"
+     ],
+     "pair": [
+      "INJORA|INJORA T6M 2.4GHz Transmitter with Micro 4CH Receiver for 1/30 SCX30",
+      "INJORA|INJORA receiver connector wire for MBL32 ESC"
      ],
      "image": "1_1_512c157d-2af3-447e-bc64-9186efb6ab2a.jpg?v=1787640287"
     },
@@ -2360,6 +2663,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$43.99 USD",
      "price": 1300,
      "note": "INJORA MBL32 NANO 無刷電變，AM32 韌體、防水、BEC 6V／7.4V 可調，低速控制細膩。需搭配 INJORA 無刷馬達，以及有 CH2 的遙控設備（原廠遙控器不相容）。",
+     "short": "MBL32 NANO 無刷電變",
      "stock": "預購",
      "sub": "無刷動力",
      "feat": [
@@ -2369,6 +2673,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "具低電壓、失控、堵轉保護",
       "規格：25A 持續／45A 峰值，2S 鋰電，25.5×15×12mm，9.5g",
       "注意：原廠遙控器不相容，需有 CH2 的遙控設備；僅搭配 INJORA 無刷馬達；請勿自行刷韌體"
+     ],
+     "pair": [
+      "INJORA|INJORA Green Viper 1621 Brushless Motor 4300KV for 1/30 SCX30",
+      "INJORA|INJORA Green Viper 1616 Brushless Motor 4800KV for 1/30 SCX30",
+      "INJORA|INJORA T6M 2.4GHz Transmitter with Micro 4CH Receiver for 1/30 SCX30"
      ],
      "image": "1_1_31466693-0039-4a32-8259-461e68c69cef.jpg?v=1787640354"
     },
@@ -2380,6 +2689,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$21.99 USD",
      "price": 660,
      "note": "INJORA Green Viper 1616 無刷馬達，4800KV，速度比原廠 88T 與 1621 更快、體積更小。需搭配 INJORA MBL32 無刷電變使用。",
+     "short": "1616 4800KV 無刷馬達",
      "stock": "預購",
      "sub": "無刷動力",
      "feat": [
@@ -2388,6 +2698,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "體積比 1621 更小，狹窄空間好安裝；出線處附保護套",
       "規格：外轉子無感、防水，Φ15.5×15.5mm，9.7g，0.3 模 11T 小齒，PH2.0 三針",
       "注意：不相容原廠電變與遙控器，需搭配 INJORA MBL32 電變；僅用 2S 鋰電"
+     ],
+     "pair": [
+      "INJORA|INJORA MBL32 NANO Brushless ESC for 1/30 Axial SCX30",
+      "INJORA|INJORA T6M 2.4GHz Transmitter with Micro 4CH Receiver for 1/30 SCX30"
      ],
      "image": "DSC08392_9cdc087f-9367-4e72-ac37-bfee85f05615.jpg?v=1787640137"
     },
@@ -2399,6 +2713,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$21.99 USD",
      "price": 660,
      "note": "INJORA Green Viper 1621 無刷馬達，4300KV，較長的馬達提供更足的扭力，適合攀爬取向。需搭配 INJORA MBL32 無刷電變使用。",
+     "short": "1621 4300KV 無刷馬達",
      "stock": "預購",
      "sub": "無刷動力",
      "feat": [
@@ -2406,6 +2721,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "出線處附保護套，更耐用",
       "規格：4300KV 外轉子無感、防水，Φ15.5×21.5mm，15g，0.3 模 11T 小齒，PH2.0 三針",
       "注意：僅搭配 INJORA MBL32 電變，需有 CH2 的遙控設備；僅用 2S 鋰電"
+     ],
+     "pair": [
+      "INJORA|INJORA MBL32 NANO Brushless ESC for 1/30 Axial SCX30",
+      "INJORA|INJORA T6M 2.4GHz Transmitter with Micro 4CH Receiver for 1/30 SCX30"
      ],
      "image": "DSC07753_1_ba2250d8-92f7-4e15-be78-bf4e0d81ed40.jpg?v=1787640289"
     },
@@ -2417,7 +2736,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$1.00 USD",
      "price": 30,
      "note": "INJORA MBL32 電變專用接收連接線，用於電變與接收機之間的連接或替換。",
-     "short": "INJORA MBL32 電變接收連接線",
+     "short": "MBL32 電變接收連接線",
      "stock": "預購",
      "sub": "配件・電池",
      "feat": [
@@ -2435,6 +2754,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "INJORA MB100 NANO 15A 有刷電變，IP67 防水，可用遙控器旋鈕調整拖曳煞車，適用 1/24、1/30、1/32 攀爬車。注意：需搭配有 CH2 的遙控設備（原廠遙控器不相容）。",
+     "short": "MB100 NANO 有刷電變 15A",
      "stock": "預購",
      "sub": "有刷動力",
      "feat": [
@@ -2444,6 +2764,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "具低電壓、過熱、過壓、訊號遺失保護",
       "規格：15A 持續／40A 峰值，2S 鋰電，BEC 5.6V 3A，23×16.5×10.3mm，5.2g",
       "注意：原廠遙控器不相容，需有 CH2 的遙控設備；支援 030／050／130／180 有刷馬達（PH2.0），不支援 370"
+     ],
+     "pair": [
+      "INJORA|INJORA T6M 2.4GHz Transmitter with Micro 4CH Receiver for 1/30 SCX30",
+      "INJORA|INJORA 60T 030-Size Brushed Motor for 1/30 SCX30",
+      "INJORA|INJORA 65T 030-Size Brushed Motor for 1/30 SCX30"
      ],
      "image": "1_dc5c13a1-0659-42a3-ae9a-9c0b07e01d87.jpg?v=1787640258"
     },
@@ -2455,6 +2780,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$6.99 USD",
      "price": 210,
      "note": "INJORA 65T 030 規格有刷馬達，強磁高扭力，速度比原廠 88T 更快，原廠電變直插即用。",
+     "short": "030 有刷馬達 65T",
      "stock": "預購",
      "sub": "有刷動力",
      "feat": [
@@ -2474,6 +2800,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$6.99 USD",
      "price": 210,
      "note": "INJORA 60T 030 規格有刷馬達，強磁高扭力，速度比原廠 88T 與 65T 更快，原廠電變直插即用。",
+     "short": "030 有刷馬達 60T",
      "stock": "預購",
      "sub": "有刷動力",
      "feat": [
@@ -2493,6 +2820,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$37.99 USD",
      "price": 1130,
      "note": "INJORA T6M 2.4GHz 六通道遙控器，附 T4DCM 微型 4CH 接收機，具油門限速與低電壓警示，適合要升級分離式電變系統的玩家。",
+     "short": "T6M 遙控器＋4CH 接收機",
      "stock": "預購",
      "sub": "遙控・接收",
      "feat": [
@@ -2502,6 +2830,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "開關機提示音、12 分鐘未操作提醒、無訊號 15 分鐘自動關機",
       "遙控器 6 通道，控制距離約 400～450m（需 4 顆 3 號電池，未附）",
       "接收機 T4DCM：4 通道，21.5×14.5×6.8mm；一次控制一台車"
+     ],
+     "pair": [
+      "INJORA|INJORA MBL32-NANO Brushless ESC & 1621 Green Viper Motor 4300KV for 1/30 SCX30",
+      "INJORA|INJORA MB100 NANO Brushed ESC 15A for 1/24 1/30 1/32 RC Crawlers"
      ],
      "image": "INT-T6M-T4_e876d671-f550-4477-926a-622a1892b9a5.jpg?v=1787640348"
     },
@@ -2513,6 +2845,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA T4DCM 4CH 2.4GHz 微型接收機，適用 1/32、1/30、1/24 遙控車，需搭配 INJORA T6 系列遙控器。",
+     "short": "T4DCM 4CH 微型接收機",
      "stock": "預購",
      "sub": "遙控・接收",
      "feat": [
@@ -2552,7 +2885,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 1180,
      "note": "凡科智能 SCX30 外轉子無刷動力套裝，提供強勁扭力與細膩低速控制。注意：安裝後無法沿用原廠遙控器，需另備遙控設備。",
-     "short": "SCX30 外轉子套裝",
+     "short": "外轉子無刷動力套裝",
      "stock": "預購",
      "sub": "無刷動力",
      "image": "https://img.alicdn.com/imgextra/i4/123392080/O1CN01m55UMO1REgxLRvDVB_!!123392080.webp"
@@ -2565,7 +2898,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$64.99 USD",
      "price": 2410,
      "note": "MEUS ME32 無刷電變＋1621 3400KV 無刷馬達套組（SCX30 專用版本），低 KV 高扭力，低速爬行細膩穩定。",
-     "short": "ME32 無刷電變＋馬達組",
+     "short": "ME32 無刷電變＋1621 馬達組",
      "stock": "預購",
      "sub": "無刷動力",
      "feat": [
@@ -2578,7 +2911,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "內容物：ME32 無刷電變×1、設定卡×1、無刷馬達×1"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/TRX4M_ME32_ESC_1621_2850KV_Motor.jpg?v=1793841656",
-     "url": "https://www.meusracing.com/products/me32-brushless-esc-and-motor-kit"
+     "url": "https://www.meusracing.com/products/me32-brushless-esc-and-motor-kit",
+     "pair": [
+      "MEUS|MEUS Racing ME-8B 8CH 2.4GHz Transmitter & Receiver"
+     ]
     },
     {
      "brand": "MEUS",
@@ -2598,7 +2934,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "規格：1621 3400KV，Φ16×21.5mm，16g"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/1621_2850KV_Brushless_Motor_For_TRX4M.jpg?v=1792840939",
-     "url": "https://www.meusracing.com/products/brushless-motors"
+     "url": "https://www.meusracing.com/products/brushless-motors",
+     "pair": [
+      "MEUS|MEUS Racing ME32 Brushless ESC & 1621 3400KV Brushless Motor for SCX30"
+     ]
     },
     {
      "brand": "MEUS",
@@ -2621,7 +2960,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "附多款馬達與電池轉接線"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/ME25-V2_Brushed_Mini_ESC.jpg?v=1773987095",
-     "url": "https://www.meusracing.com/products/me25-v2-brushed-esc"
+     "url": "https://www.meusracing.com/products/me25-v2-brushed-esc",
+     "pair": [
+      "MEUS|MEUS Racing ME-8B 8CH 2.4GHz Transmitter & Receiver",
+      "MEUS|MEUS Racing SCX30 Brushed 030 Motors with Strong Magnet (2pcs)"
+     ]
     },
     {
      "brand": "MEUS",
@@ -2631,7 +2974,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 520,
      "note": "MEUS 強磁 030 有刷馬達兩顆一組，強化磁鐵提升扭力輸出。提供 50T＋65T、50T＋88T、65T＋88T 組合（請註明組合）。",
-     "short": "030 強磁有刷馬達（2顆）",
+     "short": "030 強磁有刷馬達（2 顆）",
      "stock": "預購",
      "sub": "有刷動力",
      "feat": [
@@ -2651,7 +2994,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$38.99 USD",
      "price": 1450,
      "note": "MEUS V2 空心杯高扭力舵機，鋁合金外殼，空心杯馬達反應快、轉向扭力大，回正精準。",
-     "short": "V2 空心杯伺服機（鋁殼）",
+     "short": "V2 空心杯高扭力舵機（鋁殼）",
      "stock": "預購",
      "sub": "舵機",
      "feat": [
@@ -2672,7 +3015,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$44.99 USD",
      "price": 1670,
      "note": "MEUS V2 空心杯高扭力舵機，黃銅外殼，除了高扭力，也能增加前端配重，提升爬坡抓地。",
-     "short": "V2 空心杯伺服機（黃銅殼）",
+     "short": "V2 空心杯高扭力舵機（黃銅殼）",
      "stock": "預購",
      "sub": "舵機",
      "feat": [
@@ -2693,7 +3036,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$33.99 USD",
      "price": 1260,
      "note": "MEUS 空心杯微型舵機，鋁合金外殼，反應迅速、體積小巧。提供黑、紫兩色（請註明顏色）。",
-     "short": "空心杯微型伺服機（鋁殼）",
+     "short": "空心杯微型舵機（鋁殼）",
      "stock": "預購",
      "sub": "舵機",
      "feat": [
@@ -2714,7 +3057,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$39.99 USD",
      "price": 1480,
      "note": "MEUS 空心杯微型舵機，15.8g 黃銅外殼，兼顧轉向反應與前端配重。",
-     "short": "空心杯微型伺服機（黃銅殼）",
+     "short": "空心杯微型舵機（黃銅殼）",
      "stock": "預購",
      "sub": "舵機",
      "feat": [
@@ -2770,7 +3113,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 250,
      "note": "2S 7.4V 25C 200mAh 鋰電池，一顆約可遊玩 30～40 分鐘（依車況與玩法而定）。",
-     "short": "2S 7.4V 25C 200mAh 鋰電池",
+     "short": "2S 7.4V 200mAh 鋰電池",
      "sub": "配件・電池",
      "image": "images/BAT.JPG"
     }
@@ -2787,7 +3130,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 MAVERIX M/T 越野胎，34×12mm，泥地塊狀胎紋兼顧抓地與排泥，4 顆一組。",
-     "short": "INJORA MAVERIX M/T 輪胎 34×12mm（T7025）",
+     "short": "MAVERIX M/T 輪胎 34×12mm（T7025）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2808,7 +3151,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 King Trekker 輪胎，35×14mm，粗獷胎紋適合岩石與泥地，4 顆一組。",
-     "short": "INJORA King Trekker 輪胎 35×14mm（T7014）",
+     "short": "King Trekker 輪胎 35×14mm（T7014）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2829,7 +3172,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 Swamp Claw 輪胎，36×14mm，深溝爪狀胎紋，泥地與濕滑路面表現出色，4 顆一組。",
-     "short": "INJORA Swamp Claw 輪胎 36×14mm（T7019）",
+     "short": "Swamp Claw 輪胎 36×14mm（T7019）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2839,6 +3182,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "爪狀胎側胎塊，仿真感更強",
       "規格：外徑 36mm、寬 14mm，每顆 2.8g，4 顆一組；可搭配矽膠內襯 TI07-36-14",
       "注意：原廠僅以 INJORA 0.7 吋輪框設計測試，其他品牌輪框不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 36mm Tires"
      ],
      "image": "T7019.jpg?v=1794277918"
     },
@@ -2850,7 +3196,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 Cling On 輪胎，37×14mm，軟質膠料抓地力強，適合岩石攀爬，4 顆一組。",
-     "short": "INJORA Cling On 輪胎 37×14mm（T7022）",
+     "short": "Cling On 輪胎 37×14mm（T7022）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2860,6 +3206,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "開放間距，容易排出泥土碎石；強化肩部胎塊，側坡更穩",
       "規格：外徑 37mm、寬 14mm，每顆 3.3g，4 顆一組；可搭配矽膠內襯 TI07-36-14",
       "注意：原廠僅以 INJORA 0.7 吋輪框設計測試，其他品牌輪框不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 36mm Tires"
      ],
      "image": "T7022.jpg?v=1794278084"
     },
@@ -2871,7 +3220,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 HAMROK 輪胎，39×15mm，大尺寸提升離地高度，4 顆一組。",
-     "short": "INJORA HAMROK 輪胎 39×15mm（T7027）",
+     "short": "HAMROK 輪胎 39×15mm（T7027）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2881,6 +3230,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "包覆式側邊胎塊，側坡更穩、攀爬更好控制",
       "規格：外徑 39mm、寬 15mm，每顆 3.5g，4 顆一組；可搭配矽膠內襯 TI07-40-14",
       "注意：原廠僅以 INJORA 0.7 吋輪框設計測試，其他品牌輪框不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "T7027.jpg?v=1794278328"
     },
@@ -2892,7 +3244,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋攀爬胎，40×15mm，大外徑增加離地空間與通過性，4 顆一組。",
-     "short": "INJORA Crawler 輪胎 40×15mm（T7011）",
+     "short": "Crawler 輪胎 40×15mm（T7011）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2902,6 +3254,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "開放間距排出泥土碎石；側邊胎塊讓側坡更好控制",
       "規格：外徑 40mm、寬 15mm，每顆 4.2g，4 顆一組；可搭配矽膠內襯 TI07-40-14",
       "注意：原廠僅以 INJORA 0.7 吋輪框設計測試，其他品牌輪框不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "T7011.jpg?v=1794277791"
     },
@@ -2913,7 +3268,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 XHX 顆粒胎，40×14mm，顆粒胎紋在岩石與碎石上抓地力佳，4 顆一組。",
-     "short": "INJORA XHX Pin 輪胎 40×14mm（T7021）",
+     "short": "XHX 顆粒輪胎 40×14mm（T7021）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2923,6 +3278,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "多方向胎紋排列，前進與側向控制都好預測",
       "規格：外徑 40mm、寬 14mm，每顆 3.3g，4 顆一組；可搭配矽膠內襯 TI07-40-14",
       "注意：原廠僅以 INJORA 0.7 吋輪框設計測試，其他品牌輪框不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "T7021.jpg?v=1794278028"
     },
@@ -2934,7 +3292,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 King Trekker 輪胎大尺寸版，40×15mm，粗獷胎紋、外徑更大，4 顆一組。",
-     "short": "INJORA King Trekker 輪胎 40×15mm（T7024）",
+     "short": "King Trekker 輪胎 40×15mm（T7024）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2944,6 +3302,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "多曲線刀槽紋，鬆土與濕滑路面抓地更好",
       "規格：外徑 40mm、寬 15mm，每顆 4.2g，4 顆一組；可搭配矽膠內襯 TI07-40-14",
       "注意：原廠僅以 INJORA 0.7 吋輪框設計測試，其他品牌輪框不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "T7024.jpg?v=1794278163"
     },
@@ -2955,7 +3316,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 Cling On 輪胎，41×14mm，軟質膠料搭配大外徑，攀岩抓地力強，4 顆一組。",
-     "short": "INJORA Cling On 輪胎 41×14mm（T7020）",
+     "short": "Cling On 輪胎 41×14mm（T7020）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2965,6 +3326,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "開放間距，容易排出泥土碎石；強化肩部胎塊，側坡更穩",
       "規格：外徑 41mm、寬 14mm，每顆 3.8g，4 顆一組；可搭配矽膠內襯 TI07-40-14",
       "注意：原廠僅以 INJORA 0.7 吋輪框設計測試，其他品牌輪框不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "T7020_26329157-8cca-4d8e-b83f-b9e262e4e1d5.jpg?v=1794277976"
     },
@@ -2976,7 +3340,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 MAVERIX M/T 越野胎大尺寸版，41×14mm，兼顧抓地、排泥與離地高度，4 顆一組。",
-     "short": "INJORA MAVERIX M/T 輪胎 41×14mm（T7028）",
+     "short": "MAVERIX M/T 輪胎 41×14mm（T7028）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -2986,6 +3350,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "緊湊胎面在負重下仍保持貼地",
       "規格：外徑 41mm、寬 14mm，每顆 4.1g，4 顆一組；可搭配矽膠內襯 TI07-40-14",
       "注意：原廠僅以 INJORA 0.7 吋輪框設計測試，其他品牌輪框不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "T7028.jpg?v=1794278389"
     },
@@ -2997,7 +3364,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 XHX 顆粒胎，44×16mm 超大外徑，適用 1/30、1/32 攀爬車，大幅提升離地與通過性（車殼可能需修剪），4 顆一組。",
-     "short": "INJORA XHX Pin 輪胎 44×16mm（T7030）",
+     "short": "XHX 顆粒輪胎 44×16mm（T7030）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -3018,7 +3385,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$12.99 USD",
      "price": 390,
      "note": "INJORA 0.7 吋 Cling On 輪胎，45×16mm 超大外徑，軟質膠料抓地力強（車殼可能需修剪），4 顆一組。",
-     "short": "INJORA Cling On 輪胎 45×16mm（T7031）",
+     "short": "Cling On 輪胎 45×16mm（T7031）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -3039,7 +3406,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$10.99 USD",
      "price": 330,
      "note": "INJORA 0.7 吋 36mm 輪胎專用矽膠內襯，取代海綿，支撐性一致、不易變形，讓輪胎貼地更好。提供多種軟硬度（請註明顏色）。",
-     "short": "INJORA 矽膠內襯（36mm 輪胎用）",
+     "short": "矽膠內襯（36～37mm 輪胎用）",
      "stock": "預購",
      "sub": "內襯",
      "feat": [
@@ -3047,6 +3414,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "胎壁支撐比海綿更好，負重下更能維持輪胎形狀",
       "防水、耐溫，各種環境表現穩定",
       "適用 INJORA 36～37mm 輪胎，例如 T7019 Swamp Claw、T7022 Cling On"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 36*14mm Swamp Claw Tires for 1/30 SCX30 (T7019) (4)",
+      "INJORA|INJORA 0.7\" 37*14mm Cling On Tires for 1/30 SCX30 (T7022) (4)"
      ],
      "image": "TI07-36-14_9c0fb017-9cb4-4f85-8616-6c25889d1f86.jpg?v=1787640271"
     },
@@ -3058,7 +3429,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$10.99 USD",
      "price": 330,
      "note": "INJORA 0.7 吋 39～41mm 輪胎專用矽膠內襯，取代海綿，支撐性一致、不易變形。提供多種軟硬度（請註明顏色）。",
-     "short": "INJORA 矽膠內襯（39～41mm 輪胎用）",
+     "short": "矽膠內襯（39～41mm 輪胎用）",
      "stock": "預購",
      "sub": "內襯",
      "feat": [
@@ -3068,6 +3439,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "適用外徑約 39～41mm、寬 14～15mm 輪胎：T7027、T7021、T7024、T7020、T7028、T7011",
       "規格：36×12.2mm，每個 2.2g，4 個一組",
       "注意：非 INJORA 輪胎因胎壁厚度不同，不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)",
+      "INJORA|INJORA 0.7\" 41*14mm Cling On Tires for 1/30 SCX30 (T7020) (4)",
+      "INJORA|INJORA 0.7\" 39*15mm HAMROK Tires for 1/30 SCX30 (T7027) (4)"
      ],
      "image": "TI07-40-14_05c2fde9-cb9f-4f4a-9172-49667cab4327.jpg?v=1787640270"
     },
@@ -3079,7 +3455,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 520,
      "note": "MEUS 0.7 吋輪胎，4 顆一組，多款胎紋與尺寸可選：M0701 Lucky 7S 40×16、M0702 Vipers 40×16、M0704 Super Bouncer 40×16、M0705 Super Bouncer 36×14、M0708 Mud Shredder 40×14、M0709 Mud Shredder 35×12、M0710 Marauder 40×14、M0711 Marauder 35×14（請註明型號）。",
-     "short": "0.7吋 MS6／Bouncer 系列輪胎",
+     "short": "MS6 系列輪胎（多款）",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -3090,7 +3466,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "參考規格：M0704 40×16mm 每顆 4.5g、M0705 36×14mm 每顆 3.4g"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/M0701_MS6_Lucky_7S_Tires_40_16mm_1.jpg?v=1778489551",
-     "url": "https://www.meusracing.com/products/0-7-inch-ms6-super-bouncer-tires"
+     "url": "https://www.meusracing.com/products/0-7-inch-ms6-super-bouncer-tires",
+     "pair": [
+      "MEUS|MEUS Racing Super Soft Silicone Tire Inserts for 0.7-inch Tires (4pcs)"
+     ]
     },
     {
      "brand": "MEUS",
@@ -3100,7 +3479,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$13.99 USD",
      "price": 520,
      "note": "MEUS 0.7 吋 MPRO 顆粒超軟胎，4 顆一組，超軟膠料抓地力極佳，適合岩石攀爬：M0703 36×14、M0706 40×13、M0707 36×12（請註明型號）。",
-     "short": "0.7吋 MPRO PIN 超軟輪胎",
+     "short": "MPRO PIN 超軟顆粒輪胎",
      "stock": "預購",
      "sub": "輪胎",
      "feat": [
@@ -3110,7 +3489,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "規格：M0703 36×14mm／3.2g、M0706 40×13mm／3.5g、M0707 36×12mm／2.7g（每顆）"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/M0703_MPRO_PIN_36_14mm_1.jpg?v=1778489957",
-     "url": "https://www.meusracing.com/products/0-7-inch-super-soft-tires-for-scx30-ascent-32"
+     "url": "https://www.meusracing.com/products/0-7-inch-super-soft-tires-for-scx30-ascent-32",
+     "pair": [
+      "MEUS|MEUS Racing Super Soft Silicone Tire Inserts for 0.7-inch Tires (4pcs)"
+     ]
     },
     {
      "brand": "MEUS",
@@ -3120,7 +3502,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$10.99 USD",
      "price": 410,
      "note": "MEUS 0.7 吋輪胎專用超軟矽膠內襯，4 個一組，提升輪胎貼地與抓地表現。尺寸 31.5×8／32×11／36×10.5／36×12.5mm（請註明尺寸）。",
-     "short": "0.7吋 超軟矽膠內襯",
+     "short": "超軟矽膠內襯",
      "stock": "預購",
      "sub": "內襯",
      "feat": [
@@ -3130,7 +3512,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "對應：31.5×8 配 M0707／M0709／M0711；32×11 配 M0703／M0705；36×10.5 配 M0706／M0708／M0710；36×12.5 配 M0701／M0702／M0704"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/31.5_8mm_silicone_tire_inserts.jpg?v=1785292431",
-     "url": "https://www.meusracing.com/products/super-soft-silicone-tire-inserts-for-0-7-inch-tires"
+     "url": "https://www.meusracing.com/products/super-soft-silicone-tire-inserts-for-0-7-inch-tires",
+     "pair": [
+      "MEUS|MEUS Racing 0.7-Inch MS6 / Super Bouncer / Mud Shredder / Marauder Tires (4pcs)",
+      "MEUS|MEUS Racing 0.7-Inch MPRO PIN Super Soft Tires (4pcs)"
+     ]
     }
    ]
   },
@@ -3145,7 +3531,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "INJORA 0.7 吋 D18 六輻 CNC 鋁合金輪框，4 顆一組，輕量又有質感。提供黑色、鈦色（請註明顏色）。",
-     "short": "INJORA D18 六輻鋁合金輪框（W7001）",
+     "short": "D18 六輻鋁合金輪框（W7001）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3154,6 +3540,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "提供黑色、鈦色；附星形起子",
       "規格：外徑 18mm、寬 9mm、偏距 0mm，每顆 4g（夾環 1.5g），4 顆一組",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 4.7g Brass Inner Clamp Rings for INJORA 0.7\" D18 Wheels",
+      "INJORA|INJORA 10g Brass Inner Clamp Rings for INJORA 0.7\" D18 Wheels (4 PCS 4顆裝)",
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)"
      ],
      "image": "1_829de8ae-e95c-4294-b8b7-2065c43820c0.jpg?v=1787640363"
     },
@@ -3165,7 +3556,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "INJORA 0.7 吋 D18 五輻 CNC 鋁合金輪框，4 顆一組，經典造型。提供黑色、鈦色（請註明顏色）。",
-     "short": "INJORA D18 五輻鋁合金輪框（W7002）",
+     "short": "D18 五輻鋁合金輪框（W7002）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3174,6 +3565,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "提供黑色、鈦色；附星形起子",
       "規格：外徑 18mm、寬 9mm、偏距 -1.5mm，每顆 3.4g（夾環 1.5g），4 顆一組",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 4.7g Brass Inner Clamp Rings for INJORA 0.7\" D18 Wheels",
+      "INJORA|INJORA 10g Brass Inner Clamp Rings for INJORA 0.7\" D18 Wheels (4 PCS 4顆裝)",
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)"
      ],
      "image": "1_cdd634cc-dfca-454e-8981-e487dd22d7b2.jpg?v=1787640361"
     },
@@ -3185,7 +3581,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "INJORA 0.7 吋 D19 波紋造型 CNC 鋁合金輪框，4 顆一組。提供金色、鈦色（請註明顏色）。",
-     "short": "INJORA D19 波紋鋁合金輪框（W7005）",
+     "short": "D19 波紋鋁合金輪框（W7005）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3194,6 +3590,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "提供金色、鈦色；附星形起子",
       "規格：外徑 19mm、寬 10.7mm、偏距 +0.5mm，每顆 4.2g（夾環 1.8g），4 顆一組",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 5.6g Brass Inner Clamp Rings for INJORA 0.7\" D19 Wheels",
+      "INJORA|INJORA 10.1g Brass Inner Clamp Rings for INJORA 0.7\" D19 Wheels (4 PCS 4顆裝)",
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)"
      ],
      "image": "1_21f418bc-edc3-4465-b4dd-9b417ba5fa9d.jpg?v=1787640290"
     },
@@ -3205,7 +3606,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$23.99 USD",
      "price": 720,
      "note": "INJORA 0.7 吋 D19 波紋造型實心黃銅輪框，黑色塗層，4 顆一組，大幅增加輪端配重、降低重心。",
-     "short": "INJORA D19 波紋黑黃銅輪框（W7005）",
+     "short": "D19 波紋黑黃銅輪框（W7005）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3214,6 +3615,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "水滴形多輻設計，線條流暢俐落；附 T3 星形起子",
       "規格：外徑 19mm、寬 10.7mm、偏距 +0.5mm（夾環 5.5g），4 顆一組",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)",
+      "INJORA|INJORA M2 Stainless Steel Nuts for 1/30 SCX30"
      ],
      "image": "W7005BB_917e52c6-dee2-46f9-a75d-8a486bff4c68.jpg?v=1787640282"
     },
@@ -3225,7 +3630,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$22.99 USD",
      "price": 690,
      "note": "INJORA 0.7 吋 D19 ModuWheel 模組化輪框，4 顆一組，適用 SCX30 與 Ascent-32。提供銀、黑兩色（請註明顏色）。",
-     "short": "INJORA D19 ModuWheel 模組輪框（MW7006）",
+     "short": "D19 模組化輪框（MW7006）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3234,6 +3639,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "負偏距加寬輪距，穩定性更好；附星形起子",
       "規格：外徑 19mm、寬 10.8mm、偏距 -2mm、5mm 六角，每顆 9.4g（夾環 5.5g），4 顆一組",
       "適用 SCX30 與 Redcat Ascent-32；原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)",
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "DSC02074_2b51e936-0e04-4346-8cd9-d945b09b5d79.jpg?v=1787640320"
     },
@@ -3245,7 +3654,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "INJORA 0.7 吋 D19 黃銅 Beadlock 輪框，原色黃銅，4 顆一組。夾胎式設計免膠固定、換胎方便，黃銅材質增加輪端配重。",
-     "short": "INJORA D19 黃銅 Beadlock 輪框（W7007 原色）",
+     "short": "D19 黃銅 Beadlock 輪框（W7007 原色）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3255,6 +3664,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "多輻造型、線條流暢；附星形起子",
       "規格：外徑 19mm、寬 10.8mm（夾環 5.5g），4 顆一組",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)",
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "1-1_6db2df04-6f35-4e89-839f-99ee3e8be457.jpg?v=1787640306"
     },
@@ -3266,7 +3679,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$26.99 USD",
      "price": 810,
      "note": "INJORA 0.7 吋 D19 黃銅 Beadlock 輪框，表面塗層版，4 顆一組，提供白色（W7007WH-19）、黑黃銅（W7007BB-19）（請註明顏色）。",
-     "short": "INJORA D19 黃銅 Beadlock 輪框（W7007 塗層）",
+     "short": "D19 黃銅 Beadlock 輪框（W7007 塗層）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3276,6 +3689,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "多輻造型、線條流暢；附星形起子",
       "規格：外徑 19mm、寬 10.8mm（夾環 5.5g），4 顆一組",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)",
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "1-1_6db2df04-6f35-4e89-839f-99ee3e8be457.jpg?v=1787640306"
     },
@@ -3287,7 +3704,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "INJORA 0.7 吋 D19 CNC 鋁合金輪框，4 顆一組。提供紫色、灰色（請註明顏色）。",
-     "short": "INJORA D19 鋁合金輪框（W7008）",
+     "short": "D19 鋁合金輪框（W7008）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3296,6 +3713,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "提供紫色、灰色；附星形起子",
       "規格：外徑 19mm、寬 10.7mm、偏距 0mm，每顆 4.9g（夾環 1.8g），4 顆一組",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 5.6g Brass Inner Clamp Rings for INJORA 0.7\" D19 Wheels",
+      "INJORA|INJORA 10.1g Brass Inner Clamp Rings for INJORA 0.7\" D19 Wheels (4 PCS 4顆裝)",
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)"
      ],
      "image": "W7008PU-19_9a1a9d21-66ef-48ee-aaa7-8973f749553b.jpg?v=1787640277"
     },
@@ -3307,7 +3729,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "INJORA 0.7 吋 D19 鋁合金 Beadlock 輪框，4 顆一組，夾胎式設計免膠固定、換胎方便。提供黑色、鈦色（請註明顏色）。",
-     "short": "INJORA D19 鋁合金 Beadlock 輪框（W7009）",
+     "short": "D19 鋁合金 Beadlock 輪框（W7009）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3316,6 +3738,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "提供黑色、鈦色；附星形起子",
       "規格：外徑 19mm、寬 10.7mm、偏距 0mm，每顆 5.0g，4 顆一組",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 5.6g Brass Inner Clamp Rings for INJORA 0.7\" D19 Wheels",
+      "INJORA|INJORA 10.1g Brass Inner Clamp Rings for INJORA 0.7\" D19 Wheels (4 PCS 4顆裝)",
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)"
      ],
      "image": "1_1b478fbd-d192-44d2-a054-0443ba3ab9e7.jpg?v=1787640193"
     },
@@ -3327,7 +3754,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$22.99 USD",
      "price": 690,
      "note": "INJORA 0.7 吋 D19 ModuWheel 模組化輪框，4 顆一組，適用 SCX30 與 Ascent-32。提供黑、藍、橘三色（請註明顏色）。",
-     "short": "INJORA D19 ModuWheel 模組輪框（MW7012）",
+     "short": "D19 模組化輪框（MW7012）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3336,6 +3763,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "負偏距加寬輪距，穩定性更好；附星形起子",
       "規格：外徑 19mm、寬 10.8mm、偏距 -2mm、5mm 六角，每顆 8.4g，4 顆一組",
       "提供黑、藍、橘三色；原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)",
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "1_66c50f8c-3163-4c9f-a310-38db61268674.jpg?v=1787640201"
     },
@@ -3347,7 +3778,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "INJORA 0.7 吋 D19 CNC 鋁合金輪框，4 顆一組。提供銀、黑兩色（請註明顏色）。",
-     "short": "INJORA D19 鋁合金輪框（W7013）",
+     "short": "D19 復古鍍鉻鋁合金輪框（W7013）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3356,6 +3787,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "多圓孔輪面搭配復古鍍鉻質感，經典仿真",
       "規格：外徑 19mm、寬 10.7mm，每顆 5.1g，4 顆一組；附星形起子",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 5.6g Brass Inner Clamp Rings for INJORA 0.7\" D19 Wheels",
+      "INJORA|INJORA 10.1g Brass Inner Clamp Rings for INJORA 0.7\" D19 Wheels (4 PCS 4顆裝)",
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)"
      ],
      "image": "W7013SR-19_24e2f209-c6a1-41d2-a9c9-c748f8f03ed4.jpg?v=1787640198"
     },
@@ -3367,7 +3803,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "INJORA 0.7 吋 Turbine 渦輪造型 D19 深碟黃銅輪框，原色黃銅，4 顆一組，深碟造型搭配黃銅配重。",
-     "short": "INJORA Turbine D19 深碟黃銅輪框（原色）",
+     "short": "D19 Turbine 深碟黃銅輪框（原色）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3376,6 +3812,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "2.8mm 偏距深碟渦輪造型，外觀獨特",
       "規格：外徑 19mm、寬 10.8mm，4 顆一組；附星形起子",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)",
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "0_e770e173-7e4a-4ed0-b893-689ab672ccd1.jpg?v=1787640164"
     },
@@ -3387,7 +3827,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$27.99 USD",
      "price": 840,
      "note": "INJORA 0.7 吋 Turbine 渦輪造型 D19 深碟黃銅輪框，白色塗層，4 顆一組。",
-     "short": "INJORA Turbine D19 深碟黃銅輪框（白色）",
+     "short": "D19 Turbine 深碟黃銅輪框（白色）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3396,6 +3836,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "2.8mm 偏距深碟渦輪造型，外觀獨特",
       "規格：外徑 19mm、寬 10.8mm，4 顆一組；附星形起子",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)",
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "0_e770e173-7e4a-4ed0-b893-689ab672ccd1.jpg?v=1787640164"
     },
@@ -3407,7 +3851,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$24.99 USD",
      "price": 750,
      "note": "INJORA 0.7 吋 D19 黃銅 Beadlock 輪框，4 顆一組，提供電鍍銀、電鍍黑（請註明顏色），夾胎式設計並增加輪端配重。",
-     "short": "INJORA D19 黃銅 Beadlock 輪框（W7016）",
+     "short": "D19 黃銅 Beadlock 輪框（W7016）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3417,6 +3861,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "多圓孔輪面、復古造型；附星形起子",
       "規格：外徑 19mm、寬 10.7mm，4 顆一組",
       "注意：原廠以 INJORA 0.7 吋輪胎設計測試，其他品牌輪胎不保證相容"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" 40*15mm King Trekker Tires for 1/30 SCX30 (T7024) (4)",
+      "INJORA|INJORA Silicone Rubber Inserts for 0.7\" 39-41mm Tires"
      ],
      "image": "1_8710b896-c153-49ff-8cb1-fd46349302d4.jpg?v=1792230547"
     },
@@ -3428,6 +3876,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$28.99 USD",
      "price": 870,
      "note": "INJORA Beadlock 輪框與 MAVERIX M/T 輪胎套組，鍍鉻鋁合金輪框搭配 S5 超軟膠料輪胎，復古 8 孔造型。需自行組裝，輪框為 0.6／0.7 吋專用尺寸，不相容其他輪框輪胎。",
+     "short": "Beadlock 輪框＋輪胎組（W6701）",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3448,7 +3897,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$7.99 USD",
      "price": 240,
      "note": "INJORA 0.7 吋 D18 輪框專用黃銅內夾環，每個 4.7g，增加輪端配重、降低重心。",
-     "short": "0.7\" D18 輪框用 4.7g 黃銅內夾環",
+     "short": "D18 黃銅內夾環 4.7g（4 顆）",
      "stock": "預購",
      "sub": "配重環",
      "feat": [
@@ -3457,6 +3906,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "通氣孔設計，幫助輪胎壓縮與回彈",
       "規格：外徑 19.8mm、內徑 16.3mm、寬 7.3mm；4 個一組",
       "注意：僅適用 INJORA 0.7 吋 D18 輪框（W7001、W7002）"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" D18 6-Spoke Aluminum Wheels for 1/30 SCX30 (W7001) (4)",
+      "INJORA|INJORA 0.7\" D18 5-Spoke Aluminum Wheels for 1/30 SCX30 (W7002) (4)"
      ],
      "image": "DSC00283_cead54cb-d21e-410b-800d-f4d0e6fc9dce.jpg?v=1787640341"
     },
@@ -3468,7 +3921,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$7.99 USD",
      "price": 240,
      "note": "INJORA 0.7 吋 D19 輪框專用黃銅內夾環，每個 5.6g，增加輪端配重、降低重心。",
-     "short": "0.7\" D19 輪框用 5.6g 黃銅內夾環",
+     "short": "D19 黃銅內夾環 5.6g（4 顆）",
      "stock": "預購",
      "sub": "配重環",
      "feat": [
@@ -3477,6 +3930,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "通氣孔設計，幫助輪胎壓縮與回彈",
       "規格：外徑 20.6mm、內徑 17.3mm、寬 9mm",
       "注意：僅適用 INJORA 0.7 吋 D19 輪框"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" D19 Aluminum Beadlock Wheels for 1/30 SCX30 (W7009) (4)",
+      "INJORA|INJORA 0.7\" D19 Aluminum Wheels for 1/30 SCX30 (W7008) (4)"
      ],
      "image": "DSC00644_292a61fe-e2ee-4336-9ff6-e2ef7e902fc8.jpg?v=1787640297"
     },
@@ -3488,13 +3945,17 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$5.99 USD",
      "price": 180,
      "note": "INJORA 0.7 吋 D18 輪框專用 10g 黃銅內夾環，2 顆裝，適合只加重前輪、提升爬坡時的前輪抓地。",
-     "short": "0.7\" D18 輪框用 10g 黃銅內夾環 2顆裝",
+     "short": "D18 黃銅內夾環 10g（2 顆）",
      "stock": "預購",
      "sub": "配重環",
      "feat": [
       "CNC 黃銅內夾環，每個 10g，低位配重更穩",
       "可只裝前輪，讓重心前移、爬坡更有抓地力",
       "注意：僅適用 INJORA 0.7 吋 D18 輪框（W7001、W7002）"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" D18 6-Spoke Aluminum Wheels for 1/30 SCX30 (W7001) (4)",
+      "INJORA|INJORA 0.7\" D18 5-Spoke Aluminum Wheels for 1/30 SCX30 (W7002) (4)"
      ],
      "image": "DSC08050_08c9ff66-406a-4d7e-950a-bbc9884f53a6.jpg?v=1787640238"
     },
@@ -3506,13 +3967,17 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$9.99 USD",
      "price": 300,
      "note": "INJORA 0.7 吋 D18 輪框專用 10g 黃銅內夾環，4 顆裝，四輪全配重，整體重心更低。",
-     "short": "0.7\" D18 輪框用 10g 黃銅內夾環 4顆裝",
+     "short": "D18 黃銅內夾環 10g（4 顆）",
      "stock": "預購",
      "sub": "配重環",
      "feat": [
       "CNC 黃銅內夾環，每個 10g，低位配重更穩",
       "可只裝前輪，讓重心前移、爬坡更有抓地力",
       "注意：僅適用 INJORA 0.7 吋 D18 輪框（W7001、W7002）"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" D18 6-Spoke Aluminum Wheels for 1/30 SCX30 (W7001) (4)",
+      "INJORA|INJORA 0.7\" D18 5-Spoke Aluminum Wheels for 1/30 SCX30 (W7002) (4)"
      ],
      "image": "DSC08050_08c9ff66-406a-4d7e-950a-bbc9884f53a6.jpg?v=1787640238"
     },
@@ -3524,7 +3989,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$5.99 USD",
      "price": 180,
      "note": "INJORA 0.7 吋 D19 輪框專用 10.1g 黃銅內夾環，2 顆裝，適合只加重前輪、提升爬坡時的前輪抓地。",
-     "short": "0.7\" D19 輪框用 10.1g 黃銅內夾環 2顆裝",
+     "short": "D19 黃銅內夾環 10.1g（2 顆）",
      "stock": "預購",
      "sub": "配重環",
      "feat": [
@@ -3533,6 +3998,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "可只裝前輪，讓重心前移、爬坡更有抓地力",
       "規格：外徑 22.4mm、內徑 17.3mm、寬 9mm",
       "注意：僅適用 INJORA 0.7 吋 D19 輪框"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" D19 Aluminum Beadlock Wheels for 1/30 SCX30 (W7009) (4)",
+      "INJORA|INJORA 0.7\" D19 Aluminum Wheels for 1/30 SCX30 (W7008) (4)"
      ],
      "image": "DSC08060_f61374ac-f394-4b7e-8975-fb49ec3cfac2.jpg?v=1787640237"
     },
@@ -3544,7 +4013,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$9.99 USD",
      "price": 300,
      "note": "INJORA 0.7 吋 D19 輪框專用 10.1g 黃銅內夾環，4 顆裝，四輪全配重，整體重心更低。",
-     "short": "0.7\" D19 輪框用 10.1g 黃銅內夾環 4顆裝",
+     "short": "D19 黃銅內夾環 10.1g（4 顆）",
      "stock": "預購",
      "sub": "配重環",
      "feat": [
@@ -3553,6 +4022,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "可只裝前輪，讓重心前移、爬坡更有抓地力",
       "規格：外徑 22.4mm、內徑 17.3mm、寬 9mm",
       "注意：僅適用 INJORA 0.7 吋 D19 輪框"
+     ],
+     "pair": [
+      "INJORA|INJORA 0.7\" D19 Aluminum Beadlock Wheels for 1/30 SCX30 (W7009) (4)",
+      "INJORA|INJORA 0.7\" D19 Aluminum Wheels for 1/30 SCX30 (W7008) (4)"
      ],
      "image": "DSC08060_f61374ac-f394-4b7e-8975-fb49ec3cfac2.jpg?v=1787640237"
     },
@@ -3564,7 +4037,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$20.99 USD",
      "price": 780,
      "note": "MEUS 0.7 吋鋁合金 Beadlock 深碟輪框，4 顆一組，附 SCX30 六角轉接座。A／B／C 三種款式，黑、銀、紫三色（請註明款式與顏色）。",
-     "short": "0.7吋 Beadlock 輪框 A／B／C 款",
+     "short": "Beadlock 鋁合金輪框 A／B／C 款",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3574,7 +4047,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "附 SCX30 六角轉接座；也適用 Redcat Ascent-32"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/A_-_-_1_ea80cc2a-215b-44e0-94ef-03c077f80c6a.jpg?v=1768646568",
-     "url": "https://www.meusracing.com/products/0-7-inch-wheels-rims-for-scx30-ascent-32"
+     "url": "https://www.meusracing.com/products/0-7-inch-wheels-rims-for-scx30-ascent-32",
+     "pair": [
+      "MEUS|MEUS Racing 4.3g/pc Brass Inner Clamp Rings for MEUS 0.7\" Beadlock Wheels",
+      "MEUS|MEUS Racing 0.7-Inch MS6 / Super Bouncer / Mud Shredder / Marauder Tires (4pcs)"
+     ]
     },
     {
      "brand": "MEUS",
@@ -3584,7 +4061,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$20.99 USD",
      "price": 780,
      "note": "MEUS 0.7 吋鋁合金 Beadlock 深碟輪框，4 顆一組，每顆約 4g，輕量化設計。D／E／F 三種款式，黑、綠、銀、紫四色（請註明款式與顏色）。",
-     "short": "0.7吋 深碟 Beadlock 輪框 D／E／F 款",
+     "short": "深碟 Beadlock 鋁合金輪框 D／E／F 款",
      "stock": "預購",
      "sub": "輪框",
      "feat": [
@@ -3593,7 +4070,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "鋁合金每顆約 4g；外徑 21mm、寬 10.5mm"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/Model_D_Black_0.7-inch_wheels.jpg?v=1780993670",
-     "url": "https://www.meusracing.com/products/0-7-inch-aluminum-beadlock-wheels-for-scx30"
+     "url": "https://www.meusracing.com/products/0-7-inch-aluminum-beadlock-wheels-for-scx30",
+     "pair": [
+      "MEUS|MEUS Racing 4.3g/pc Brass Inner Clamp Rings for MEUS 0.7\" Beadlock Wheels",
+      "MEUS|MEUS Racing 0.7-Inch MS6 / Super Bouncer / Mud Shredder / Marauder Tires (4pcs)"
+     ]
     },
     {
      "brand": "MEUS",
@@ -3603,7 +4084,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$9.99 USD",
      "price": 370,
      "note": "MEUS 0.7 吋 Beadlock 輪框專用黃銅內配重環，每個 4.3g，僅適用 MEUS 輪框。",
-     "short": "黃銅內配重環",
+     "short": "黃銅內夾環 4.3g（MEUS 輪框用）",
      "stock": "預購",
      "sub": "配重環",
      "feat": [
@@ -3614,7 +4095,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "內容物：黃銅內夾環×4"
      ],
      "image": "https://www.meusracing.com/cdn/shop/files/0.7_-_1.jpg?v=1776072890",
-     "url": "https://www.meusracing.com/products/brass-inner-clamp-rings-for-meus-0-7-inch-wheel-rim"
+     "url": "https://www.meusracing.com/products/brass-inner-clamp-rings-for-meus-0-7-inch-wheel-rim",
+     "pair": [
+      "MEUS|MEUS Racing 0.7-inch Beadlock Wheels Model A / B / C (4pcs)",
+      "MEUS|MEUS Racing 0.7-Inch Aluminum Beadlock Deep-Dish Wheels Model D / E / F (4pcs)"
+     ]
     },
     {
      "brand": "OP",
@@ -3624,7 +4109,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 90,
      "note": "M2 黃銅輪框螺母，一份 4 顆，比原廠更有質感，也能稍微增加輪端配重。",
-     "short": "黃銅輪框螺母M2",
+     "short": "M2 黃銅輪框螺母",
      "sub": "螺母",
      "image": "images/Brassnut.JPG"
     }
@@ -3641,13 +4126,16 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$4.99 USD",
      "price": 150,
      "note": "INJORA SCX30 專用起子／套筒，單支販售：3.0mm 套筒、2.0mm＋十字、T3 星形、0.05\" 六角任選（請註明規格）。",
-     "short": "INJORA SCX30 專用起子／套筒（單支）",
+     "short": "SCX30 專用起子／套筒（單支）",
      "stock": "預購",
      "feat": [
       "防滑人體工學握把，握持穩定舒適",
       "精密加工刀頭，密合度好、耐用",
       "刀頭小巧，SCX30 細小螺絲更好操作",
       "規格：鋼製刀頭＋鋁合金握把；3.0mm 套筒、2.0mm 十字、T3 星形、0.05 吋（1.27mm）六角"
+     ],
+     "pair": [
+      "INJORA|INJORA Drivers for 1/30 Axial SCX30 (4-Piece Driver Set 4件完整套組)"
      ],
      "image": "1_cfe79b4f-002e-4ce6-a937-5346c5506a84.jpg?v=1788320208"
     },
@@ -3659,13 +4147,17 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 600,
      "note": "INJORA SCX30 專用 4 件式起子／套筒完整套組，涵蓋 SCX30 常用螺絲規格，保養改裝一次到位。",
-     "short": "4 件式專用螺絲起子/套筒完整套組",
+     "short": "SCX30 專用起子／套筒 4 件組",
      "stock": "預購",
      "feat": [
       "防滑人體工學握把，握持穩定舒適",
       "精密加工刀頭，密合度好、耐用",
       "刀頭小巧，SCX30 細小螺絲更好操作",
       "規格：鋼製刀頭＋鋁合金握把；3.0mm 套筒、2.0mm 十字、T3 星形、0.05 吋（1.27mm）六角"
+     ],
+     "pair": [
+      "INJORA|INJORA Grade 12.9 Alloy Steel M1.0 M1.4 M2.0 Screws Set for 1/30 SCX30",
+      "INJORA|INJORA Aluminum RC Car Stand with Shock Holder for 1/30 1/32 RC Crawler"
      ],
      "image": "1_cfe79b4f-002e-4ce6-a937-5346c5506a84.jpg?v=1788320208"
     },
@@ -3677,7 +4169,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$15.99 USD",
      "price": 480,
      "note": "INJORA 鋁合金修車架，適用 1/30、1/32 攀爬車，附避震器放置座，保養時車輛穩固、零件不散落。",
-     "short": "1/30 1/32 鋁合金修車架",
+     "short": "鋁合金修車架（附避震架）",
      "stock": "預購",
      "feat": [
       "CNC 鋁合金，黑色陽極處理",
@@ -3697,7 +4189,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$7.99 USD",
      "price": 240,
      "note": "INJORA 12.9 級合金鋼螺絲組，含 M1.0／M1.4／M2.0 常用規格，強度高、不易滑牙，替換原廠螺絲的好選擇。",
-     "short": "12.9級合金鋼螺絲組",
+     "short": "12.9 級合金鋼螺絲組",
      "stock": "預購",
      "feat": [
       "12.9 級高強度合金鋼，耐用",
@@ -3705,6 +4197,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
       "相容原廠與 INJORA 升級件；多種尺寸，組裝保養都夠用",
       "分袋標示「STOCK」（原廠件用）與「INJORA」（升級件用），好辨識",
       "內含 M1.0、M1.4、M2.0 共 9 種規格，約 90 支"
+     ],
+     "pair": [
+      "INJORA|INJORA Drivers for 1/30 Axial SCX30 (4-Piece Driver Set 4件完整套組)"
      ],
      "image": "DSC03672_4cb55fc9-296d-4133-a953-05cbd6101d9e.jpg?v=1787640292"
     },
@@ -3716,7 +4211,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$6.99 USD",
      "price": 210,
      "note": "醋酸布膠帶 8mm 與 10mm 兩種寬度，適合整理電線，耐熱、絕緣、不易殘膠。",
-     "short": "8mm & 10mm 醋酸布膠帶",
+     "short": "醋酸布膠帶 8mm＋10mm",
      "stock": "預購",
      "feat": [
       "讓電線整理得乾淨整齊、專業美觀",
@@ -3735,7 +4230,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "$19.99 USD",
      "price": 740,
      "note": "MEUS 起子工具組，含六角、套筒、十字起子，適用 SCX30 與 SCX24。",
-     "short": "起子工具組",
+     "short": "六角／套筒／十字起子組",
      "stock": "預購",
      "feat": [
       "高品質金屬，獨立起子免換頭，使用更方便",
@@ -3754,7 +4249,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 150,
      "note": "簡易起子工具組，內附 6 顆金屬輪框螺母，適合入門保養使用。",
-     "short": "簡易起子工具組(內附6顆金屬輪框螺母)",
+     "short": "簡易起子組（附 6 顆輪框螺母）",
      "image": "images/Tool-88.JPG"
     }
    ]
@@ -3770,7 +4265,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 150,
      "note": "PLA+ 3D 列印 SCX30 維修駐車架，保養時讓車輛穩固架起（請註明車款）。",
-     "short": "SCX30 維修駐車架(請備注車款)",
+     "short": "SCX30 維修駐車架（請備註車款）",
      "stock": "預購",
      "image": "images/Stand.JPG"
     },
@@ -3782,8 +4277,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 50,
      "note": "PLA+ 3D 列印 Wrangler（牧馬人）車側踏板，增加側邊保護並提升外觀細節。",
-     "short": "牧馬人 車側踏板",
+     "short": "JLU 側踏板（3D 列印）",
      "stock": "預購",
+     "fit": [
+      "JLU"
+     ],
      "image": "images/JLUSLIDER.PNG"
     },
     {
@@ -3794,8 +4292,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "usd": "",
      "price": 50,
      "note": "PLA+ 3D 列印 Tacoma 車側踏板，增加側邊保護並提升外觀細節。",
-     "short": "Tacoma 車側踏板",
+     "short": "Tacoma 側踏板（3D 列印）",
      "stock": "預購",
+     "fit": [
+      "Tacoma"
+     ],
      "image": "images/TACOSLIDER.JPG"
     }
    ]
@@ -3813,12 +4314,6 @@ select:disabled{opacity:.45;cursor:not-allowed}
      "qty": 1
     },
     {
-     "cat": "車架",
-     "brand": "INJORA",
-     "label": "INJORA Aluminum LCG Chassis Kit for 1/30 SCX30 Bronco JLU K10 Tacoma (Chassis Kit Only 僅車架)",
-     "qty": 1
-    },
-    {
      "cat": "避震懸吊",
      "brand": "HR",
      "label": "鋁合金前後避震器活動升高套件",
@@ -3830,12 +4325,6 @@ select:disabled{opacity:.45;cursor:not-allowed}
    "name": "大腳組合",
    "desc": "加寬車橋＋大胎＋凹框",
    "items": [
-    {
-     "cat": "車橋相關配件",
-     "brand": "INJORA",
-     "label": "INJORA +4.5mm Planet Axles with Double Joint Shafts for 1/30 SCX30 (Front & Rear 前後橋套組)",
-     "qty": 1
-    },
     {
      "cat": "輪胎與海綿內襯",
      "brand": "INJORA",
@@ -3952,28 +4441,22 @@ select:disabled{opacity:.45;cursor:not-allowed}
 const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec"; // 訂單接收網址（Google Apps Script）
 const LINE_OA_ID = "@293ljwzr";                                                  // LINE 官方帳號 ID
 const SHIP_FEE_711 = 60;                                                         // 7-11 店到店運費（要和 Apps Script 後台一致）
-const FREE_SHIP_OVER = 0;                                                        // 滿多少免運，0＝不設免運
+const FREE_SHIP_OVER = 1500;                                                     // 滿多少免運，0＝不設免運（要和 Apps Script 訂單程式一致）
+const PREORDER_ETA = "約 2～4 週";                                                // 預購商品的預估到貨時間（商品詳細會顯示）
+const GA_ID = "G-S4VMHCED7V";                                                                 // Google Analytics 評估 ID（G- 開頭），空白＝不追蹤
 const HERO_SECONDS = 4;                                                          // 首頁實車照幾秒換一張
 const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";                             // 查詢 7-11 門市
 const TRACK_URL = "https://eservice.7-11.com.tw/e-tracking/search.aspx";          // 查詢物流進度
-const PAGE_VERSION = "v6.6"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v6.7"; // 網頁程式有改動時，請手動調高這個版本號
 // 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
 const CHANGELOG_DATE = "2026-11-24";
 const CHANGELOG = [
-  "店名改為「山稜RC選物」，用 LINE 分享網址時會顯示預覽卡片。",
-  "首頁新增訂購四步驟與重點提醒，購物車送出前也會列出重點；購物須知與常見問題合併在頁面下方。",
-  "品項會顯示庫存狀態，例如現貨或預計到貨時間。",
-  "分類列最前面新增「現貨」按鈕，一鍵只顯示有現貨的商品。",
-  "姓名、手機改為必填，LINE ID 改為選填；寄件時可以勾選「收件人姓名、手機同上」。",
-  "送出訂單後可一鍵開啟 LINE 訂單通知；首頁新增加入 LINE 官方帳號的按鈕。",
-  "現貨會顯示剩餘數量；店家確認訂單後自動扣庫存，賣完自動變成預購。",
-  "訂單狀態「待貨中」改名為「備貨中」。",
-  "面交訂單改為當面付款，不會再出現匯款資訊。",
-  "商品較多的分類新增「種類」小按鈕（例如車橋總成、CVD・半軸），清單也更精簡。",
-  "「全部零件」改版：上方分類分頁、品牌篩選，商品直接列出圖片與價格，按「＋」就加入購物車，點商品看詳細。",
-  "按「現貨」直接列出現貨商品卡，可以直接加入購物車；現貨與熱門推薦改成左右滑動，比較不佔版面。",
-  "新增直達網址：#orders 打開我的訂單、#info 跳到購物須知，可放在 LINE 官方帳號的圖文選單。",
-  "LINE ID 欄位加上查詢說明與檢查；送出訂單後可以「用 LINE 接收訂單通知」，訂單確認、收款、出貨都會自動傳 LINE。"
+  "新增「我的車」：選 Bronco、JLU、K10、Tacoma 或 CJ-7，只顯示適用你車款的零件。",
+  "商品詳細新增「搭配加購」，購物車也會推薦常一起買的零件。",
+  "7-11 店到店滿 NT$1,500 免運，購物車會顯示還差多少。",
+  "清單只標示「現貨」，預購商品在商品詳細顯示預估到貨時間。",
+  "品名用字統一（例如 JLU、前或後・單支）；購物車是空的時候，底部列會自動隱藏。",
+  "商品詳細新增官網產品特點與完整商品說明。"
 ];
 /* ================================================== */
 
@@ -3985,7 +4468,54 @@ const NO_BRAND = "其他", MAXQ = 99, CART_KEY = "injora_cart_v1", CONTACT_KEY =
 const brandOf = it => it.brand || NO_BRAND;
 const nameOf = it => (it && it.short) || (it && it.label) || "";      // 有「顯示名稱」就用精簡名稱
 const clampQ = v => Math.min(MAXQ, Math.max(1, parseInt(v, 10) || 1));
-let data = EMBED, rows = [], cart = loadCart();
+let data = EMBED, rows = [], cart = loadCart(), refMap = {};
+
+/* ---------- 成效追蹤（Google Analytics 4，設定區 GA_ID 有填才會啟用） ---------- */
+function track(name, params) { try { if (window.gtag) window.gtag("event", name, params || {}); } catch (e) {} }
+if (/^G-[A-Z0-9]{4,}$/.test(GA_ID)) {
+  window.dataLayer = window.dataLayer || []; window.gtag = function () { window.dataLayer.push(arguments); };
+  window.gtag("js", new Date()); window.gtag("config", GA_ID);
+  document.head.append(el("script", { async: true, src: "https://www.googletagmanager.com/gtag/js?id=" + GA_ID }));
+}
+const gaItem = (it, q, cat) => ({ item_id: it.sku || it.label, item_name: nameOf(it), item_brand: brandOf(it), item_category: cat || "", price: it.price, quantity: q || 1 });
+
+/* ---------- 我的車：只顯示適用車款的零件（價格表「適用車款」欄空白＝全車款） ---------- */
+const CARS = [["Bronco", "Bronco"], ["JLU", "JLU 牧馬人"], ["K10", "K10"], ["Tacoma", "Tacoma"], ["CJ-7", "CJ-7"]];
+const CAR_KEY = "scx30_car_v1";
+let myCar = (() => { try { const v = localStorage.getItem(CAR_KEY) || ""; return CARS.some(c => c[0] === v) ? v : ""; } catch (e) { return ""; } })();
+const fits = it => !myCar || !it.fit || !it.fit.length || it.fit.includes(myCar);
+function renderCar() {
+  const b = (v, t) => {
+    const x = el("button", { type: "button", className: myCar === v ? "on" : "", textContent: t });
+    x.setAttribute("aria-pressed", String(myCar === v)); x.addEventListener("click", () => setCar(v)); return x;
+  };
+  $("mycar").replaceChildren(el("span", { className: "ml", textContent: "我的車" }), b("", "全部車款"), ...CARS.map(c => b(c[0], c[1])));
+}
+function setCar(v) {
+  myCar = v; try { localStorage.setItem(CAR_KEY, v); } catch (e) {}
+  renderCar(); if (onlyStock) renderStockGrid(); else renderList(); showResults(); renderCart();
+  track("select_car", { car: v || "all" });
+}
+function fitLine(it) {
+  if (!it.fit || !it.fit.length) return null;
+  const ok = fits(it);
+  return el("p", { className: "fitline" + (ok ? "" : " bad") }, ok ? "適用車款：" : "⚠ 不適用你的 " + myCar + "，適用：", el("b", { textContent: it.fit.join("／") }));
+}
+/* 搭配加購的一列 */
+function pairRow(cat, it) {
+  const hit = cartKeyOf(cat, it);
+  const b = el("button", { className: "padd2" + (hit ? " done" : ""), type: "button", textContent: hit ? "已加入 ✓" : "＋ 加入" });
+  b.setAttribute("aria-label", "加入購物車：" + nameOf(it));
+  b.addEventListener("click", e => { e.stopPropagation(); const h = cartKeyOf(cat, it); setCartQty(cat, it, (h ? h.qty : 0) + 1); b.textContent = "已加入 ✓"; b.classList.add("done"); });
+  const r = el("div", { className: "pp", tabIndex: 0 }, thumb(it, "pth") || el("div", { className: "pth none" }),
+    el("div", {}, el("div", { className: "n", textContent: nameOf(it) }), el("div", { className: "p", textContent: fmt(it.price) + (fits(it) ? "" : "　（不適用 " + myCar + "）") })), b);
+  r.setAttribute("role", "button");
+  r.addEventListener("click", () => openPd(cat, it));
+  return r;
+}
+const pairsOf = it => (it.pair || []).map(k => refMap[k]).filter(Boolean);
+/* 免運：還差多少（沒設定免運回傳 null） */
+const freeLeft = total => FREE_SHIP_OVER > 0 ? Math.max(0, FREE_SHIP_OVER - total) : null;
 
 /* ---------- 商品圖片 ---------- */
 const isHttp = u => /^https?:\/\/\S+$/i.test(u || "");
@@ -4057,8 +4587,9 @@ async function refresh() { try { render(await loadData()); } catch (e) {} }
 let curCat = "", curBrand = "", curSub = "";
 const cartKeyOf = (catName, it) => cart.find(c => c.cat === catName && c.brand === brandOf(it) && c.label === it.label);
 function setCartQty(catName, it, q) {
-  const hit = cartKeyOf(catName, it);
+  const hit = cartKeyOf(catName, it), was = hit ? hit.qty : 0;
   q = Math.max(0, Math.min(MAXQ, q));
+  if (q > was) track("add_to_cart", { currency: "TWD", value: it.price * (q - was), items: [gaItem(it, q - was, catName)] });
   if (hit) { if (q) hit.qty = q; else cart = cart.filter(c => c !== hit); }
   else if (q) cart.push({ cat: catName, brand: brandOf(it), label: it.label, qty: q });
   saveCart(); renderCart();
@@ -4104,7 +4635,7 @@ function renderList() {
   if (!rows.length) return;
   renderTabs();
   const row = rows.find(r => r.cat.name === curCat) || rows[0];
-  const items = row.cat.items;
+  const items = row.cat.items.filter(fits);
   const brands = [...new Set(items.map(brandOf))];
   if (curBrand && !brands.includes(curBrand)) curBrand = "";
   const subs = [...new Set(items.map(it => it.sub || "").filter(Boolean))].sort((x, y) => /其他/.test(x) - /其他/.test(y));   // 「其他」排最後
@@ -4119,7 +4650,7 @@ function renderList() {
   bb.hidden = !subRow && !brandRow;
   const shown = items.filter(it => (!curBrand || brandOf(it) === curBrand) && (!curSub || it.sub === curSub));
   const list = $("list");
-  if (!shown.length) { list.replaceChildren(el("div", { className: "pempty", textContent: curBrand && curSub ? "這個品牌沒有這類商品，換個品牌或種類看看" : "這個分類目前沒有商品" })); return; }
+  if (!shown.length) { list.replaceChildren(el("div", { className: "pempty", textContent: curBrand && curSub ? "這個品牌沒有這類商品，換個品牌或種類看看" : myCar ? "這個分類沒有標示適用 " + myCar + " 的商品，可以切換到「全部車款」看看" : "這個分類目前沒有商品" })); return; }
   list.replaceChildren(...shown.map(it => {
     const img = thumb(it, "pth") || el("div", { className: "pth none" });
     const r = el("div", { className: "pi", tabIndex: 0 }, img,
@@ -4148,15 +4679,18 @@ function openPd(catName, it) {
   x.addEventListener("click", closePd);
   const info = [["型號", it.sku], ["顏色", it.color], ["官網價", it.usd]].filter(v => v[1]);
   const link = isHttp(it.url) ? el("a", { className: "plink", href: it.url, target: "_blank", rel: "noopener noreferrer", textContent: "查看官網商品頁 ↗" }) : null;
-  $("pdCard").replaceChildren(...[x, big, stockTag(it) ? el("div", {}, stockTag(it)) : null, el("h3", { textContent: nameOf(it) }),
+  const pairs = pairsOf(it);
+  track("view_item", { currency: "TWD", value: it.price, items: [gaItem(it, 1, catName)] });
+  $("pdCard").replaceChildren(...[x, big, stockTag(it, true) ? el("div", {}, stockTag(it, true)) : null, el("h3", { textContent: nameOf(it) }),
     it.short ? el("p", { className: "pdfull", textContent: it.label }) : null,
-    el("div", { className: "sm", textContent: brandOf(it) + "｜" + catName }),
+    el("div", { className: "sm", textContent: brandOf(it) + "｜" + catName }), fitLine(it),
     it.note ? el("p", { className: "pddesc", textContent: it.note }) : null,
     it.feat && it.feat.length ? el("div", { className: "pdfeat" }, el("b", { textContent: "產品特點" }), el("ul", {}, ...it.feat.map(t => el("li", { textContent: t })))) : null,
     info.length ? el("dl", {}, ...info.flatMap(v => [el("dt", { textContent: v[0] }), el("dd", { textContent: v[1] })])) : null,
     link, el("div", { className: "pdp", textContent: fmt(it.price) }),
     el("div", { className: "pdrow" }, qty, add),
-    el("small", { textContent: "顏色或其他需求，可以在購物車裡每一項的備註欄填寫。" })].filter(Boolean));
+    el("small", { textContent: "顏色或其他需求，可以在購物車裡每一項的備註欄填寫。" }),
+    pairs.length ? el("div", { className: "pdpair" }, el("b", { textContent: "搭配加購" }), ...pairs.map(p => pairRow(p.cat, p.it))) : null].filter(Boolean));
   $("pd").hidden = false; document.body.classList.add("locked");
   $("pdCard").scrollTop = 0;
 }
@@ -4193,6 +4727,8 @@ function render(raw) {
   $("ver").textContent = "網頁 " + PAGE_VERSION + "　價格 v" + raw.version + "（更新於 " + raw.updated + "）";
   $("footnote").textContent = raw.footnote || "";
   rows = raw.categories.map((cat, ci) => ({ cat, ci }));
+  refMap = {}; rows.forEach(r => r.cat.items.forEach(it => { refMap[brandOf(it) + "|" + it.label] = { cat: r.cat.name, it }; }));
+  renderCar();
   if (!rows.some(r => r.cat.name === curCat)) curCat = rows.length ? rows[0].cat.name : "";
   buildIndex();
   renderHero(raw.hero);
@@ -4222,7 +4758,7 @@ function renderStockGrid() {
   box.hidden = !onlyStock;
   if (!onlyStock) { box.replaceChildren(); return; }
   const cards = [];
-  rows.forEach(row => row.cat.items.filter(inStock).forEach(it => cards.push(stockCard(row, it))));
+  rows.forEach(row => row.cat.items.filter(it => inStock(it) && fits(it)).forEach(it => cards.push(stockCard(row, it))));
   box.replaceChildren(el("h3", { textContent: "共 " + cards.length + " 項現貨" + (cards.length > 2 ? "　← 左右滑動看更多 →" : "") }),
     el("div", { className: "sgrid" }, ...cards));      // 全部現貨排成一排，左右滑動
 }
@@ -4235,6 +4771,7 @@ function stockCard(row, it) {
     const q = clampQ(qty.value), brand = brandOf(it);
     const hit = cart.find(c => c.cat === row.cat.name && c.brand === brand && c.label === it.label);
     if (hit) hit.qty = Math.min(MAXQ, hit.qty + q); else cart.push({ cat: row.cat.name, brand, label: it.label, qty: q });
+    track("add_to_cart", { currency: "TWD", value: it.price * q, items: [gaItem(it, q, row.cat.name)] });
     saveCart(); renderCart(); qty.value = 1;
     add.textContent = "已加入 ✓"; setTimeout(() => { add.textContent = "加入購物車"; }, 1200);
     const bar = $("cbTotal"); bar.classList.remove("bump"); void bar.offsetWidth; bar.classList.add("bump");
@@ -4307,6 +4844,7 @@ function renderBundles() {
         const hit = cart.find(c => c.cat === x.cat && c.brand === brandOf(it) && c.label === it.label);
         if (hit) hit.qty = Math.min(MAXQ, hit.qty + x.qty); else cart.push({ cat: x.cat, brand: brandOf(it), label: it.label, qty: x.qty });
       });
+      track("add_to_cart", { currency: "TWD", value: total, items: lines.map(({ x, it }) => gaItem(it, x.qty, x.cat)) });
       saveCart(); renderCart();
       btn.textContent = "已加入 " + lines.length + " 項 ✓"; setTimeout(() => { btn.textContent = "整組加入購物車"; }, 1500);
       const bar = $("cbTotal"); bar.classList.remove("bump"); void bar.offsetWidth; bar.classList.add("bump");
@@ -4358,7 +4896,13 @@ function renderPoints() {
 }
 /* ---------- 庫存標籤 ---------- */
 function stockKind(s) { s = String(s || ""); return /現貨|有貨/.test(s) ? "ok" : /缺貨|售完|停產|停售|暫停/.test(s) ? "no" : "wait"; }
-function stockTag(it) { return it.stock ? el("span", { className: "stk " + stockKind(it.stock), textContent: it.stock }) : null; }
+// 清單只標「現貨」「缺貨」；預購的到貨時間放在商品詳細（full = true）
+function stockTag(it, full) {
+  if (!it.stock) return null;
+  const k = stockKind(it.stock);
+  if (k === "wait" && !full) return null;
+  return el("span", { className: "stk " + k, textContent: k === "wait" && it.stock === "預購" ? "預購・" + PREORDER_ETA + "到貨" : it.stock });
+}
 function updateRows() { if (!onlyStock) renderList(); }
 function addToCart() {}
 /* ---------- 搜尋 ---------- */
@@ -4370,7 +4914,8 @@ function buildIndex() {
     hay: norm([it.short, it.label, it.sku, it.color, brandOf(it), row.cat.name, it.note].join(" ")) })));
 }
 function search(q) {
-  const words = q.trim().toLowerCase().split(/\s+/).map(norm).filter(Boolean);
+  const AL = { "牧馬人": "jlu", "wrangler": "jlu", "藍哥": "bronco" };
+  const words = q.trim().toLowerCase().split(/\s+/).map(norm).filter(Boolean).map(w => AL[w] || w);
   if (!words.length) return [];
   return index.filter(x => (!onlyStock || inStock(x.it)) && words.every(w => x.hay.includes(w))).slice(0, 30);
 }
@@ -4385,7 +4930,7 @@ function showResults() {
     const ph = thumb(it, "ph") || el("span", { className: "ph none" });
     const b = el("button", { className: "res", type: "button" }, ph,
       el("span", {}, el("span", { className: "nm", textContent: nameOf(it) }),
-        el("span", { className: "mt" }, brandOf(it) + "｜" + rows[ri].cat.name + (it.sku ? "｜" + it.sku : ""), ...[stockTag(it)].filter(Boolean))),
+        el("span", { className: "mt" }, brandOf(it) + "｜" + rows[ri].cat.name + (it.sku ? "｜" + it.sku : ""), ...[stockTag(it), fits(it) ? null : el("span", { className: "stk nofit", textContent: "不適用 " + myCar })].filter(Boolean))),
       el("span", { className: "pr", textContent: fmt(it.price) }));
     b.setAttribute("role", "option");
     b.addEventListener("click", () => pick(ri, it));
@@ -4404,7 +4949,8 @@ function pick(ri, it) {
     if (r) { r.classList.add("flash"); setTimeout(() => r.classList.remove("flash"), 1600); }
     openPd(row.cat.name, it);
   }, 250);
-}$("q").addEventListener("input", showResults);
+}let qTimer = null;
+$("q").addEventListener("input", () => { showResults(); clearTimeout(qTimer); const v = $("q").value.trim(); if (v.length > 1) qTimer = setTimeout(() => track("search", { search_term: v.slice(0, 60) }), 1500); });
 $("q").addEventListener("focus", showResults);
 $("q").addEventListener("keydown", e => {
   if (e.key === "Escape") { $("q").value = ""; showResults(); }
@@ -4425,7 +4971,15 @@ function setQty(c, v) { c.qty = clampQ(v); saveCart(); renderCart(); }
 function renderCart() {
   const { count, total } = cartTotals();
   const m = shipMethod(), fee = feeFor(total, m);
-  $("cbCount").textContent = "購物車 " + count + " 件"; $("cbTotal").textContent = fmt(total);
+  $("cbCount").textContent = count + " 件"; $("cbTotal").textContent = fmt(total);
+  $("cartbar").hidden = !count && !myOrders.length;                    // 購物車是空的、也沒有訂單時，底部列整條隱藏
+  $("cbSum").hidden = $("cartOpen").hidden = !count;
+  const left = freeLeft(total), fsOn = left != null && count && m !== "pickup";
+  $("cbFree").hidden = !fsOn;
+  if (fsOn) { $("cbFree").textContent = left > 0 ? "再 " + fmt(left) + " 免運" : "✓ 已達免運"; $("cbFree").classList.toggle("ok", !left); }
+  const fb = $("fsBar"); fb.hidden = !fsOn; fb.classList.toggle("ok", fsOn && !left);
+  if (fsOn) fb.replaceChildren(left > 0 ? el("span", {}, "再買 ", el("b", { textContent: fmt(left) }), " 就享 7-11 免運") : el("span", { textContent: "🎉 已達 " + fmt(FREE_SHIP_OVER) + "，7-11 店到店免運" }),
+    el("div", { className: "tr" }, el("i", { style: "width:" + Math.min(100, Math.round(total / FREE_SHIP_OVER * 100)) + "%" })));
   $("cartSub").textContent = fmt(total);
   $("cartFee").textContent = !m ? "請選擇取貨方式" : fee == null ? "另計" : fee === 0 ? (m === "711" ? "免運" : "NT$ 0") : fmt(fee);
   $("cartTotal").textContent = fmt(total + (fee || 0)) + (m === "711" && fee == null ? " ＋運費" : "");
@@ -4451,6 +5005,11 @@ function renderCart() {
       el("div", { className: "sub2" }, it ? fmt(it.price * c.qty) : "—", it ? el("small", { textContent: "單價 " + fmt(it.price) }) : ""),
       el("div", { className: "stepper" }, minus, inp, plus), del, lnote));
   });
+  // 常一起買：購物車商品的「搭配加購」，排除已經在購物車裡的
+  const inCart = new Set(cart.map(c => c.brand + "|" + c.label)), sug = [];
+  cartLines().forEach(({ it }) => { if (it) pairsOf(it).forEach(p => { const k = brandOf(p.it) + "|" + p.it.label; if (!inCart.has(k) && fits(p.it) && !sug.some(x => x.k === k)) sug.push({ k, ...p }); }); });
+  const cp = $("cartPair"); cp.hidden = !sug.length;
+  cp.replaceChildren(...(sug.length ? [el("b", { textContent: "常一起買" }), ...sug.slice(0, 3).map(p => pairRow(p.cat, p.it))] : []));
   ["cartCopy", "cartSend", "cartShare"].forEach(id => $(id).disabled = !count);
   $("cartClear").disabled = !cart.length;
   markNav();
@@ -4599,6 +5158,9 @@ async function sendOrder() {
         items: pl.items.map(x => ({ name: (findItem({ cat: x.category, brand: x.brand, label: x.label }) ? nameOf(findItem({ cat: x.category, brand: x.brand, label: x.label })) : x.label), qty: x.qty, note: x.note })) });
       myOrders = myOrders.slice(0, 20); saveOrders(); renderOrders(); renderNav();
     }
+    { const pl = orderPayload(), f = feeFor(pl.total, pl.shipMethod);
+      track("purchase", { transaction_id: j.id || "", currency: "TWD", value: pl.total, shipping: f || 0,
+        items: pl.items.map(x => ({ item_id: x.sku || x.label, item_name: x.label, item_brand: x.brand, item_category: x.category, price: x.unitPrice, quantity: x.qty })) }); }
     cart = []; saveCart(); contactEls.remark.value = ""; saveContact();
     renderCart(); msg.textContent = "訂單已送出" + (j.id ? "（編號 " + j.id + "）" : "") + "，我們會用 LINE 跟你確認。" + (j.token ? "之後可以按畫面下方的「我的訂單」查看狀態、取消或付款。" : "");
     if (j.id && j.token) {                                             // 拿綁定驗證碼，顯示「用 LINE 接收訂單通知」
@@ -4629,6 +5191,7 @@ async function api(body) {
 function renderOrders() {
   const box = $("orders"); box.replaceChildren();
   $("ordOpen").hidden = !myOrders.length;
+  $("cartbar").hidden = !cartTotals().count && !myOrders.length;
   // 紅點：有訂單需要付款（已收到匯款資訊但還沒回報後五碼）
   $("ordDot").hidden = !myOrders.some(o => o.detail && o.detail.pay && !o.detail.last5 && o.status !== "已取消");
   if (!myOrders.length) box.append(el("p", { className: "omsg", textContent: "這裡還沒有訂單紀錄。訂單只會顯示在下單的那個瀏覽器：在 LINE 裡下的單，請從 LINE 打開本頁查看。" }));
@@ -4817,7 +5380,7 @@ function closeD(switching) {
   if (lastFocus) lastFocus.focus({ preventScroll: true });
 }
 $("cnMore").addEventListener("click", goInfo);
-function openCart() { $("cartMsg").textContent = ""; document.querySelectorAll("#drawer .linebind").forEach(x => x.remove()); openD("drawer"); }
+function openCart() { const t = cartTotals(); if (t.count) track("begin_checkout", { currency: "TWD", value: t.total }); $("cartMsg").textContent = ""; document.querySelectorAll("#drawer .linebind").forEach(x => x.remove()); openD("drawer"); }
 function closeCart() { closeD(); }
 function openOrders() { renderOrders(); openD("odrawer"); refreshStatus(Date.now() - lastStatusAt > 15000); }
 $("cartOpen").onclick = openCart;
