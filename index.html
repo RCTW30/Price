@@ -40,6 +40,7 @@ html{scroll-padding-top:84px}
 html,body{overflow-x:clip}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
 body.locked{overflow:hidden}
+html:has(body.locked){overflow:hidden}
 main{max-width:920px;margin:0 auto;padding:28px 16px 130px}
 [hidden]{display:none!important}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -310,8 +311,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .chip:hover{border-color:#4a4a4a}
 .chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
 .chip .ck{color:var(--accent);margin-left:4px;font-weight:700}
-.chip.stockchip{border-color:var(--accent);color:var(--accent);font-weight:700}
-.chip.stockchip.on{background:var(--accent);color:var(--accent-ink)}
+.chip.stockchip{font-weight:700}
+.chip.stockchip .n{color:var(--accent)}
+.chip.stockchip.on .n{color:inherit}
+.chip.stockchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .chip.stockchip .n{margin-left:6px;font-size:12px;opacity:.8}
 .stockhint{margin:-6px 0 12px;color:var(--mute);font-size:13px}
 #stockGrid h3{margin:18px 0 8px;font-size:15px;color:var(--mute);font-weight:600;letter-spacing:.04em}
@@ -4896,10 +4899,11 @@ const GA_ID = "";                                                               
 const HERO_SECONDS = 4;                                                          // 首頁實車照幾秒換一張
 const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";                             // 查詢 7-11 門市
 const TRACK_URL = "https://eservice.7-11.com.tw/e-tracking/search.aspx";          // 查詢物流進度
-const PAGE_VERSION = "v6.9"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v7.0"; // 網頁程式有改動時，請手動調高這個版本號
 // 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
 const CHANGELOG_DATE = "2026-11-25";
 const CHANGELOG = [
+  "修正：iPhone 開著購物車時在上方滑動會卡住；「現貨」按鈕沒選時不再一直亮著。",
   "購物車底部改得更精簡，商品清單看得更多；開著購物車捲動時，後面的網頁不會跟著動。",
   "商品清單的圖片放大一倍；「現貨」和「全部零件」改成切換按鈕，按「全部零件」一定回到全部商品。",
   "新增「我的車」：選 Bronco、JLU、K10、Tacoma 或 CJ-7，只顯示適用你車款的零件。",
@@ -5858,6 +5862,28 @@ function lockScroll(on) {
     const sb = h.style.scrollBehavior; h.style.scrollBehavior = "auto"; window.scrollTo(0, lockY); h.style.scrollBehavior = sb;
   }
 }
+// 開著購物車／彈窗時：手指在「不能捲的地方」（購物車上方的暗色區、標題列、底部合計）滑動，一律擋掉，
+// 避免 iPhone 把整個網頁往上推、導致購物車卡住；購物車內容本身照常可以捲。
+function canScroll_(el, dx, dy) {
+  for (; el && el !== document.body; el = el.parentElement) {
+    const cs = getComputedStyle(el);
+    if (Math.abs(dy) >= Math.abs(dx)) {
+      if (/(auto|scroll)/.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 1) {
+        if (dy > 0 && el.scrollTop <= 0) return false;                                   // 已在最上面還往下拉
+        if (dy < 0 && el.scrollTop + el.clientHeight >= el.scrollHeight - 1) return false; // 已在最下面還往上推
+        return true;
+      }
+    } else if (/(auto|scroll)/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 1) return true;
+  }
+  return false;
+}
+let tY = 0, tX = 0;
+document.addEventListener("touchstart", e => { const t = e.touches[0]; tX = t.clientX; tY = t.clientY; }, { passive: true });
+document.addEventListener("touchmove", e => {
+  if (!document.body.classList.contains("locked") || e.touches.length > 1) return;
+  const t = e.touches[0];
+  if (!canScroll_(e.target, t.clientX - tX, t.clientY - tY)) e.preventDefault();
+}, { passive: false });
 let lastFocus = null, curD = null;                                    // 目前打開的側邊面板（購物車或我的訂單）
 function openD(id) {
   const keep = curD ? lastFocus : document.activeElement;
