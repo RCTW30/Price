@@ -263,7 +263,8 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .dhead{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
 .dhead h2{margin:0;font-family:var(--disp);font-weight:800;font-size:28px;text-transform:uppercase}
 .dhead .btn{min-height:40px}
-.dbody{overflow:auto;flex:1;min-height:0;overscroll-behavior:contain}
+.dbody{overflow:auto;flex:1;min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.drawer,.bm,.lb{overscroll-behavior:contain}
 .empty-cart{padding:40px 18px;text-align:center;color:var(--mute)}
 .line{display:grid;grid-template-columns:1fr auto;gap:10px 12px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center}
 .line .who{display:flex;gap:12px;align-items:center;min-width:0}
@@ -408,9 +409,22 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .shipm .opt:has(input:checked){border-color:var(--accent);background:var(--accent-dim)}
 .shipm input{width:20px;height:20px;min-height:0;margin:0;accent-color:var(--accent)}
 .shipm small{display:block;color:var(--mute);font-size:13px}
-.tots{display:grid;gap:4px;font-size:14px;color:var(--mute)}
-.tots div{display:flex;justify-content:space-between}
-@media (max-width:640px){.dfoot{gap:8px;padding-top:10px}.dtotal strong{font-size:28px}.dfoot .btn{min-height:42px}}
+.tots{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:12px;color:var(--mute)}
+.tots b{font-weight:500;color:#cfcfc8}
+.frow{display:flex;align-items:center;gap:12px}
+.fsum{flex:1;min-width:0}
+.frow #cartSend{flex:none;min-height:48px;padding:0 22px;font-size:16px}
+.dfoot .dtotal{gap:8px;justify-content:flex-start}
+.dfoot .dtotal span{font-size:13px;color:var(--mute)}
+.dfoot .dtotal strong{font-size:26px;line-height:1.1}
+.dfoot{gap:8px;padding-top:10px}
+.dfoot .fsbar{margin:0;padding:6px 10px;font-size:12.5px;border-radius:9px}
+.dfoot .fsbar .tr{height:4px;margin-top:5px}
+.dfoot .dmsg{min-height:0}
+.dfoot .dmsg:empty{display:none}
+.ctools{display:flex;gap:8px;padding:12px 18px;border-bottom:1px solid var(--line)}
+.ctools .btn{flex:1;min-height:36px;font-size:13.5px;justify-content:center}
+.ctools[hidden]{display:none}
 .faq{display:grid;gap:8px}
 .faq details{background:var(--panel);border:1px solid var(--line);border-radius:12px}
 .faq summary{cursor:pointer;padding:14px 44px 14px 16px;font-weight:600;list-style:none;position:relative}
@@ -533,6 +547,11 @@ select:disabled{opacity:.45;cursor:not-allowed}
   <div class="dbody">
     <div id="cartLines"></div>
     <div class="cpair" id="cartPair" hidden></div>
+    <div class="ctools" id="cartTools">
+      <button id="cartCopy" type="button" class="btn">複製訂單</button>
+      <button id="cartShare" type="button" class="btn">分享清單</button>
+      <button id="cartClear" type="button" class="btn danger">清空</button>
+    </div>
     <div class="contact">
       <h3>聯絡資料與備註</h3>
       <label>姓名（必填）<input id="cName" maxlength="40" autocomplete="name"></label>
@@ -565,13 +584,12 @@ select:disabled{opacity:.45;cursor:not-allowed}
   </div>
   <div class="dfoot">
     <div class="fsbar" id="fsBar" hidden></div>
-    <div class="tots"><div><span>商品小計</span><span id="cartSub">NT$ 0</span></div><div><span>運費</span><span id="cartFee">請選擇取貨方式</span></div></div>
-    <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
-    <div class="dbtns">
-      <button id="cartSend" type="button" class="btn primary wide" hidden>送出訂單</button>
-      <button id="cartCopy" type="button" class="btn">複製訂單內容</button>
-      <button id="cartShare" type="button" class="btn">分享清單</button>
-      <button id="cartClear" type="button" class="btn danger wide">清空購物車</button>
+    <div class="frow">
+      <div class="fsum">
+        <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
+        <div class="tots"><span>小計 <b id="cartSub">NT$ 0</b></span><span>運費 <b id="cartFee">請選擇取貨方式</b></span></div>
+      </div>
+      <button id="cartSend" type="button" class="btn primary" hidden>送出訂單</button>
     </div>
     <div class="dmsg" id="cartMsg" role="status"></div>
   </div>
@@ -4878,10 +4896,11 @@ const GA_ID = "";                                                               
 const HERO_SECONDS = 4;                                                          // 首頁實車照幾秒換一張
 const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";                             // 查詢 7-11 門市
 const TRACK_URL = "https://eservice.7-11.com.tw/e-tracking/search.aspx";          // 查詢物流進度
-const PAGE_VERSION = "v6.8"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v6.9"; // 網頁程式有改動時，請手動調高這個版本號
 // 本次網頁更新內容（只寫最新版，顯示在頁面最下方；改版時請一起更新）
-const CHANGELOG_DATE = "2026-11-24";
+const CHANGELOG_DATE = "2026-11-25";
 const CHANGELOG = [
+  "購物車底部改得更精簡，商品清單看得更多；開著購物車捲動時，後面的網頁不會跟著動。",
   "商品清單的圖片放大一倍；「現貨」和「全部零件」改成切換按鈕，按「全部零件」一定回到全部商品。",
   "新增「我的車」：選 Bronco、JLU、K10、Tacoma 或 CJ-7，只顯示適用你車款的零件。",
   "商品詳細新增「搭配加購」，購物車也會推薦常一起買的零件。",
@@ -4991,12 +5010,12 @@ function openLb(it) {
   lbFocus = document.activeElement;
   const img = $("lbImg"); img.src = bigUrl(it); img.alt = nameOf(it); img.referrerPolicy = "no-referrer";
   $("lbCap").replaceChildren(el("b", { textContent: fmt(it.price) }), document.createTextNode(it.label + (it.sku ? "（" + it.sku + "）" : "")));
-  $("lb").hidden = false; document.body.classList.add("locked");
+  $("lb").hidden = false; lockScroll(true);
   $("lbClose").focus();
 }
 function closeLb() {
   $("lb").hidden = true; $("lbImg").removeAttribute("src");
-  if (!curD) document.body.classList.remove("locked");
+  if (!curD && $("pd").hidden) lockScroll(false);
   if (lbFocus) lbFocus.focus({ preventScroll: true });
 }
 $("lbClose").onclick = closeLb;
@@ -5140,10 +5159,10 @@ function openPd(catName, it) {
     el("div", { className: "pdrow" }, qty, add),
     el("small", { textContent: "顏色或其他需求，可以在購物車裡每一項的備註欄填寫。" }), notifyBox(it),
     pairs.length ? el("div", { className: "pdpair" }, el("b", { textContent: "搭配加購" }), ...pairs.map(p => pairRow(p.cat, p.it))) : null].filter(Boolean));
-  $("pd").hidden = false; document.body.classList.add("locked");
+  $("pd").hidden = false; lockScroll(true);
   $("pdCard").scrollTop = 0;
 }
-function closePd() { $("pd").hidden = true; if (!curD) document.body.classList.remove("locked"); }
+function closePd() { $("pd").hidden = true; if (!curD) lockScroll(false); }
 $("pd").addEventListener("click", e => { if (e.target === $("pd")) closePd(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("pd").hidden && $("lb").hidden) closePd(); });
 addEventListener("resize", () => { const t = $("ptabs"); if (t) t.style.top = stickyOffset() - 10 + "px"; });
@@ -5476,7 +5495,7 @@ function renderCart() {
   const cp = $("cartPair"); cp.hidden = !sug.length;
   cp.replaceChildren(...(sug.length ? [el("b", { textContent: "常一起買" }), ...sug.slice(0, 3).map(p => pairRow(p.cat, p.it))] : []));
   ["cartCopy", "cartSend", "cartShare"].forEach(id => $(id).disabled = !count);
-  $("cartClear").disabled = !cart.length;
+  $("cartClear").disabled = !cart.length; $("cartTools").hidden = !cart.length;
   markNav();
   if (rows.length && !onlyStock) renderList();
 }
@@ -5828,20 +5847,31 @@ $("heroNext").onclick = () => heroGo(heroIdx() + 1);
 $("hero").addEventListener("touchend", () => setTimeout(() => heroPaused = false, 6000), { passive: true });
 
 /* ---------- 側邊購物車開關 ---------- */
+let lockY = 0;                                                        // 開購物車／彈窗時鎖住後面網頁（iOS 也有效）
+function lockScroll(on) {
+  const b = document.body, h = document.documentElement;
+  if (on && !b.classList.contains("locked")) {
+    lockY = window.scrollY; b.classList.add("locked");
+    Object.assign(b.style, { position: "fixed", top: -lockY + "px", left: "0", right: "0", width: "100%" });
+  } else if (!on && b.classList.contains("locked")) {
+    b.classList.remove("locked"); Object.assign(b.style, { position: "", top: "", left: "", right: "", width: "" });
+    const sb = h.style.scrollBehavior; h.style.scrollBehavior = "auto"; window.scrollTo(0, lockY); h.style.scrollBehavior = sb;
+  }
+}
 let lastFocus = null, curD = null;                                    // 目前打開的側邊面板（購物車或我的訂單）
 function openD(id) {
   const keep = curD ? lastFocus : document.activeElement;
   if (curD) closeD(true);
   lastFocus = keep; curD = $(id);
   curD.classList.add("open"); $("backdrop").classList.add("open");
-  curD.setAttribute("aria-hidden", "false"); document.body.classList.add("locked");
+  curD.setAttribute("aria-hidden", "false"); lockScroll(true);
   setTimeout(() => curD && curD.querySelector(".dhead .btn").focus(), 50);
 }
 function closeD(switching) {
   if (!curD) return;
   curD.classList.remove("open"); curD.setAttribute("aria-hidden", "true"); curD = null;
   if (switching) return;
-  $("backdrop").classList.remove("open"); document.body.classList.remove("locked");
+  $("backdrop").classList.remove("open"); lockScroll(false);
   if (lastFocus) lastFocus.focus({ preventScroll: true });
 }
 $("cnMore").addEventListener("click", goInfo);
