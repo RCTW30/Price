@@ -4587,7 +4587,8 @@ const CHANGELOG = [
   "清單只標示「現貨」，預購商品在商品詳細顯示預估到貨時間。",
   "品名用字統一（例如 JLU、前或後・單支）；購物車是空的時候，底部列會自動隱藏。",
   "商品詳細新增官網產品特點與完整商品說明。",
-  "預購商品可以按「有現貨時通知我」，到貨時用 LINE 通知你。"
+  "預購商品可以按「有現貨時通知我」，到貨時用 LINE 通知你。",
+  "品牌官網缺貨的商品會自動標示「缺貨」，官網補貨後自動改回預購。"
 ];
 /* ================================================== */
 
@@ -4828,6 +4829,8 @@ function openPd(catName, it) {
   $("pdCard").replaceChildren(...[x, big, stockTag(it, true) ? el("div", {}, stockTag(it, true)) : null, el("h3", { textContent: nameOf(it) }),
     it.short ? el("p", { className: "pdfull", textContent: it.label }) : null,
     el("div", { className: "sm", textContent: brandOf(it) + "｜" + catName }), fitLine(it),
+    it.stock === "缺貨" ? el("p", { className: "fitline bad", textContent: "⚠ " + brandOf(it) + " 官網目前缺貨，補貨時間未定。可以按下方「有現貨時通知我」，或用 LINE 詢問。" }) : null,
+    it.offOut && it.offOut.length ? el("p", { className: "fitline bad", textContent: "⚠ 官網目前缺貨的規格：" + it.offOut.join("、") + "（其他規格可正常訂購）" }) : null,
     it.note ? el("p", { className: "pddesc", textContent: it.note }) : null,
     it.feat && it.feat.length ? el("div", { className: "pdfeat" }, el("b", { textContent: "產品特點" }), el("ul", {}, ...it.feat.map(t => el("li", { textContent: t })))) : null,
     info.length ? el("dl", {}, ...info.flatMap(v => [el("dt", { textContent: v[0] }), el("dd", { textContent: v[1] })])) : null,
@@ -4843,7 +4846,7 @@ $("pd").addEventListener("click", e => { if (e.target === $("pd")) closePd(); })
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("pd").hidden && $("lb").hidden) closePd(); });
 addEventListener("resize", () => { const t = $("ptabs"); if (t) t.style.top = stickyOffset() - 10 + "px"; });
 /* ---------- 即時庫存：店家在後台設定的現貨數量，會蓋過 Excel 的庫存文字 ---------- */
-let liveStock = null;
+let liveStock = null, liveOut = {};                                     // liveOut：官網缺貨（1＝整個缺貨，陣列＝缺貨的規格）
 const stockKey = it => brandOf(it) + "|" + it.label;
 function applyLive(raw) {
   if (!liveStock) return raw;
@@ -4853,6 +4856,10 @@ function applyLive(raw) {
     if (q == null) { if (it._xs) it.stock = it._xs; else delete it.stock; delete it.stockQty; }
     else if (q > 0) { it.stock = "現貨・剩 " + q; it.stockQty = q; }
     else { it.stock = "預購"; it.stockQty = 0; }
+    const o = liveOut[stockKey(it)];
+    delete it.offOut;
+    if (o === 1 && !(q > 0)) it.stock = "缺貨";                         // 官網整個缺貨（自己有現貨的照樣顯示現貨）；補貨後自動改回
+    else if (Array.isArray(o) && !(q > 0)) it.offOut = o;
   }));
   return raw;
 }
@@ -4861,6 +4868,11 @@ async function loadLiveStock() {
   try {
     const j = await api({ action: "stock" });
     if (!j || !j.ok || !j.stock || typeof j.stock !== "object") return;
+    liveOut = {};
+    if (j.out && typeof j.out === "object") Object.keys(j.out).forEach(k => {
+      const v = j.out[k];
+      if (k.length < 300 && (v === 1 || Array.isArray(v))) liveOut[k] = v === 1 ? 1 : v.filter(x => typeof x === "string").map(x => x.slice(0, 40)).slice(0, 8);
+    });
     const m = {};
     Object.keys(j.stock).forEach(k => { const n = Math.floor(Number(j.stock[k])); if (n >= 0 && k.length < 300) m[k] = n; });
     liveStock = m; render(data); renderCart();
@@ -5145,7 +5157,7 @@ function renderCart() {
     del.onclick = () => { cart = cart.filter(x => x !== c); saveCart(); renderCart(); };
     body.append(el("div", { className: "line" },
       el("div", { className: "who" }, ...[thumb(it, "thumb", true)].filter(Boolean), el("div", {}, el("div", { className: "name", textContent: it ? nameOf(it) : c.label }),
-        el("div", { className: "meta" + (it ? "" : " bad"), textContent: it ? c.brand + "｜" + c.cat + (it.stockQty != null && c.qty > it.stockQty ? "｜現貨剩 " + it.stockQty + "，其餘為預購" : "") : "此品項已下架或改名，不列入合計，請刪除" }))),
+        el("div", { className: "meta" + (it ? "" : " bad"), textContent: it ? c.brand + "｜" + c.cat + (it.stock === "缺貨" ? "｜官網缺貨，補貨時間未定" : it.stockQty != null && c.qty > it.stockQty ? "｜現貨剩 " + it.stockQty + "，其餘為預購" : "") : "此品項已下架或改名，不列入合計，請刪除" }))),
       el("div", { className: "sub2" }, it ? fmt(it.price * c.qty) : "—", it ? el("small", { textContent: "單價 " + fmt(it.price) }) : ""),
       el("div", { className: "stepper" }, minus, inp, plus), del, lnote));
   });
