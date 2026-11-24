@@ -2834,6 +2834,7 @@ const CHANGELOG = [
   "姓名、手機改為必填，LINE ID 改為選填；寄件時可以勾選「收件人姓名、手機同上」。",
   "送出訂單後可一鍵開啟 LINE 訂單通知；首頁新增加入 LINE 官方帳號的按鈕。",
   "現貨會顯示剩餘數量；店家確認訂單後自動扣庫存，賣完自動變成預購。",
+  "訂單狀態「待貨中」改名為「備貨中」。",
   "面交訂單改為當面付款，不會再出現匯款資訊。",
   "商品較多的分類新增「種類」小按鈕（例如車橋總成、CVD・半軸），清單也更精簡。",
   "「全部零件」改版：上方分類分頁、品牌篩選，商品直接列出圖片與價格，按「＋」就加入購物車，點商品看詳細。",
@@ -3485,7 +3486,7 @@ function loadOrders() {
   catch (e) { return []; }
 }
 function saveOrders() { try { localStorage.setItem(ORDERS_KEY, JSON.stringify(myOrders)); } catch (e) {} }
-const stClass = s => s === "待確認" ? "pending" : s === "已取消" ? "cancel" : s === "已確認" ? "ok" : s === "待貨中" ? "wait" : s === "已出貨" ? "ship" : "";
+const stClass = s => s === "待確認" ? "pending" : s === "已取消" ? "cancel" : s === "已確認" ? "ok" : (s === "備貨中" || s === "待貨中") ? "wait" : s === "已出貨" ? "ship" : "";
 async function api(body) {
   const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
   return r.json();
@@ -3527,7 +3528,7 @@ function renderOrders() {
         el("div", { className: "prow" }, inp, send), pmsg));
     }
     const isPk = o.method === "pickup" || dt.pickup;
-    if (isPk && !dt.paid && (o.status === "已確認" || o.status === "待貨中"))
+    if (isPk && !dt.paid && (o.status === "已確認" || o.status === "備貨中" || o.status === "待貨中"))
       extra.append(el("div", { className: "paybox" }, el("h4", { textContent: "面交付款" }),
         el("div", {}, "面交時當面付款 ", el("span", { className: "pdue", textContent: fmt(+dt.due || o.due || o.total) })),
         el("div", { className: "omsg", textContent: "不需要先匯款，面交的時間和地點會用 LINE 跟你約。" })));
