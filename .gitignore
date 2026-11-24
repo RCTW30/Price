@@ -9,3 +9,4 @@ index.html.bak
 .venv/
 .DS_Store
 __pycache__/
+gallery_cache.json
