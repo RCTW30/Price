@@ -5059,6 +5059,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <script>
 /* ===================== 設定區（店家可修改） ===================== */
 const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec"; // 訂單接收網址（Google Apps Script）
+const COUPON_ON = false;        // 結帳要不要顯示「使用折扣碼」（折扣碼本身設定在 Apps Script 的 LINE通知.gs）
 const TURNSTILE_SITEKEY = "0x4AAAAAAGSvmR2V3lESv5Ue";   // 防機器人灌單：Cloudflare Turnstile 的 Site Key（沒填＝不啟用）
 const LINE_OA_ID = "@293ljwzr";                                                  // LINE 官方帳號 ID
 const SHIP_FEE_711 = 60;                                                         // 7-11 店到店運費（要和 Apps Script 後台一致）
@@ -5764,7 +5765,7 @@ const COUPON_KEY = "slrc_coupon_v1";
 let coupon = null;                                                     // { code, min, rate, label }
 try { const o = JSON.parse(localStorage.getItem(COUPON_KEY) || "null"); if (o && typeof o.code === "string" && o.rate > 0 && o.rate < 1) coupon = o; } catch (e) {}
 const saveCoupon = () => { try { coupon ? localStorage.setItem(COUPON_KEY, JSON.stringify(coupon)) : localStorage.removeItem(COUPON_KEY); } catch (e) {} };
-function discountOf(total) { return coupon && total >= coupon.min ? total - Math.round(total * coupon.rate) : 0; }
+function discountOf(total) { return COUPON_ON && coupon && total >= coupon.min ? total - Math.round(total * coupon.rate) : 0; }
 function couponMsg(total) {
   const m = $("cpMsg"); if (!m) return;
   $("cpGo").textContent = coupon ? "移除" : "套用";
@@ -5794,7 +5795,7 @@ async function applyCoupon() {
 }
 $("cpGo").addEventListener("click", applyCoupon);
 $("cpCode").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); applyCoupon(); } });
-if (!ORDER_ENDPOINT) $("cpBox").hidden = true;
+if (!ORDER_ENDPOINT || !COUPON_ON) { $("cpBox").hidden = true; if (!COUPON_ON && coupon) { coupon = null; saveCoupon(); } }
 
 function orderText() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
