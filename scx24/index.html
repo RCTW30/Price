@@ -370,7 +370,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .scard .sp{font-weight:800;font-size:17px;color:var(--accent);margin-top:auto;padding-top:4px}
 .scard .sf{display:flex;gap:6px}
 .scard .sf .qty{width:52px;flex:none;padding:8px 4px;text-align:center}
-.scard .sf .btn{flex:1;padding:8px 6px;font-size:14px;white-space:nowrap}
+.scard .sf .btn{flex:1;min-width:0;padding:9px 6px;font-size:14px;white-space:nowrap;justify-content:center}
 @media (max-width:420px){.scard{flex-basis:150px}.sgrid{gap:8px}}
 .stockhint button{background:none;border:0;padding:0;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer}
 
@@ -3578,8 +3578,7 @@ function renderStockGrid() {
 }
 function stockCard(row, it) {
   const img = thumb(it, "simg", true) || el("div", { className: "simg none" });
-  const qty = el("input", { className: "qty", type: "number", min: 1, max: MAXQ, step: 1, value: 1 });
-  qty.setAttribute("aria-label", "數量");
+  const qty = { value: 1 };                                             // 現貨卡片空間小：每按一次加 1 個，數量到購物車再調
   const add = el("button", { className: "btn primary", type: "button", textContent: "加入購物車" });
   add.addEventListener("click", () => {
     const q = clampQ(qty.value), brand = brandOf(it);
@@ -3595,7 +3594,7 @@ function stockCard(row, it) {
       el("div", { className: "sn", textContent: nameOf(it) }),
       el("div", { className: "sm", textContent: brandOf(it) + "｜" + row.cat.name }),
       el("div", { className: "sp", textContent: fmt(it.price) }),
-      el("div", { className: "sf" }, qty, add)));
+      el("div", { className: "sf" }, add)));
 }
 function setOnlyStock() {}                                            // 舊功能（現貨／全部切換）已取消，保留空函式相容舊程式
 
