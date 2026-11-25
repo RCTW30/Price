@@ -565,11 +565,6 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <div class="dots" id="heroDots"></div>
   </div>
 
-  <div class="oaband" id="oaBand" hidden>
-    <div><strong>歡迎加入 LINE 官方帳號</strong><small>新品、現貨、優惠第一時間通知</small></div>
-    <a class="btn lineapp lineoa" id="bandOA" href="#" target="_blank" rel="noopener noreferrer">加入好友</a>
-  </div>
-
   <section class="sec" id="secStock" hidden>
     <h2>現貨 <small>不用等進口，確認後最快出貨</small></h2>
     <div id="stockGrid"></div>
@@ -6233,7 +6228,7 @@ if (!ORDER_ENDPOINT) {   // 沒有設定訂單網址時，直接在購物車說�
   $("cartMsg").before(el("p", { className: "dmsg", style: "color:var(--danger)", textContent: "目前暫時無法線上送出訂單，請按「複製訂單內容」貼到 LINE 給我們。" }));
 }
 if (!ORDER_ENDPOINT) $("cartCopy").classList.add("primary");          // 沒有後台時，「複製訂單內容」當主要按鈕
-if (LINE_OA_ID) { ["cartOA", "footOA", "bandOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; }); $("oaBand").hidden = false; }
+if (LINE_OA_ID) { ["cartOA", "footOA"].forEach(id => { $(id).href = lineUrl(); $(id).hidden = false; }); }
 $("cartClear").onclick = () => { if (confirm("確定清空購物車？")) { cart = []; saveCart(); renderCart(); } };
 loadContact();
 if (contactEls.contact.value.trim()) $("lineIdBox").open = true;
