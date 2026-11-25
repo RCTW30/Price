@@ -362,7 +362,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .sgrid{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 10px;margin:0 -2px;scrollbar-width:thin;scrollbar-color:#333 transparent}
 .sgrid::-webkit-scrollbar{height:6px}.sgrid::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
 .scard{flex:0 0 168px;scroll-snap-align:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
-.scard .simg{display:block;width:100%;aspect-ratio:1;object-fit:contain;background:#fff;cursor:zoom-in}
+.scard .simg{display:block;width:100%;aspect-ratio:1;object-fit:contain;background:#fff;cursor:pointer}
+.scard .sn{cursor:pointer}
+.scard .simw{cursor:pointer}
 .scard .simg.none{background:var(--panel2)}
 .scard .sb{padding:10px 10px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
 .scard .sn{font-weight:700;font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -370,7 +372,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .scard .sp{font-weight:800;font-size:17px;color:var(--accent);margin-top:auto;padding-top:4px}
 .scard .sf{display:flex;gap:6px}
 .scard .sf .qty{width:52px;flex:none;padding:8px 4px;text-align:center}
-.scard .sf .btn{flex:1;min-width:0;padding:9px 6px;font-size:14px;white-space:nowrap;justify-content:center}
+.scard .sf .btn{flex:1;min-width:0;min-height:36px;padding:6px;font-size:13px;white-space:nowrap;justify-content:center}
 @media (max-width:420px){.scard{flex-basis:150px}.sgrid{gap:8px}}
 .stockhint button{background:none;border:0;padding:0;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer}
 
@@ -5365,7 +5367,8 @@ function renderStockGrid() {
     el("div", { className: "sgrid" }, ...cards));      // 全部現貨排成一排，左右滑動
 }
 function stockCard(row, it) {
-  const img = thumb(it, "simg", true) || el("div", { className: "simg none" });
+  const img = thumb(it, "simg", false) || el("div", { className: "simg none" });
+  const open = () => openPd(row.cat.name, it);                         // 點圖片或品名：打開商品詳細
   const qty = { value: 1 };                                             // 現貨卡片空間小：每按一次加 1 個，數量到購物車再調
   const add = el("button", { className: "btn primary", type: "button", textContent: "加入購物車" });
   add.addEventListener("click", () => {
@@ -5377,9 +5380,14 @@ function stockCard(row, it) {
     add.textContent = "已加入 ✓"; setTimeout(() => { add.textContent = "加入購物車"; }, 1200);
     const bar = $("cbTotal"); bar.classList.remove("bump"); void bar.offsetWidth; bar.classList.add("bump");
   });
-  return el("article", { className: "scard" }, img,
+  const imw = el("div", { className: "simw" }, img);                  // 圖片載入失敗被換成灰底時，一樣點得開
+  imw.addEventListener("click", open);
+  const nm = el("div", { className: "sn", textContent: nameOf(it), role: "button", tabIndex: 0 });
+  nm.addEventListener("click", open);
+  nm.addEventListener("keydown", e => { if (e.key === "Enter") open(); });
+  return el("article", { className: "scard" }, imw,
     el("div", { className: "sb" }, el("div", {}, stockTag(it)),
-      el("div", { className: "sn", textContent: nameOf(it) }),
+      nm,
       el("div", { className: "sm", textContent: brandOf(it) + "｜" + row.cat.name }),
       el("div", { className: "sp", textContent: fmt(it.price) }),
       el("div", { className: "sf" }, add)));
