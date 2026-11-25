@@ -15,7 +15,7 @@
 <meta property="og:title" content="山稜RC選物｜Axial SCX24 改裝零件報價">
 <meta property="og:description" content="Axial SCX24 改裝零件報價：INJORA 車殼、車架、連桿、車橋、變速箱、避震、1.0 吋輪框輪胎、舵機與無刷動力，新台幣直接報價，可依車款篩選，線上下單、7-11 取貨。">
 <meta property="og:url" content="https://slrc.tw/scx24/">
-<meta property="og:image" content="https://rctw30.github.io/Price/images/share.jpg">
+<meta property="og:image" content="https://slrc.tw/images/share.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_TW">
@@ -336,6 +336,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .privacy{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.55;color:#cfcfc8;background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:10px 12px;margin:0}
 .contact input,.contact textarea{width:100%;font-size:16px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
 .contact textarea{resize:vertical}
+.tsbox{margin:10px 0 2px;min-height:65px}
 .cprow{display:flex;gap:8px}.cprow input{flex:1;min-width:0;text-transform:uppercase}.cprow .btn{flex:none;min-height:44px}
 #cpMsg.ok{color:var(--accent)}#cpMsg.bad{color:var(--danger)}
 #cartDiscW b{color:var(--accent)}
@@ -649,6 +650,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <p class="privacy"><span aria-hidden="true">🔒</span><span>寄件資料僅用於本次訂單出貨與取件通知，不會提供給第三方，也不會用於行銷或其他用途。</span></p>
       </div>
       <label>其他備註（選填，例如：交貨時間）<textarea id="cRemark" maxlength="300" rows="2"></textarea></label>
+      <div id="tsBox" class="tsbox" hidden></div>
       <details class="lineid" id="cpBox"><summary>＋ 使用折扣碼</summary>
         <div class="cprow"><input id="cpCode" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="輸入折扣碼" aria-label="折扣碼"><button type="button" class="btn" id="cpGo">套用</button></div>
         <p class="hint" id="cpMsg" role="status"></p>
@@ -3197,6 +3199,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
 <script>
 /* ===================== 設定區（店家可修改） ===================== */
 const ORDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbyFyfzId_sfVWiiSOylGzvNSjED6ogTNArkLXe_knjgWuld6S-QU14loyX87CJH-r_j/exec"; // 訂單接收網址（Google Apps Script）
+const TURNSTILE_SITEKEY = "0x4AAAAAAGSvmR2V3lESv5Ue";   // 防機器人灌單：Cloudflare Turnstile 的 Site Key（沒填＝不啟用）
 const LINE_OA_ID = "@293ljwzr";                                                  // LINE 官方帳號 ID
 const SHIP_FEE_711 = 60;                                                         // 7-11 店到店運費（要和 Apps Script 後台一致）
 const FREE_SHIP_OVER = 1500;                                                     // 滿多少免運，0＝不設免運（要和 Apps Script 訂單程式一致）
@@ -3961,7 +3964,7 @@ const lineUrl = () => "https://line.me/R/ti/p/" + encodeURIComponent(LINE_OA_ID)
 function orderPayload() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
   return { sentAt: new Date().toISOString(), priceVersion: data.version, pageVersion: PAGE_VERSION,
-    name: v("name"), phone: phoneOf(v("phone")), contact: v("contact").replace(/^@/, "") || "未填", remark: v("remark"), website: $("cHp").value,
+    ts: tsToken, name: v("name"), phone: phoneOf(v("phone")), contact: v("contact").replace(/^@/, "") || "未填", remark: v("remark"), website: $("cHp").value,
     shipMethod: shipMethod(),
     shipName: shipMethod() === "711" ? v("shipName") : "", shipPhone: shipMethod() === "711" ? phoneOf(v("shipPhone")) : "", shipStore: shipMethod() === "711" ? v("shipStore") : "",
     items: lines.map(({ c, it }) => ({ category: (MAIN_SITE ? "" : SITE.short + "｜") + c.cat, brand: c.brand, label: it.label, sku: it.sku || "", qty: c.qty, unitPrice: it.price, subtotal: it.price * c.qty, note: (c.note || "").trim() })),
@@ -4017,6 +4020,24 @@ async function fetchBindCodes() {
   } catch (e) {}
 }
 
+/* ---------- 防機器人：Cloudflare Turnstile（打開購物車才載入，大多數客人不用做任何事） ---------- */
+let tsToken = "", tsId = null, tsLoaded = false;
+function tsInit() {
+  if (!TURNSTILE_SITEKEY || tsLoaded) return;
+  tsLoaded = true;
+  const s = document.createElement("script");
+  s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=tsReady"; s.async = true; s.defer = true;
+  document.head.append(s);
+}
+window.tsReady = function () {
+  try {
+    const b = $("tsBox"); b.hidden = false;
+    tsId = window.turnstile.render(b, { sitekey: TURNSTILE_SITEKEY, theme: "dark", size: "flexible", language: "zh-tw",
+      callback: t => { tsToken = t; }, "expired-callback": () => { tsToken = ""; }, "error-callback": () => { tsToken = ""; } });
+  } catch (e) {}
+};
+function tsReset() { tsToken = ""; try { if (window.turnstile && tsId != null) window.turnstile.reset(tsId); } catch (e) {} }
+
 async function sendOrder() {
   const msg = $("cartMsg");
   if (!cartTotals().count) return;
@@ -4025,11 +4046,13 @@ async function sendOrder() {
   const idProb = lineIdProblem(contactEls.contact.value);
   if (idProb) { msg.textContent = idProb; $("lineIdBox").open = true; checkIdHint(true); contactEls.contact.focus(); return; }
   const sc = shipCheck(); if (sc) { msg.textContent = sc[1]; sc[0].focus(); return; }
+  if (TURNSTILE_SITEKEY && window.turnstile && !tsToken) { msg.textContent = "請等下方「確認您是真人」的驗證完成再送出（通常 1～2 秒）。"; $("tsBox").scrollIntoView({ block: "center", behavior: "smooth" }); return; }
   $("cartSend").disabled = true; msg.textContent = "送出中…";
   try {
     const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(orderPayload()) });
     const j = await r.json();
-    if (!j.ok) { renderCart(); msg.textContent = "訂單沒有送出成功，請確認 LINE ID 後再試一次，或改用「複製訂單內容」傳給店家。"; return; }
+    tsReset();                                                             // 驗證碼只能用一次
+    if (!j.ok) { renderCart(); msg.textContent = typeof j.error === "string" && j.guard ? j.error : "訂單沒有送出成功，請確認 LINE ID 後再試一次，或改用「複製訂單內容」傳給店家。"; return; }
     if (j.id && j.token) {                                             // 記住這張訂單，之後可以在「我的訂單」查狀態或取消
       const pl = orderPayload();
       const f = feeFor(pl.total, pl.shipMethod);
@@ -4055,6 +4078,7 @@ async function sendOrder() {
       } catch (e) {}
     }
   } catch (e) {
+    tsReset();
     renderCart(); msg.textContent = "無法確認訂單是否送出成功，請不要重複送出，改按「複製訂單內容」傳給店家。";
   }
 }
@@ -4343,7 +4367,7 @@ function closeD(switching) {
   if (lastFocus) lastFocus.focus({ preventScroll: true });
 }
 $("cnMore").addEventListener("click", goInfo);
-function openCart() { const t = cartTotals(); if (t.count) track("begin_checkout", { currency: "TWD", value: t.total }); $("cartMsg").textContent = ""; document.querySelectorAll("#drawer .linebind").forEach(x => x.remove()); openD("drawer"); }
+function openCart() { tsInit(); const t = cartTotals(); if (t.count) track("begin_checkout", { currency: "TWD", value: t.total }); $("cartMsg").textContent = ""; document.querySelectorAll("#drawer .linebind").forEach(x => x.remove()); openD("drawer"); }
 function closeCart() { closeD(); }
 function openOrders() { renderOrders(); openD("odrawer"); refreshStatus(Date.now() - lastStatusAt > 15000); }
 $("cartOpen").onclick = openCart;
