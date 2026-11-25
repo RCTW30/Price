@@ -336,6 +336,9 @@ select:disabled{opacity:.45;cursor:not-allowed}
 .privacy{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.55;color:#cfcfc8;background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:10px 12px;margin:0}
 .contact input,.contact textarea{width:100%;font-size:16px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
 .contact textarea{resize:vertical}
+.cprow{display:flex;gap:8px}.cprow input{flex:1;min-width:0;text-transform:uppercase}.cprow .btn{flex:none;min-height:44px}
+#cpMsg.ok{color:var(--accent)}#cpMsg.bad{color:var(--danger)}
+#cartDiscW b{color:var(--accent)}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .dfoot{padding:14px 18px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:grid;gap:10px;background:var(--panel)}
 .dtotal{display:flex;justify-content:space-between;align-items:baseline}
@@ -530,12 +533,6 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <li><b>4</b><span><strong>出貨取貨</strong><small>7-11 店到店或面交</small></span></li>
     </ol>
     <ul class="points" id="points" hidden></ul>
-    <div class="hero" id="hero" hidden>
-      <div class="track" id="heroTrack" aria-label="實車照片"></div>
-      <button class="nav prev" id="heroPrev" type="button" aria-label="上一張">‹</button>
-      <button class="nav next" id="heroNext" type="button" aria-label="下一張">›</button>
-      <div class="dots" id="heroDots"></div>
-    </div>
   </header>
 
   <div class="searchwrap">
@@ -560,6 +557,13 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <p class="bhint" id="bHint" hidden>← 左右滑動看更多推薦 →</p>
     <div class="bundles" id="bundles"></div>
   </section>
+
+  <div class="hero" id="hero" hidden>
+      <div class="track" id="heroTrack" aria-label="實車照片"></div>
+      <button class="nav prev" id="heroPrev" type="button" aria-label="上一張">‹</button>
+      <button class="nav next" id="heroNext" type="button" aria-label="下一張">›</button>
+      <div class="dots" id="heroDots"></div>
+  </div>
 
   <div class="oaband" id="oaBand" hidden>
     <div><strong>歡迎加入 LINE 官方帳號</strong><small>新品、現貨、優惠第一時間通知</small></div>
@@ -650,6 +654,10 @@ select:disabled{opacity:.45;cursor:not-allowed}
       <p class="privacy"><span aria-hidden="true">🔒</span><span>寄件資料僅用於本次訂單出貨與取件通知，不會提供給第三方，也不會用於行銷或其他用途。</span></p>
       </div>
       <label>其他備註（選填，例如：交貨時間）<textarea id="cRemark" maxlength="300" rows="2"></textarea></label>
+      <details class="lineid" id="cpBox"><summary>＋ 使用折扣碼</summary>
+        <div class="cprow"><input id="cpCode" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="輸入折扣碼" aria-label="折扣碼"><button type="button" class="btn" id="cpGo">套用</button></div>
+        <p class="hint" id="cpMsg" role="status"></p>
+      </details>
       <details class="lineid" id="lineIdBox"><summary>＋ 留 LINE ID（選填）</summary>
         <label>LINE ID（是「ID」不是 LINE 名稱）<input id="cContact" maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="例如 shanleng_rc"></label>
         <p class="hint" id="cIdHint">查詢方式：打開 LINE →「主頁」→ 右上角齒輪 →「個人檔案」→「ID」。LINE ID 只會有英文小寫、數字和 . _ -，不會有中文或空格。送出訂單後也可以直接用 LINE 接收通知，不填也沒關係。</p>
@@ -669,7 +677,7 @@ select:disabled{opacity:.45;cursor:not-allowed}
     <div class="frow">
       <div class="fsum">
         <div class="dtotal"><span>合計</span><strong id="cartTotal">NT$ 0</strong></div>
-        <div class="tots"><span>小計 <b id="cartSub">NT$ 0</b></span><span>運費 <b id="cartFee">請選擇取貨方式</b></span></div>
+        <div class="tots"><span>小計 <b id="cartSub">NT$ 0</b></span><span>運費 <b id="cartFee">請選擇取貨方式</b></span><span id="cartDiscW" hidden>折扣 <b id="cartDisc"></b></span></div>
       </div>
       <button id="cartSend" type="button" class="btn primary" hidden>送出訂單</button>
     </div>
@@ -5061,7 +5069,7 @@ const GA_ID = "G-S4VMHCED7V";                                                   
 const HERO_SECONDS = 4;                                                          // 首頁實車照幾秒換一張
 const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";                             // 查詢 7-11 門市
 const TRACK_URL = "https://eservice.7-11.com.tw/e-tracking/search.aspx";          // 查詢物流進度
-const PAGE_VERSION = "v8.1"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v8.3"; // 網頁程式有改動時，請手動調高這個版本號
 // 每一版的更新內容記在後台「總覽 → 更新紀錄」（管理後台.gs），網站上不顯示
 /* ================================================== */
 
@@ -5669,7 +5677,10 @@ function renderCart() {
     el("div", { className: "tr" }, el("i", { style: "width:" + Math.min(100, Math.round(total / FREE_SHIP_OVER * 100)) + "%" })));
   $("cartSub").textContent = fmt(total);
   $("cartFee").textContent = !m ? "請選擇取貨方式" : fee == null ? "另計" : fee === 0 ? (m === "711" ? "免運" : "NT$ 0") : fmt(fee);
-  $("cartTotal").textContent = fmt(total + (fee || 0)) + (m === "711" && fee == null ? " ＋運費" : "");
+  const disc = discountOf(total);
+  $("cartDiscW").hidden = !disc; $("cartDisc").textContent = "−" + fmt(disc);
+  $("cartTotal").textContent = fmt(total - disc + (fee || 0)) + (m === "711" && fee == null ? " ＋運費" : "");
+  couponMsg(total);
   $("feeLbl").textContent = SHIP_FEE_711 == null ? "運費另計" : "運費 " + fmt(SHIP_FEE_711) + (FREE_SHIP_OVER > 0 ? "，商品滿 " + fmt(FREE_SHIP_OVER) + " 免運" : "");
   $("shipBox").hidden = m !== "711";
   $("cbBadge").textContent = count; $("cbBadge").hidden = !count;
@@ -5749,13 +5760,52 @@ function shipCheck() {
   return "";
 }
 
+/* ---------- 折扣碼（代碼與門檻由 Apps Script 驗證，網頁不存任何代碼） ---------- */
+const COUPON_KEY = "slrc_coupon_v1";
+let coupon = null;                                                     // { code, min, rate, label }
+try { const o = JSON.parse(localStorage.getItem(COUPON_KEY) || "null"); if (o && typeof o.code === "string" && o.rate > 0 && o.rate < 1) coupon = o; } catch (e) {}
+const saveCoupon = () => { try { coupon ? localStorage.setItem(COUPON_KEY, JSON.stringify(coupon)) : localStorage.removeItem(COUPON_KEY); } catch (e) {} };
+function discountOf(total) { return coupon && total >= coupon.min ? total - Math.round(total * coupon.rate) : 0; }
+function couponMsg(total) {
+  const m = $("cpMsg"); if (!m) return;
+  $("cpGo").textContent = coupon ? "移除" : "套用";
+  $("cpCode").readOnly = !!coupon; if (coupon) $("cpCode").value = coupon.code;
+  if (!coupon) { if (m.classList.contains("ok")) { m.textContent = ""; m.className = "hint"; } return; }
+  const d = discountOf(total);
+  m.className = "hint " + (d ? "ok" : "bad");
+  m.textContent = d ? "✓ 已套用 " + coupon.code + "（" + coupon.label + "），折抵 " + fmt(d)
+    : "已輸入 " + coupon.code + "（" + coupon.label + "），商品再買 " + fmt(coupon.min - total) + " 才能使用。";
+  if (d) $("cpBox").open = true;
+}
+async function applyCoupon() {
+  const m = $("cpMsg");
+  if (coupon) { coupon = null; saveCoupon(); $("cpCode").value = ""; m.textContent = ""; m.className = "hint"; renderCart(); return; }
+  const code = $("cpCode").value.trim().toUpperCase();
+  if (!code) { m.className = "hint bad"; m.textContent = "請輸入折扣碼。"; $("cpCode").focus(); return; }
+  if (!ORDER_ENDPOINT) { m.className = "hint bad"; m.textContent = "目前無法使用折扣碼，請用 LINE 聯繫我們。"; return; }
+  $("cpGo").disabled = true; m.className = "hint"; m.textContent = "確認中…";
+  try {
+    const j = await api({ action: "coupon", code });
+    if (j && j.ok && typeof j.code === "string" && j.rate > 0 && j.rate < 1) {
+      coupon = { code: j.code, min: Number(j.min) || 0, rate: Number(j.rate), label: String(j.label || "") }; saveCoupon(); renderCart();
+      track("select_promotion", { promotion_id: coupon.code, promotion_name: coupon.label });
+    } else { m.className = "hint bad"; m.textContent = j && j.reason === "busy" ? "使用的人太多，請稍後再試。" : "這個折扣碼無效，請確認後再輸入。"; }
+  } catch (e) { m.className = "hint bad"; m.textContent = "無法連線，請稍後再試。"; }
+  $("cpGo").disabled = false;
+}
+$("cpGo").addEventListener("click", applyCoupon);
+$("cpCode").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); applyCoupon(); } });
+if (!ORDER_ENDPOINT) $("cpBox").hidden = true;
+
 function orderText() {
   const lines = cartLines().filter(x => x.it), { total } = cartTotals(), v = k => contactEls[k].value.trim();
   return ["【" + SITE.model + " 改裝零件訂單】", ""].concat(
     lines.map(({ c, it }, i) => (i + 1) + ". [" + c.brand + "] " + nameOf(it) + (it.sku ? "（" + it.sku + "）" : "") + " × " + c.qty + " = " + fmt(it.price * c.qty) + (c.note && c.note.trim() ? "\n   顏色／備註：" + c.note.trim() : "")),
     (() => { const m = shipMethod(), fee = feeFor(total, m);
+      const disc = discountOf(total);
       return ["", "商品小計：" + fmt(total), "取貨方式：" + (m === "711" ? "7-11 店到店" : m === "pickup" ? "面交自取" : "未選擇"),
-        "運費：" + (!m ? "—" : fee == null ? "另計" : fmt(fee)), "合計：" + fmt(total + (fee || 0)) + (m === "711" && fee == null ? " ＋運費" : "")]; })(),
+        "運費：" + (!m ? "—" : fee == null ? "另計" : fmt(fee))].concat(disc ? ["折扣：−" + fmt(disc) + "（折扣碼 " + coupon.code + "）"] : [],
+        ["合計：" + fmt(total - disc + (fee || 0)) + (m === "711" && fee == null ? " ＋運費" : "")]); })(),
     v("name") ? ["姓名：" + v("name")] : [], v("phone") ? ["手機：" + phoneOf(v("phone"))] : [], v("contact") ? ["LINE ID：" + v("contact")] : [], v("remark") ? ["其他備註：" + v("remark")] : [],
     shipMethod() === "711" && (v("shipName") || v("shipStore")) ? ["", "【7-11 寄件】收件人：" + v("shipName") + "｜手機：" + phoneOf(v("shipPhone")) + "｜門市：" + v("shipStore")] : [],
     ["（價格版本 v" + data.version + "，更新於 " + data.updated + "）"]).join("\n");
@@ -5779,7 +5829,7 @@ function orderPayload() {
     shipMethod: shipMethod(),
     shipName: shipMethod() === "711" ? v("shipName") : "", shipPhone: shipMethod() === "711" ? phoneOf(v("shipPhone")) : "", shipStore: shipMethod() === "711" ? v("shipStore") : "",
     items: lines.map(({ c, it }) => ({ category: (MAIN_SITE ? "" : SITE.short + "｜") + c.cat, brand: c.brand, label: it.label, sku: it.sku || "", qty: c.qty, unitPrice: it.price, subtotal: it.price * c.qty, note: (c.note || "").trim() })),
-    total, text: orderText() };
+    total, coupon: discountOf(total) ? coupon.code : "", text: orderText() };
 }
 /* ---------- LINE ID 檢查：很多人會填成 LINE 名稱 ---------- */
 function lineIdProblem(v) {
@@ -5848,7 +5898,7 @@ async function sendOrder() {
       const pl = orderPayload();
       const f = feeFor(pl.total, pl.shipMethod);
       myOrders.unshift({ id: j.id, token: j.token, at: Date.now(), total: pl.total, status: "待確認",
-        due: j.due != null ? j.due : pl.total + (f || 0), method: pl.shipMethod,
+        due: j.due != null ? j.due : pl.total - discountOf(pl.total) + (f || 0), method: pl.shipMethod,
         items: pl.items.map(x => ({ name: (findItem({ cat: x.category, brand: x.brand, label: x.label }) ? nameOf(findItem({ cat: x.category, brand: x.brand, label: x.label })) : x.label), qty: x.qty, note: x.note })) });
       if (j.line === true) myOrders[0].detail = { line: true };          // 這支手機以前綁定過 LINE：自動開啟通知
       myOrders = myOrders.slice(0, 20); saveOrders(); renderOrders(); renderNav();
@@ -5857,6 +5907,7 @@ async function sendOrder() {
       track("purchase", { transaction_id: j.id || "", currency: "TWD", value: pl.total, shipping: f || 0,
         items: pl.items.map(x => ({ item_id: x.sku || x.label, item_name: x.label, item_brand: x.brand, item_category: x.category, price: x.unitPrice, quantity: x.qty })) }); }
     cart = []; saveCart(); contactEls.remark.value = ""; saveContact();
+    coupon = null; saveCoupon(); $("cpCode").value = ""; $("cpBox").open = false;
     renderCart(); msg.textContent = "訂單已送出" + (j.id ? "（編號 " + j.id + "）" : "") + "，我們會用 LINE 跟你確認。" + (j.token ? "之後可以按畫面下方的「我的訂單」查看狀態、取消或付款。" : "");
     if (j.line === true) msg.textContent += "\n🔔 已自動用你之前綁定的 LINE 接收這張訂單的通知，不用再傳驗證碼。";
     if (j.id && j.token && j.line !== true) {                          // 第一次：拿綁定驗證碼，顯示「用 LINE 接收訂單通知」
