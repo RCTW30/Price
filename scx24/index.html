@@ -3210,7 +3210,7 @@ const GA_ID = "G-S4VMHCED7V";                                                   
 const HERO_SECONDS = 4;                                                          // 首頁實車照幾秒換一張
 const STORE_LOOKUP_URL = "https://emap.pcsc.com.tw/";                             // 查詢 7-11 門市
 const TRACK_URL = "https://eservice.7-11.com.tw/e-tracking/search.aspx";          // 查詢物流進度
-const PAGE_VERSION = "v8.3"; // 網頁程式有改動時，請手動調高這個版本號
+const PAGE_VERSION = "v8.4"; // 網頁程式有改動時，請手動調高這個版本號
 // 每一版的更新內容記在後台「總覽 → 更新紀錄」（管理後台.gs），網站上不顯示
 /* ================================================== */
 
@@ -4049,7 +4049,23 @@ async function sendOrder() {
   if (idProb) { msg.textContent = idProb; $("lineIdBox").open = true; checkIdHint(true); contactEls.contact.focus(); return; }
   const sc = shipCheck(); if (sc) { msg.textContent = sc[1]; sc[0].focus(); return; }
   if (TURNSTILE_SITEKEY && window.turnstile && !tsToken) { msg.textContent = "請等下方「確認您是真人」的驗證完成再送出（通常 1～2 秒）。"; $("tsBox").scrollIntoView({ block: "center", behavior: "smooth" }); return; }
-  $("cartSend").disabled = true; msg.textContent = "送出中…";
+  $("cartSend").disabled = true; msg.textContent = "確認最新價格中…";
+  // 送出前再抓一次最新價格：店家剛好更新了價格（或商品下架），先更新購物車請客人確認，不用舊價格送出
+  try {
+    const fresh = await loadData();
+    if (fresh && (String(fresh.version) !== String(data.version) || fresh.updated !== data.updated)) {
+      const sig = () => JSON.stringify(cart.map(c => { const it = findItem(c); return it ? it.price * c.qty : "x"; }));
+      const before = sig(), oldTotal = cartTotals().total;
+      render(fresh);
+      if (sig() !== before) {
+        const nt = cartTotals().total;
+        renderCart(); $("cartSend").disabled = false;
+        msg.textContent = "⚠️ 價格剛剛更新了，購物車金額已改成最新價格（NT$ " + oldTotal.toLocaleString() + " → NT$ " + nt.toLocaleString() + "）。請確認後再按一次送出。";
+        return;
+      }
+    }
+  } catch (e) {}                                                          // 抓不到最新價格時照常送出（價格版本會記在訂單裡）
+  msg.textContent = "送出中…";
   try {
     const r = await fetch(ORDER_ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(orderPayload()) });
     const j = await r.json();
